@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\FinanceReports;
 use App\Models\Product;
 use App\Models\SaleDetail;
 use App\Models\Sales;
@@ -32,7 +33,6 @@ class SalesController extends Controller
         if ($request->has('status') && $request->status != '') {
             $query->where('payment_status', $request->status);
         }
-
 
         $sales = $query->paginate(5);
 
@@ -80,8 +80,6 @@ class SalesController extends Controller
             if ($product->stock < $quantity) {
                 return redirect()->back()->withErrors(['stock' => "Stok untuk {$product->name} tidak mencukupi."]);
             }
-
-            $product->decrement('stock', $quantity);
 
             $details[] = [
                 'product_id' => $product->id,
@@ -156,8 +154,36 @@ class SalesController extends Controller
         $sale = Sales::findOrFail($id);
 
         $sale->update([
-            'payment_status' => 'dibayar' 
+            'payment_status' => 'dibayar'
         ]);
+
+        // Ambil data sales
+        $sale = Sales::findOrFail($id);
+
+        // Ambil semua detail penjualan
+        $saleDetails = $sale->details; // Asumsikan relasi `details()` sudah ada di model Sales
+
+        // Kembalikan stok untuk setiap produk
+        foreach ($saleDetails as $detail) {
+            $product = Product::find($detail->product_id);
+            if ($product) {
+                $product->decrement('stock', $detail->quantity);
+            }
+        }
+
+        $lastFinance = FinanceReports::where('source', 'cash')->latest()->first();
+        $total = $sale->total_price + $lastFinance->total;       
+
+        FinanceReports::create([
+            'type' => 'income',
+            'category' => 'Penjualan',
+            'source' => 'cash',
+            'amount' => $sale->total_price,
+            'transaction_date' => now(),
+            'description' => 'Pemasukan dari penjualan invoice #' . $sale->invoice_number,
+            'total' => $total
+        ]);
+
 
         // Redirect dengan pesan sukses
         return redirect()->route('admin.sales.index')->with(['success' => 'Pembayaran Berhasil Di Konfirmasi']);

@@ -9,6 +9,9 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SalesController;
+use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\Report;
+use App\Models\FinanceReports;
 
 Route::get('/', function () {
     return view('welcome');
@@ -54,8 +57,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('sales', SalesController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('employee', EmployeeController::class);
+    Route::resource('finance', FinanceController::class);
 
     Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');
+    Route::get('/laporan/keuangan', [Report::class, 'indexFinance'])->name('report_finance');
 });
 
 require __DIR__ . '/auth.php';

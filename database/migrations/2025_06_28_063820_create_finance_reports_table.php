@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['income', 'expense']); // pemasukan atau pengeluaran
             $table->string('category'); // misal: 'Penjualan', 'Gaji', 'Beli Bahan'
+            $table->string('source');
             $table->decimal('amount', 15, 2);
             $table->text('description')->nullable();
+            $table->decimal('total', 15, 2)->default(0);
             $table->date('transaction_date');
             $table->timestamps();
         });

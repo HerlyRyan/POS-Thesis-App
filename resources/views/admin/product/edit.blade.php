@@ -6,7 +6,7 @@
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <h1 class="text-2xl font-bold text-white">Edit Product</h1>
         <br>
-        <form action="{{ route('product.update', $product->id) }}" method="POST" enctype="multipart/form-data"
+        <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data"
             id="edit-product-form">
             @csrf
             @method('PUT')

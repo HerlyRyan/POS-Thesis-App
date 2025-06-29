@@ -4,9 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
-use App\Models\Product;
-use App\Models\SaleDetail;
-use App\Models\Sales;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +14,7 @@ class CustomerController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Customer::query(); // Add relationship loading
+        $query = Customer::with('user'); // Add relationship loading
         $columns = Schema::getColumnListing('customers');
 
         if ($request->has('search') && $request->search != '') {
@@ -50,9 +47,7 @@ class CustomerController extends Controller
     public function update(Request $request, $id): RedirectResponse
     {
         //validate form
-        $request->validate([
-            'name' => 'string',
-            'email' => 'string',
+        $request->validate([            
             'phone' => 'string',
             'address' => 'string',
         ]);
@@ -61,9 +56,7 @@ class CustomerController extends Controller
         $customer = Customer::findOrFail($id);
 
         //update customer without image
-        $customer->update([
-            'name' => $request->name,
-            'email' => $request->email,
+        $customer->update([            
             'phone' => $request->phone,
             'address' => $request->address,
         ]);

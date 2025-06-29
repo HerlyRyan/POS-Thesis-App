@@ -59,10 +59,10 @@
                                 </td>
                                 <td
                                     class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    {{ $customer->name }}
+                                    {{ $customer->user->name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $customer->email }}
+                                    {{ $customer->user->email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     {{ $customer->phone }}
@@ -118,10 +118,10 @@
             </div>
             @forelse($customers as $customer)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                    <div class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ $customer->name }}
+                    <div class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ $customer->user->name }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Email: {{ $customer->email }}
+                        Email: {{ $customer->user->email }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
                         Phone: {{ $customer->phone }}

@@ -24,7 +24,7 @@ class Report extends Controller
         // Total berdasarkan filter (semua jenis source & type)
         $filteredTotal = $cashBalance + $bankBalance;
 
-        return view('finance.index', compact(
+        return view('report.finance.index', compact(
             'filteredTotal',
             'cashBalance',
             'bankBalance'
@@ -45,7 +45,7 @@ class Report extends Controller
             $query->where('type', $request->type);
         }
         $records = $query->where('source', $id)->orderBy('transaction_date', 'desc')->paginate(10);
-        return view('finance.show', compact(
+        return view('report.finance.show', compact(
             'records',
         ));
     }

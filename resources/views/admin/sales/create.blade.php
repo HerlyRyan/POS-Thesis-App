@@ -19,7 +19,7 @@
                 <select name="customer_id" class="product-select w-full rounded border-gray-300">
                     <option value="">-- Pilih Customer --</option>
                     @foreach ($customers as $customer)
-                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                        <option value="{{ $customer->id }}">{{ $customer->user->name }}</option>
                     @endforeach
                 </select>
             </div>

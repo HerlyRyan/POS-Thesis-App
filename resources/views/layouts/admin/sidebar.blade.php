@@ -62,8 +62,8 @@
 
             <span class="mx-3">Pelanggan</span>
         </a>
-        <a class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.employee.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
-            href="{{ route('admin.employee.index') }}">
+        <a class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.employees.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+            href="{{ route('admin.employees.index') }}">
             <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -115,9 +115,9 @@
             <span class="mx-3">UI Elements</span>
         </a>
 
-        <div class="relative group ">
-            <button id="dropdown-button"
-                class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.report_finance.index') || Route::currentRouteNamed('admin.roles.index') || Route::currentRouteNamed('admin.permissions.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
+        <div class="relative group">
+            <button id="dropdown-button-report"
+                class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.report_finance') || Route::currentRouteNamed('admin.roles.index') || Route::currentRouteNamed('admin.permissions.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -131,7 +131,7 @@
                         clip-rule="evenodd" />
                 </svg>
             </button>
-            <div id="dropdown-menu" class=" dropdown_branding w-full">
+            <div id="dropdown-menu-report" class="dropdown_branding w-full">
                 <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.report_finance') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
                     href="{{ route('admin.report_finance') }}">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -145,7 +145,7 @@
             </div>
         </div>
 
-        <div class="relative group ">
+        <div class="relative group">
             <button id="dropdown-button"
                 class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.users.index') || Route::currentRouteNamed('admin.roles.index') || Route::currentRouteNamed('admin.permissions.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -162,7 +162,7 @@
                         clip-rule="evenodd" />
                 </svg>
             </button>
-            <div id="dropdown-menu" class=" dropdown_branding w-full">
+            <div id="dropdown-menu" class="dropdown_branding w-full">
                 <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.users.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
                     href="{{ route('admin.users.index') }}">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -201,23 +201,24 @@
     </nav>
 </div>
 
-
 <script>
-    // JavaScript to toggle the dropdown
-    const dropdownButton = document.getElementById('dropdown-button');
-    const dropdownMenu = document.getElementById('dropdown-menu');
-    let isOpen = true; // Set to true to open the dropdown by default
+    // Fungsi umum toggle dropdown
+    function setupDropdown(buttonId, menuId) {
+        const button = document.getElementById(buttonId);
+        const menu = document.getElementById(menuId);
 
-    // Function to toggle the dropdown state
-    function toggleDropdown() {
-        isOpen = !isOpen;
-        dropdownMenu.classList.toggle('hidden', !isOpen);
+        // Sembunyikan menu saat load (jika perlu)
+        menu.classList.add('hidden');
+
+        button.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
     }
 
-    // Set initial state
-    toggleDropdown();
-
-    dropdownButton.addEventListener('click', () => {
-        toggleDropdown();
+    // Inisialisasi dropdown
+    document.addEventListener('DOMContentLoaded', function () {
+        setupDropdown('dropdown-button', 'dropdown-menu');
+        setupDropdown('dropdown-button-report', 'dropdown-menu-report');
     });
 </script>
+

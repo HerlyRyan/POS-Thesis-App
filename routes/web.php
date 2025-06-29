@@ -56,7 +56,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('product', ProductController::class);
     Route::resource('sales', SalesController::class);
     Route::resource('customers', CustomerController::class);
-    Route::resource('employee', EmployeeController::class);
+    Route::resource('employees', EmployeeController::class);
     Route::resource('finance', FinanceController::class);
 
     Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');

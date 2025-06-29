@@ -1,29 +1,26 @@
 <x-admin-layout>
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Sales Data</h2>
+        <h2 class="text-white text-xl">Finance Records</h2>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
             <div class="mb-4 flex justify-between items-center">
                 <!-- Search Form -->
-                <form method="GET" action="{{ route('admin.sales.index') }}" id="searchForm"
+                <form method="GET" action="{{ url()->current() }}" id="searchForm"
                     class="flex md:flex-row md:items-center md:justify-between gap-2">
                     <div class="flex items-center w-full md:w-1/3">
                         <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search sales..."
+                            placeholder="Search records..."
                             class="w-full px-6 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
                     </div>
                     <div class="w-full md:w-48">
-                        <select name="status" id="statusFilter"
+                        <select name="type" id="typeFilter"
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100 transition">
-                            <option value="">All Statuses</option>
-                            @foreach (['dibayar', 'belum dibayar', 'cicil'] as $status)
-                                <option value="{{ $status }}"
-                                    {{ request('status') == $status ? 'selected' : '' }}>
-                                    {{ ucfirst($status) }}
-                                </option>
-                            @endforeach
+                            <option value="">All Types</option>
+                            <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Income</option>
+                            <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Expense
+                            </option>
                         </select>
                     </div>
                     <button type="button" id="resetButton"
@@ -31,9 +28,9 @@
                         Reset
                     </button>
                 </form>
-                <a href="{{ route('admin.sales.create') }}"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Sale
+                <a href="{{ route('admin.finance.index') }}"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Kembali
                 </a>
             </div>
 
@@ -47,88 +44,75 @@
                                 No</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Invoice Number</th>
+                                Tanggal</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Customer</th>
+                                Tipe</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Sales Person</th>
+                                Dampak</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Total Price</th>
+                                Kategori</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Payment Method</th>
+                                Jumlah</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Status</th>
+                                Deskripsi</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Date</th>
+                                Total</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Actions</th>
+                                Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
-                        @forelse($sales as $index => $sale)
+                        @forelse($records as $index => $record)
                             <tr>
                                 <td
                                     class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    {{ $loop->iteration + $sales->firstItem() - 1 }}
-                                </td>
-                                <td
-                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    {{ $sale->invoice_number }}
+                                    {{ $loop->iteration + $records->firstItem() - 1 }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $sale->customer->user->name ?? 'N/A' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $sale->user->name ?? 'N/A' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    Rp {{ number_format($sale->total_price, 0, ',', '.') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $sale->payment_method }}
+                                    {{ \Carbon\Carbon::parse($record->transaction_date)->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            {{ $sale->payment_status == 'dibayar'
-                                ? 'bg-green-100 text-green-800'
-                                : ($sale->payment_status == 'belum dibayar'
-                                    ? 'bg-yellow-500 text-white'
-                                    : 'bg-red-100 text-red-800') }}">
-                                        {{ ucfirst($sale->payment_status) }}
+                                        {{ $record->type == 'income' ? 'bg-green-100 text-green-800' : 'bg-red-500 text-white' }}">
+                                        {{ ucfirst($record->type) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $sale->transaction_date->format('d M Y') }}
+                                    {{ $record->source }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $record->category }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    Rp {{ number_format($record->amount, 0, ',', '.') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $record->description }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    Rp {{ number_format($record->total, 0, ',', '.') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    @if ($sale->payment_status == 'belum dibayar')
-                                        <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)"
-                                            modalId="confirm-payment-{{ $sale->id }}"
-                                            total="{{ $sale->total_price }}" />
-                                        <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)"
-                                            modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
-                                    @else
-                                        <div class="flex items-center gap-2">
-                                            <a href="{{ route('admin.sales.show', $sale) }}"
-                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                            <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)"
-                                                modalId="confirm-delete-{{ $sale->id }}" name="Hapus" />
-                                        </div>
-                                    @endif
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('admin.finance.edit', $record) }}"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
+                                        <x-confirm-delete-button :route="route('admin.finance.destroy', $record)"
+                                            modalId="confirm-delete-{{ $record->id }}" name="Delete" />
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="9" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                    No sales found.
+                                    No finance records found.
                                 </td>
                             </tr>
                         @endforelse
@@ -137,7 +121,7 @@
             </div>
 
             <div class="mt-4">
-                {{ $sales->appends(request()->query())->links() }}
+                {{ $records->appends(request()->query())->links() }}
             </div>
         </div>
 
@@ -145,71 +129,62 @@
         <div class="block md:hidden space-y-4">
             <div class="mb-4 flex justify-between items-center">
                 <!-- Search Form -->
-                <form method="GET" action="{{ route('admin.sales.index') }}" id="searchForm"
+                <form method="GET" action="{{ url()->current() }}" id="mobileSearchForm"
                     class="flex md:flex-row md:items-center md:justify-between gap-2">
                     <div class="items-center w-full md:w-1/3">
-                        <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search sales..."
+                        <input type="text" id="mobileSearchInput" name="search" value="{{ request('search') }}"
+                            placeholder="Search records..."
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
                     </div>
-                    <button type="button" id="resetButton"
+                    <button type="button" id="mobileResetButton"
                         class="inline-flex items-center px-3 py-2 bg-gray-300 border border-transparent rounded-md text-xs font-semibold text-gray-800 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         Reset
                     </button>
                 </form>
-                <a href="{{ route('admin.sales.create') }}"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Sale
+                <a href="{{ route('admin.finance.index') }}"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Kembali
                 </a>
             </div>
-            @forelse($sales as $sale)
+            @forelse($records as $record)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                        Date: {{ \Carbon\Carbon::parse($record->transaction_date)->format('d M Y') }}
+                    </div>
                     <div class="flex justify-between items-center mb-2">
-                        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $sale->invoice_number }}
-                        </div>
                         <span
                             class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            {{ $sale->payment_status == 'dibayar'
-                                ? 'bg-green-100 text-green-800'
-                                : ($sale->payment_status == 'belum dibayar'
-                                    ? 'bg-yellow-500 text-white'
-                                    : 'bg-red-100 text-red-800') }}">
-                            {{ ucfirst($sale->payment_status) }}
+                            {{ $record->type == 'income' ? 'bg-green-100 text-green-800' : 'bg-red-500 text-red-800' }}">
+                            {{ ucfirst($record->type) }}
                         </span>
+                        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            Rp {{ number_format($record->amount, 0, ',', '.') }}
+                        </div>
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Customer: {{ $sale->customer->user->name ?? 'N/A' }}
+                        Dampak: {{ $record->source }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Total: Rp {{ number_format($sale->total_price, 0, ',', '.') }}
+                        Category: {{ $record->category }}
                     </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                        Date: {{ $sale->transaction_date->format('d M Y') }}
+                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                        Description: {{ $record->description }}
                     </div>
                     <div class="flex space-x-4">
-                        @if ($sale->payment_status == 'belum dibayar')
-                            <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)" modalId="confirm-payment-{{ $sale->id }}"
-                                total="{{ $sale->total_price }}" />
-                            <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)" modalId="confirm-delete-{{ $sale->id }}"
-                                name="Batal" />
-                        @else
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.sales.show', $sale) }}"
-                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)" modalId="confirm-delete-{{ $sale->id }}"
-                                    name="Hapus" />
-                            </div>
-                        @endif
+                        <a href="{{ route('admin.finance.edit', $record) }}"
+                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
+                        <x-confirm-delete-button :route="route('admin.finance.destroy', $record)" modalId="mobile-confirm-delete-{{ $record->id }}"
+                            name="Delete" />
                     </div>
                 </div>
             @empty
                 <div
                     class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-center text-gray-500 dark:text-gray-400">
-                    No sales found.
+                    No finance records found.
                 </div>
             @endforelse
             <div class="mt-4">
-                {{ $sales->appends(request()->query())->links() }}
+                {{ $records->appends(request()->query())->links() }}
             </div>
         </div>
     </div>
@@ -218,11 +193,13 @@
         let debounceTimer;
         const searchInput = document.getElementById('searchInput');
         const searchForm = document.getElementById('searchForm');
-        const statusFilter = document.getElementById('statusFilter');
+        const typeFilter = document.getElementById('typeFilter');
         const resetButton = document.getElementById('resetButton');
+        const mobileSearchInput = document.getElementById('mobileSearchInput');
+        const mobileResetButton = document.getElementById('mobileResetButton');
 
-        if (statusFilter) {
-            statusFilter.addEventListener('change', function() {
+        if (typeFilter) {
+            typeFilter.addEventListener('change', function() {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
                     searchForm.submit();
@@ -234,15 +211,27 @@
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 searchForm.submit();
-            }, 500); // delay 500ms after the user stops typing
+            }, 500);
         });
 
         resetButton.addEventListener('click', function() {
             searchInput.value = '';
-            if (statusFilter) {
-                statusFilter.value = '';
+            if (typeFilter) {
+                typeFilter.value = '';
             }
-            // Redirect to the base URL without query parameters
+            window.location.href = window.location.pathname;
+        });
+
+        // Mobile handlers
+        mobileSearchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                document.getElementById('mobileSearchForm').submit();
+            }, 500);
+        });
+
+        mobileResetButton.addEventListener('click', function() {
+            mobileSearchInput.value = '';
             window.location.href = window.location.pathname;
         });
     </script>

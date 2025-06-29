@@ -35,6 +35,8 @@ class PermissionsSeeder extends Seeder
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $editor = Role::firstOrCreate(['name' => 'editor']);
         $viewer = Role::firstOrCreate(['name' => 'viewer']);
+        $customer = Role::firstOrCreate(['name' => 'customer']);
+        $employee = Role::firstOrCreate(['name' => 'employee']);
 
         // Assign permissions ke role admin
         $admin->syncPermissions($permissions); // semua permission

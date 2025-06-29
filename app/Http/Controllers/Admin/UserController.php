@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Employees;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -60,23 +61,36 @@ class UserController extends Controller
 
         if ($request->has('roles')) {
             // Ambil nama role berdasarkan ID
-            $roleNames = Role::whereIn('id', $request->roles)->pluck('name')->toArray();            
-            
+            $roleNames = Role::whereIn('id', $request->roles)->pluck('name')->toArray();
+
             // Assign role berdasarkan nama
             $user->assignRole($roleNames);
 
             // Jika ada role 'customer', maka buatkan record Customer
             if (in_array('customer', $roleNames)) {
-                Customer::create([
+                $new_cust = Customer::create([
                     'user_id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                ]);                
+                ]);
+
+                // Redirect ke edit customer
+                return redirect()->route('admin.customers.edit', $new_cust->id)->with('success', 'User created successfully.');
+            } else if (in_array('employee', $roleNames)) {
+                $new_employee = Employees::create([
+                    'user_id' => $user->id,
+                    'position' => $request->position ?? 'buruh', // posisi default
+                    'hourly_rate' => $request->hourly_rate ?? 0,
+                ]);
+
+                // Redirect ke edit employee
+                return redirect()->route('admin.employees.edit', $new_employee->id)->with('success', 'User created successfully.');
             }
-        }        
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
+
 
     public function show(User $user)
     {
@@ -111,7 +125,7 @@ class UserController extends Controller
 
         // Map role IDs to role names
         $roleIds = $request->roles;
-        $validRoleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();     
+        $validRoleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
 
         // Jika ada role 'customer', maka buatkan record Customer
         if (in_array('customer', $validRoleNames)) {

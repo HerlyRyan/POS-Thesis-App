@@ -7,20 +7,21 @@
         <div class="hidden md:block">
             <div class="mb-4 flex justify-between items-center">
                 <!-- Search Form -->
-                <form method="GET" action="{{ route('admin.employee.index') }}" id="searchForm"
+                <form method="GET" action="{{ route('admin.employees.index') }}" id="searchForm"
                     class="flex md:flex-row md:items-center md:justify-between gap-2">
                     <div class="flex items-center w-full md:w-1/3">
                         <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search products..."
+                            placeholder="Search employees..."
                             class="w-full px-6 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
                     </div>
                     <div class="w-full md:w-48">
-                        <select name="category" id="categoryFilter"
+                        <select name="position" id="positionFilter"
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100 transition">
-                            <option value="">All Categories</option>
-                            @foreach (['galam', 'bambu', 'atap'] as $cat)
-                                <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
-                                    {{ ucfirst($cat) }}
+                            <option value="">All Positions</option>
+                            @foreach (['buruh', 'supir'] as $position)
+                                <option value="{{ $position }}"
+                                    {{ request('position') == $position ? 'selected' : '' }}>
+                                    {{ ucfirst($position) }}
                                 </option>
                             @endforeach
                         </select>
@@ -30,9 +31,9 @@
                         Reset
                     </button>
                 </form>
-                <a href="{{ route('product.create') }}"
+                <a href="{{ route('admin.users.create') }}"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Product
+                    Add New Employee
                 </a>
             </div>
 
@@ -44,62 +45,58 @@
                             No</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Image</th>
-                        <th
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Name</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Price</th>
+                            Phone</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Stocks</th>
+                            Position</th>
+                        <th
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Hourly Rate</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
-                    @forelse($products as $index => $product)
+                    @forelse($employees as $index => $employee)
                         <tr>
                             <td
                                 class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                {{ $loop->iteration + $products->firstItem() - 1 }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                <img src="{{ asset('/storage/products/' . $product->image) }}" class="rounded"
-                                    style="width: 150px">
+                                {{ $loop->iteration + $employees->firstItem() - 1 }}
                             </td>
                             <td
                                 class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                {{ $product->name }}</td>
+                                {{ $employee->user->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                Rp {{ number_format($product->price, 0, ',', '.') }}
+                                {{ $employee->phone }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                {{ $product->stock }} unit</td>
+                                {{ $employee->position }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                Rp {{ number_format($employee->hourly_rate, 0, ',', '.') }}
+                            </td>
                             <td
-                                class="flex justify-between items-center px-6 py-12 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('product.show', $product) }}"
+                                class="flex justify-between items-center px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a href="{{ route('admin.employees.show', $employee) }}"
                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">View</a>
-                                <a href="{{ route('product.edit', $product) }}"
+                                <a href="{{ route('admin.employees.edit', $employee) }}"
                                     class=" text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
-                                <x-confirm-delete-button :route="route('product.destroy', $product)"
-                                    modalId="confirm-delete-{{ $product->id }}" />
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ count($columns) }}"
-                                class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                No products found.
+                            <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                No employees found.
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
             <div class="mt-4">
-                {{ $products->appends(request()->query())->links() }}
+                {{ $employees->appends(request()->query())->links() }}
             </div>
         </div>
 
@@ -107,11 +104,11 @@
         <div class="block md:hidden space-y-4">
             <div class="mb-4 flex justify-between items-center">
                 <!-- Search Form -->
-                <form method="GET" action="{{ route('product.index') }}" id="searchForm"
+                <form method="GET" action="{{ route('admin.employees.index') }}" id="searchForm"
                     class="flex md:flex-row md:items-center md:justify-between gap-2">
                     <div class="items-center w-full md:w-1/3">
                         <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search users..."
+                            placeholder="Search employees..."
                             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
                     </div>
                     <button type="button" id="resetButton"
@@ -119,35 +116,39 @@
                         Reset
                     </button>
                 </form>
-                <a href="{{ route('product.create') }}"
+                <a href="{{ route('admin.users.create') }}"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Product
+                    Add New Employee
                 </a>
             </div>
-            @forelse($products as $product)
+            @forelse($employees as $employee)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $product->name }}</div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ $product->price }}</div>
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $employee->user->name }}
+                        </div>
                     </div>
-                    <div class="flex space-x-4">
-                        <a href="{{ route('product.show', $product) }}"
+                    <div class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                        <p><span class="font-medium">Phone:</span> {{ $employee->phone }}</p>
+                        <p><span class="font-medium">Position:</span> {{ $employee->position }}</p>
+                        <p><span class="font-medium">Hourly Rate:</span> Rp
+                            {{ number_format($employee->hourly_rate, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="flex space-x-4 mt-3">
+                        <a href="{{ route('admin.employees.show', $employee) }}"
                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">View</a>
-                        <a href="{{ route('product.edit', $product) }}"
+                        <a href="{{ route('admin.employees.edit', $employee) }}"
                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
-                        <x-confirm-delete-button :route="route('product.destroy', $product)" modalId="confirm-delete-{{ $product->id }}" />
-
-
+                        >
                     </div>
                 </div>
             @empty
                 <div
                     class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-center text-gray-500 dark:text-gray-400">
-                    No products found.
+                    No employees found.
                 </div>
             @endforelse
             <div class="mt-4">
-                {{ $products->appends(request()->query())->links() }}
+                {{ $employees->appends(request()->query())->links() }}
             </div>
         </div>
     </div>
@@ -156,27 +157,29 @@
         let debounceTimer;
         const searchInput = document.getElementById('searchInput');
         const searchForm = document.getElementById('searchForm');
-        const categoryFilter = document.getElementById('categoryFilter');
+        const positionFilter = document.getElementById('positionFilter');
         const resetButton = document.getElementById('resetButton');
 
-        categoryFilter.addEventListener('change', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                searchForm.submit();
-            }, 500);
-        });
+        if (positionFilter) {
+            positionFilter.addEventListener('change', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    searchForm.submit();
+                }, 500);
+            });
+        }
 
         searchInput.addEventListener('input', function() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 searchForm.submit();
-            }, 500); // delay 500ms setelah user berhenti mengetik
+            }, 500); // delay 500ms after user stops typing
         });
 
         resetButton.addEventListener('click', function() {
             searchInput.value = '';
-            categoryFilter.value = '';
-            // Hapus query string di URL tanpa reload halaman
+            if (positionFilter) positionFilter.value = '';
+            // Remove query string from URL without page reload
             history.pushState({}, '', window.location.pathname);
             searchForm.submit();
         });

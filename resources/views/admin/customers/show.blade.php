@@ -7,9 +7,9 @@
         <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Customer Information</h2>
         <div class="mb-4 flex justify-around gap-6">
             <div class="col-2 w-full">
-                <h3 class="mt-2 text-gray-600 dark:text-gray-100 font-medium text-xl">{{ $customer->name }}</h3>
+                <h3 class="mt-2 text-gray-600 dark:text-gray-100 font-medium text-xl">{{ $customer->user->name }}</h3>
                 <hr>
-                <p class="mt-2 text-gray-600 dark:text-gray-100">Email: <span class="font-medium">{{ $customer->email }}</span></p>
+                <p class="mt-2 text-gray-600 dark:text-gray-100">Email: <span class="font-medium">{{ $customer->user->email }}</span></p>
                 <p class="mt-2 text-gray-600 dark:text-gray-100">Phone: <span class="font-medium">{{ $customer->phone ?? '-' }}</span></p>
                 <p class="mt-2 text-gray-600 dark:text-gray-100">Address: <span class="font-medium">{{ $customer->address ?? '-' }}</span></p>
             </div>

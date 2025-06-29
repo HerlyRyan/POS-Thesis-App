@@ -10,6 +10,7 @@ use App\Models\SaleDetail;
 use App\Models\Sales;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -150,42 +151,43 @@ class SalesController extends Controller
 
     public function payment_confirmation($id): RedirectResponse
     {
-        // Ambil data sales
-        $sale = Sales::findOrFail($id);
-
-        $sale->update([
-            'payment_status' => 'dibayar'
-        ]);
-
-        // Ambil data sales
-        $sale = Sales::findOrFail($id);
-
-        // Ambil semua detail penjualan
-        $saleDetails = $sale->details; // Asumsikan relasi `details()` sudah ada di model Sales
-
-        // Kembalikan stok untuk setiap produk
-        foreach ($saleDetails as $detail) {
-            $product = Product::find($detail->product_id);
-            if ($product) {
-                $product->decrement('stock', $detail->quantity);
+        // Wrap all database operations in a transaction
+        return DB::transaction(function () use ($id) {
+            // Ambil data sales
+            $sale = Sales::findOrFail($id);
+            
+            $sale->update([
+                'payment_status' => 'dibayar'
+            ]);
+            
+            // Ambil semua detail penjualan
+            $saleDetails = $sale->details;
+            
+            // Kurangi stok untuk setiap produk
+            foreach ($saleDetails as $detail) {
+                $product = Product::find($detail->product_id);
+                if ($product) {
+                    $product->decrement('stock', $detail->quantity);
+                }
             }
-        }
-
-        $lastFinance = FinanceReports::where('source', 'cash')->latest()->first();
-        $total = $sale->total_price + $lastFinance->total;       
-
-        FinanceReports::create([
-            'type' => 'income',
-            'category' => 'Penjualan',
-            'source' => 'cash',
-            'amount' => $sale->total_price,
-            'transaction_date' => now(),
-            'description' => 'Pemasukan dari penjualan invoice #' . $sale->invoice_number,
-            'total' => $total
-        ]);
-
-
-        // Redirect dengan pesan sukses
-        return redirect()->route('admin.sales.index')->with(['success' => 'Pembayaran Berhasil Di Konfirmasi']);
+            
+            // Tambahkan ke laporan keuangan
+            $lastFinance = FinanceReports::where('source', 'cash')->latest()->value('total') ?? 0;
+            $total = $sale->total_price + $lastFinance;       
+            
+            FinanceReports::create([
+                'type' => 'income',
+                'category' => 'Penjualan',
+                'source' => 'cash',
+                'amount' => $sale->total_price,
+                'transaction_date' => now(),
+                'description' => 'Pemasukan dari penjualan invoice #' . $sale->invoice_number,
+                'total' => $total
+            ]);
+            
+            // Return redirect response
+            return redirect()->route('admin.sales.index')
+                ->with(['success' => 'Pembayaran Berhasil Di Konfirmasi']);
+        });
     }
 }

@@ -17,10 +17,11 @@ class Sales extends Model
         'invoice_number',
         'customer_id',
         'user_id',
-        'total_price',        
+        'total_price',
         'payment_method',
         'payment_status',
         'transaction_date',
+        'snap_url',
         'note'
     ];
 

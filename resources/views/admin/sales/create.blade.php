@@ -68,7 +68,7 @@
             <div class="mt-6">
                 <label for="payment_method" class="block font-medium text-gray-700 dark:text-gray-200">Metode
                     Pembayaran</label>
-                <select name="payment_method" id="payment_method"
+                <select name="payment_method" id="payment_method" x-model="payment_method"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                     <option value="cash">Cash</option>
                     <option value="transfer">Transfer</option>

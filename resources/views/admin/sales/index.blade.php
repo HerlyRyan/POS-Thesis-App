@@ -110,10 +110,19 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     @if ($sale->payment_status == 'belum dibayar')
-                                        <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)"
-                                            modalId="confirm-payment-{{ $sale->id }}"
-                                            total="{{ $sale->total_price }}" />
-                                        <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)"
+                                        @if ($sale->payment_method == 'cash')
+                                            <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)"
+                                                modalId="confirm-payment-{{ $sale->id }}"
+                                                total="{{ $sale->total_price }}" />
+                                        @else
+                                            @if ($sale->snap_url)
+                                                <a href="{{ $sale->snap_url }}" target="_blank"
+                                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
+                                                    Pembayaran
+                                                </a>
+                                            @endif
+                                        @endif
+                                        <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
                                             modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
                                     @else
                                         <div class="flex items-center gap-2">
@@ -188,16 +197,25 @@
                     </div>
                     <div class="flex space-x-4">
                         @if ($sale->payment_status == 'belum dibayar')
-                            <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)" modalId="confirm-payment-{{ $sale->id }}"
-                                total="{{ $sale->total_price }}" />
-                            <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)" modalId="confirm-delete-{{ $sale->id }}"
+                            @if ($sale->payment_method == 'cash')
+                                <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)" modalId="confirm-payment-{{ $sale->id }}"
+                                    total="{{ $sale->total_price }}" />
+                            @else
+                                @if ($sale->snap_url)
+                                    <a href="{{ $sale->snap_url }}" target="_blank"
+                                        class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
+                                        Pembayaran
+                                    </a>
+                                @endif
+                            @endif
+                            <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)" modalId="confirm-delete-{{ $sale->id }}"
                                 name="Batal" />
                         @else
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('admin.sales.show', $sale) }}"
                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)" modalId="confirm-delete-{{ $sale->id }}"
-                                    name="Hapus" />
+                                <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)"
+                                    modalId="confirm-delete-{{ $sale->id }}" name="Hapus" />
                             </div>
                         @endif
                     </div>

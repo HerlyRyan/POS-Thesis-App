@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\SalesController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\Report;
 use App\Models\FinanceReports;
+use App\Http\Controllers\MidtransWebhookController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -55,6 +56,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('permissions', PermissionController::class);
     Route::resource('product', ProductController::class);
     Route::resource('sales', SalesController::class);
+    Route::delete('sales/cancel/{sale}', [SalesController::class, 'cancel'])->name('sales.cancel');
     Route::resource('customers', CustomerController::class);
     Route::resource('employees', EmployeeController::class);
     Route::resource('finance', FinanceController::class);

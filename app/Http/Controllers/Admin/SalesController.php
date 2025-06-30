@@ -8,12 +8,16 @@ use App\Models\FinanceReports;
 use App\Models\Product;
 use App\Models\SaleDetail;
 use App\Models\Sales;
+use App\Services\MidtransService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Response;
 
 class SalesController extends Controller
 {
@@ -49,10 +53,9 @@ class SalesController extends Controller
             ->latest()
             ->first();
 
-        $lastCounter = $lastSale ? intval(substr($lastSale->invoice_number, -2)) : 0;
-        $todayCounter = $lastCounter + 1;
+        $random = strtoupper(Str::random(4));
 
-        $invoiceNumber = 'INVGS-' . $today . str_pad($todayCounter, 2, '0', STR_PAD_LEFT);
+        $invoiceNumber = 'INVGS-' . $today . '-' . $random;
 
         $products = Product::all();
         $customers = Customer::all();
@@ -102,19 +105,53 @@ class SalesController extends Controller
         }
 
         // Simpan penjualan
-        $sale = Sales::create([
-            'invoice_number' => $request->invoice,
-            'customer_id' => $customer_id,
-            'user_id' => $user->id,
-            'total_price' => $totalPrice,
-            'payment_method' => $request->payment_method,
-            'payment_status' => 'belum dibayar',
-            'transaction_date' => now(),
-        ]);
+        if ($request->payment_method == 'cash') {
+            $sale = Sales::create([
+                'invoice_number' => $request->invoice,
+                'customer_id' => $customer_id,
+                'user_id' => $user->id,
+                'total_price' => $totalPrice,
+                'payment_method' => $request->payment_method,
+                'payment_status' => 'belum dibayar',
+                'transaction_date' => now(),
+            ]);
 
-        // Simpan detail penjualan
-        foreach ($details as $detail) {
-            $sale->details()->create($detail);
+            // Simpan detail penjualan
+            foreach ($details as $detail) {
+                $sale->details()->create($detail);
+            }
+        }
+
+        if ($request->payment_method == 'transfer') {
+            $midtrans = new MidtransService();
+
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $request->invoice,
+                    'gross_amount' => $totalPrice,
+                ],
+                'customer_details' => [
+                    'first_name' => optional($request->user())->name ?? 'Pelanggan',
+                    'email' => $request->user()->email ?? 'email@example.com',
+                ],
+            ];
+
+            $snap = $midtrans->createTransaction($params);
+
+            $sale = Sales::create([
+                'invoice_number' => $request->invoice,
+                'customer_id' => $customer_id,
+                'user_id' => $request->user()->id,
+                'total_price' => $totalPrice,
+                'payment_method' => 'transfer',
+                'payment_status' => 'belum dibayar',
+                'snap_url' => $snap->redirect_url,
+                'transaction_date' => now(),
+            ]);
+
+            foreach ($details as $detail) {
+                $sale->details()->create($detail);
+            }
         }
 
         return redirect()->route('admin.sales.index')->with('success', 'Penjualan berhasil disimpan.');
@@ -149,20 +186,32 @@ class SalesController extends Controller
         return redirect()->route('admin.sales.index')->with(['success' => 'Data penjualan berhasil dihapus dan stok dikembalikan.']);
     }
 
+    public function cancel($id): RedirectResponse
+    {
+        // Ambil data sales
+        $sale = Sales::findOrFail($id);
+
+        // Hapus data sales
+        $sale->delete();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('admin.sales.index')->with(['success' => 'Data penjualan berhasil dibatalkan.']);
+    }
+
     public function payment_confirmation($id): RedirectResponse
     {
         // Wrap all database operations in a transaction
         return DB::transaction(function () use ($id) {
             // Ambil data sales
             $sale = Sales::findOrFail($id);
-            
+
             $sale->update([
                 'payment_status' => 'dibayar'
             ]);
-            
+
             // Ambil semua detail penjualan
             $saleDetails = $sale->details;
-            
+
             // Kurangi stok untuk setiap produk
             foreach ($saleDetails as $detail) {
                 $product = Product::find($detail->product_id);
@@ -170,11 +219,11 @@ class SalesController extends Controller
                     $product->decrement('stock', $detail->quantity);
                 }
             }
-            
+
             // Tambahkan ke laporan keuangan
             $lastFinance = FinanceReports::where('source', 'cash')->latest()->value('total') ?? 0;
-            $total = $sale->total_price + $lastFinance;       
-            
+            $total = $sale->total_price + $lastFinance;
+
             FinanceReports::create([
                 'type' => 'income',
                 'category' => 'Penjualan',
@@ -184,7 +233,7 @@ class SalesController extends Controller
                 'description' => 'Pemasukan dari penjualan invoice #' . $sale->invoice_number,
                 'total' => $total
             ]);
-            
+
             // Return redirect response
             return redirect()->route('admin.sales.index')
                 ->with(['success' => 'Pembayaran Berhasil Di Konfirmasi']);

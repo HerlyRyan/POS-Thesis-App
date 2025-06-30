@@ -8,6 +8,8 @@
         "php": "^8.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "midtrans/midtrans-php": "^2.6",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.9",
         "yajra/laravel-datatables-oracle": "^11.1"
     },

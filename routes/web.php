@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -11,16 +12,14 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SalesController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\Report;
-use App\Models\FinanceReports;
-use App\Http\Controllers\MidtransWebhookController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('admin.dashboard');
-})->middleware(['auth', 'verified', 'permission:dashboard_access'])->name('admin.dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'permission:dashboard_access'])
+    ->name('admin.dashboard');
 
 Route::get('/test', function () {
     return view('dashboard');
@@ -33,9 +32,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::group(['middleware' => ['role:admin']], function () {
-    Route::get('/admin', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/forms', function () {
         return view('admin.forms');
     })->name('admin.forms');
@@ -50,7 +47,7 @@ Route::group(['middleware' => ['role:admin']], function () {
 // Route::group(['middleware' => ['permission:publish articles']], function () {});
 
 // Group routes that need admin role and authentication
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {    
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);

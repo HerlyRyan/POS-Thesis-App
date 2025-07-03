@@ -5,7 +5,7 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.sales.index')" :addRoute="route('admin.sales.create')" searchPlaceholder="Search sales..."
+            <x-filter-add-table :action="route('admin.sales.index')" :route="route('admin.sales.create')" searchPlaceholder="Search sales..."
                 selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum dibayar', 'cicil' => 'Cicil']" selectLabel="All Stutuses" textAdd="Sale" />
 
             <!-- Wrapper untuk menghindari overflow -->
@@ -123,7 +123,7 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-add-table :action="route('admin.sales.index')" :addRoute="route('admin.sales.create')" searchPlaceholder="Search sales..."
+            <x-filter-add-table :action="route('admin.sales.index')" :route="route('admin.sales.create')" searchPlaceholder="Search sales..."
                 selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum dibayar', 'cicil' => 'Cicil']" selectLabel="All Stutuses" textAdd="Sale" />
             @forelse($sales as $sale)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">

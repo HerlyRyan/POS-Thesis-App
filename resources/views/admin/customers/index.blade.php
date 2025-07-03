@@ -5,7 +5,7 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.customers.index')" :addRoute="route('admin.customers.create')" searchPlaceholder="Search customer..."
+            <x-filter-add-table :action="route('admin.customers.index')" :route="route('admin.customers.create')" searchPlaceholder="Search customer..."
                 textAdd="Customer" />
 
             <!-- Wrapper untuk menghindari overflow -->
@@ -80,7 +80,7 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-add-table :action="route('admin.customers.index')" :addRoute="route('admin.users.create')" searchPlaceholder="Search customer..."
+            <x-filter-add-table :action="route('admin.customers.index')" :route="route('admin.users.create')" searchPlaceholder="Search customer..."
                 textAdd="Customer" />
             @forelse($customers as $customer)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">

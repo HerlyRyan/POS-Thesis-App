@@ -5,7 +5,7 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.product.index')" :addRoute="route('admin.product.create')" searchPlaceholder="Search product..."
+            <x-filter-add-table :action="route('admin.product.index')" :route="route('admin.product.create')" searchPlaceholder="Search product..."
                 selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="All Categories" textAdd="Product" />
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -82,7 +82,7 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-add-table :action="route('admin.product.index')" :addRoute="route('admin.product.create')" searchPlaceholder="Search product..."
+            <x-filter-add-table :action="route('admin.product.index')" :route="route('admin.product.create')" searchPlaceholder="Search product..."
                 selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="All Categories" textAdd="Product" />
             @forelse($products as $product)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">

@@ -57,11 +57,11 @@
                     <!-- Tombol Filter dan Reset -->
                     <div class="col-span-full flex gap-2 mt-2">
                         <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-md hover:bg-blue-700">
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-blue-700">
                             Filter
                         </button>
                         <a href="{{ route('admin.report_sales.index') }}"
-                            class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-xs font-semibold rounded-md hover:bg-gray-400">
+                            class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-gray-400">
                             Reset
                         </a>
                     </div>

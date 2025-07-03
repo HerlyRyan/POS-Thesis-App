@@ -1,11 +1,11 @@
 @props([
     'action', // route atau url tujuan filter
-    'addRoute' => null, // route untuk tombol "Add New"
+    'route' => null, // route untuk tombol "Add New"
     'searchPlaceholder' => 'Search...',
     'selectName' => null, // nama filter select (opsional)
     'selectOptions' => [], // isi option
     'selectLabel' => 'All Options',
-    'textAdd',
+    'textAdd' => null,
 ])
 
 <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -39,10 +39,14 @@
     </form>
 
     <!-- Tombol Tambah -->
-    @if ($addRoute)
-        <a href="{{ $addRoute }}"
+    @if ($route)
+        <a href="{{ $route }}"
             class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Add New {{ $textAdd }}
+            @if ($textAdd)
+                Add New {{ $textAdd }}
+            @else
+                Kembali
+            @endif
         </a>
     @endif
 

@@ -17,12 +17,12 @@
                         class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
 
                     <button type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
+                        class="px-4 py-2 bg-blue-600 text-white text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
                         Cari
                     </button>
 
                     <a href="{{ url()->current() }}"
-                        class="px-4 py-2 bg-gray-300 text-gray-800 text-xs font-semibold rounded-md hover:bg-gray-400">
+                        class="px-4 py-2 bg-gray-300 text-gray-800 text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-gray-400">
                         Reset
                     </a>
                 </form>

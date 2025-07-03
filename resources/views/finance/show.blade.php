@@ -5,34 +5,8 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <div class="mb-4 flex justify-between items-center">
-                <!-- Search Form -->
-                <form method="GET" action="{{ url()->current() }}" id="searchForm"
-                    class="flex md:flex-row md:items-center md:justify-between gap-2">
-                    <div class="flex items-center w-full md:w-1/3">
-                        <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search records..."
-                            class="w-full px-6 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
-                    </div>
-                    <div class="w-full md:w-48">
-                        <select name="type" id="typeFilter"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100 transition">
-                            <option value="">All Types</option>
-                            <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Income</option>
-                            <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Expense
-                            </option>
-                        </select>
-                    </div>
-                    <button type="button" id="resetButton"
-                        class="inline-flex items-center px-4 bg-gray-300 border border-transparent rounded-md text-xs font-semibold text-gray-800 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Reset
-                    </button>
-                </form>
-                <a href="{{ route('admin.finance.index') }}"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Kembali
-                </a>
-            </div>
+            <x-filter-add-table :action="route('admin.finance.index')" :route="route('admin.finance.index')" searchPlaceholder="Search finance record..."
+            selectName="status" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="All Types"/>            
 
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">

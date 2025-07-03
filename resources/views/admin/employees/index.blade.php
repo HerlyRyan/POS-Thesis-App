@@ -5,7 +5,7 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.employees.index')" :addRoute="route('admin.users.create')" searchPlaceholder="Search employee..."
+            <x-filter-add-table :action="route('admin.employees.index')" :route="route('admin.users.create')" searchPlaceholder="Search employee..."
                 selectName="position" :selectOptions="['buruh' => 'Buruh', 'supir' => 'Supir']" selectLabel="All Position" textAdd="Employee" />            
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -73,25 +73,8 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <div class="mb-4 flex justify-between items-center">
-                <!-- Search Form -->
-                <form method="GET" action="{{ route('admin.employees.index') }}" id="searchForm"
-                    class="flex md:flex-row md:items-center md:justify-between gap-2">
-                    <div class="items-center w-full md:w-1/3">
-                        <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search employees..."
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
-                    </div>
-                    <button type="button" id="resetButton"
-                        class="inline-flex items-center px-3 py-2 bg-gray-300 border border-transparent rounded-md text-xs font-semibold text-gray-800 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Reset
-                    </button>
-                </form>
-                <a href="{{ route('admin.users.create') }}"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Employee
-                </a>
-            </div>
+            <x-filter-add-table :action="route('admin.employees.index')" :route="route('admin.users.create')" searchPlaceholder="Search employee..."
+                selectName="position" :selectOptions="['buruh' => 'Buruh', 'supir' => 'Supir']" selectLabel="All Position" textAdd="Employee" />
             @forelse($employees as $employee)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-2">

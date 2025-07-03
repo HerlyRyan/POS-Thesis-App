@@ -59,7 +59,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('finance', FinanceController::class);
 
     Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');
-    Route::get('/laporan/keuangan', [Report::class, 'indexFinance'])->name('report_finance');
+    Route::get('/laporan/finance', [Report::class, 'indexFinance'])->name('report_finance.index');
+    Route::get('/laporan/finance/{source}', [Report::class, 'showFinance'])->name('report_finance.show');
+
+    Route::get('/laporan/sales', [Report::class, 'indexSales'])->name('report_sales.index');
+    Route::get('/report/sales/print', [Report::class, 'printSales'])->name('report_sales.print');
+
+    Route::get('/laporan/best_sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers');
 });
 
 require __DIR__ . '/auth.php';

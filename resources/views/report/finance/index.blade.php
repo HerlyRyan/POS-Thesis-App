@@ -56,7 +56,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('admin.finance.show', 'cash') }}"
+                                    <a href="{{ route('admin.report_finance.show', 'cash') }}"
                                         class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                                 </div>
                             </td>
@@ -70,7 +70,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('admin.finance.show', 'bank') }}"
+                                    <a href="{{ route('admin.report_finance.show', 'bank') }}"
                                         class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                                 </div>
                             </td>

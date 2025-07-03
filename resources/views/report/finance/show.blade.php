@@ -28,7 +28,7 @@
                         Reset
                     </button>
                 </form>
-                <a href="{{ route('admin.finance.index') }}"
+                <a href="{{ route('admin.report_finance.index') }}"
                     class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Kembali
                 </a>
@@ -62,10 +62,7 @@
                                 Deskripsi</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Total</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Aksi</th>
+                                Total</th>                            
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -99,15 +96,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     Rp {{ number_format($record->total, 0, ',', '.') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex items-center gap-2">
-                                        <a href="{{ route('admin.finance.edit', $record) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
-                                        <x-confirm-delete-button :route="route('admin.finance.destroy', $record)"
-                                            modalId="confirm-delete-{{ $record->id }}" name="Delete" />
-                                    </div>
-                                </td>
+                                </td>                               
                             </tr>
                         @empty
                             <tr>
@@ -141,7 +130,7 @@
                         Reset
                     </button>
                 </form>
-                <a href="{{ route('admin.finance.index') }}"
+                <a href="{{ route('admin.report_finance.index') }}"
                     class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Kembali
                 </a>
@@ -169,13 +158,7 @@
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
                         Description: {{ $record->description }}
-                    </div>
-                    <div class="flex space-x-4">
-                        <a href="{{ route('admin.finance.edit', $record) }}"
-                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
-                        <x-confirm-delete-button :route="route('admin.finance.destroy', $record)" modalId="mobile-confirm-delete-{{ $record->id }}"
-                            name="Delete" />
-                    </div>
+                    </div>                    
                 </div>
             @empty
                 <div

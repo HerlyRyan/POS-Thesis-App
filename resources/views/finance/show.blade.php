@@ -154,7 +154,7 @@
                     <div class="flex justify-between items-center mb-2">
                         <span
                             class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            {{ $record->type == 'income' ? 'bg-green-100 text-green-800' : 'bg-red-500 text-red-800' }}">
+                            {{ $record->type == 'income' ? 'bg-green-100 text-green-800' : 'bg-red-500 text-white' }}">
                             {{ ucfirst($record->type) }}
                         </span>
                         <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">

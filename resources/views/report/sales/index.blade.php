@@ -1,12 +1,72 @@
 <x-admin-layout>
     <x-flash-modal />
+
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Sales Data</h2>
+        <div class="flex justify-between">
+            <h2 class="text-white text-xl">Sales Data</h2>
+            <!-- Tombol Print -->
+            <div class="flex md:items-start justify-end">
+                <a href="{{ route('admin.report_sales.print', request()->all()) }}"
+                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Print
+                </a>
+            </div>
+        </div>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.sales.index')" :addRoute="route('admin.sales.create')" searchPlaceholder="Search sales..."
-                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum dibayar', 'cicil' => 'Cicil']" selectLabel="All Stutuses" textAdd="Sale" />
+            <div class="mb-4 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <!-- Filter Form -->
+                <form method="GET" action="{{ route('admin.report_sales.index') }}" id="searchForm"
+                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 w-full">
+
+                    <!-- Search -->
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Cari invoice / customer..."
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+
+                    <!-- Status -->
+                    <select name="status"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                        <option value="">Semua Status</option>
+                        @foreach (['dibayar', 'belum dibayar', 'cicil'] as $status)
+                            <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                {{ ucfirst($status) }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <!-- Rentang Tanggal -->
+                    <input type="date" name="start_date" value="{{ request('start_date') }}"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+
+                    <input type="date" name="end_date" value="{{ request('end_date') }}"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+
+                    <!-- Bulan -->
+                    <select name="month"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                        <option value="">Pilih Bulan</option>
+                        @for ($m = 1; $m <= 12; $m++)
+                            <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                            </option>
+                        @endfor
+                    </select>
+
+                    <!-- Tombol Filter dan Reset -->
+                    <div class="col-span-full flex gap-2 mt-2">
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-md hover:bg-blue-700">
+                            Filter
+                        </button>
+                        <a href="{{ route('admin.report_sales.index') }}"
+                            class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-xs font-semibold rounded-md hover:bg-gray-400">
+                            Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
 
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
@@ -37,9 +97,6 @@
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Date</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -79,31 +136,6 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     {{ $sale->transaction_date->format('d M Y') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    @if ($sale->payment_status == 'belum dibayar')
-                                        @if ($sale->payment_method == 'cash')
-                                            <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)"
-                                                modalId="confirm-payment-{{ $sale->id }}"
-                                                total="{{ $sale->total_price }}" />
-                                        @else
-                                            @if ($sale->snap_url)
-                                                <a href="{{ $sale->snap_url }}" target="_blank"
-                                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
-                                                    Pembayaran
-                                                </a>
-                                            @endif
-                                        @endif
-                                        <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
-                                            modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
-                                    @else
-                                        <div class="flex items-center gap-2">
-                                            <a href="{{ route('admin.sales.show', $sale) }}"
-                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                            <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)"
-                                                modalId="confirm-delete-{{ $sale->id }}" name="Hapus" />
-                                        </div>
-                                    @endif
-                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -123,12 +155,70 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-add-table :action="route('admin.sales.index')" :addRoute="route('admin.sales.create')" searchPlaceholder="Search sales..."
-                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum dibayar', 'cicil' => 'Cicil']" selectLabel="All Stutuses" textAdd="Sale" />
+            <div class="mb-4 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <!-- Filter Form -->
+                <form method="GET" action="{{ route('admin.report_sales.index') }}" id="searchForm"
+                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 w-full">
+
+                    <!-- Search -->
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Cari invoice / customer..."
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+
+                    <!-- Status -->
+                    <select name="status"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                        <option value="">Semua Status</option>
+                        @foreach (['dibayar', 'belum dibayar', 'cicil'] as $status)
+                            <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                {{ ucfirst($status) }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <!-- Rentang Tanggal -->
+                    <input type="date" name="start_date" value="{{ request('start_date') }}"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                    <input type="date" name="end_date" value="{{ request('end_date') }}"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+
+                    <!-- Bulan -->
+                    <select name="month"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                        <option value="">Pilih Bulan</option>
+                        @for ($m = 1; $m <= 12; $m++)
+                            <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                            </option>
+                        @endfor
+                    </select>
+
+                    <!-- Tombol Filter dan Reset -->
+                    <div class="col-span-full flex gap-2 mt-2">
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-md hover:bg-blue-700">
+                            Filter
+                        </button>
+                        <a href="{{ route('admin.report_sales.index') }}"
+                            class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-xs font-semibold rounded-md hover:bg-gray-400">
+                            Reset
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Tombol Print -->
+                <div class="flex md:items-start justify-end">
+                    <a href="{{ route('admin.report_sales.print', request()->all()) }}"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Print
+                    </a>
+                </div>
+            </div>
             @forelse($sales as $sale)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $sale->invoice_number }}
+                        <div class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            {{ $sale->invoice_number }}
                         </div>
                         <span
                             class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -148,30 +238,6 @@
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
                         Date: {{ $sale->transaction_date->format('d M Y') }}
-                    </div>
-                    <div class="flex space-x-4">
-                        @if ($sale->payment_status == 'belum dibayar')
-                            @if ($sale->payment_method == 'cash')
-                                <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)" modalId="confirm-payment-{{ $sale->id }}"
-                                    total="{{ $sale->total_price }}" />
-                            @else
-                                @if ($sale->snap_url)
-                                    <a href="{{ $sale->snap_url }}" target="_blank"
-                                        class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
-                                        Pembayaran
-                                    </a>
-                                @endif
-                            @endif
-                            <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)" modalId="confirm-delete-{{ $sale->id }}"
-                                name="Batal" />
-                        @else
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.sales.show', $sale) }}"
-                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)"
-                                    modalId="confirm-delete-{{ $sale->id }}" name="Hapus" />
-                            </div>
-                        @endif
                     </div>
                 </div>
             @empty

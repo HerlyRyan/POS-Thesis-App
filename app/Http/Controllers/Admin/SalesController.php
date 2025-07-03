@@ -29,7 +29,7 @@ class SalesController extends Controller
         if ($request->has('search') && $request->search != '') {
             $query->where(function ($q) use ($request) {
                 $q->where('invoice_number', 'like', "%{$request->search}%")
-                    ->orWhereHas('customer', function ($query) use ($request) {
+                    ->orWhereHas('customer.user', function ($query) use ($request) {
                         $query->where('name', 'like', "%{$request->search}%");
                     });
             });

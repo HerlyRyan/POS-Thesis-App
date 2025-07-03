@@ -21,8 +21,8 @@ class EmployeeController extends Controller
             $query->where('name', 'like', "%{$request->search}%");
         }
 
-        if ($request->has('category') && $request->category != '') {
-            $query->where('category', $request->category);
+        if ($request->has('position') && $request->position != '') {
+            $query->where('position', $request->position);
         }
 
         $employees = $query->paginate(5);

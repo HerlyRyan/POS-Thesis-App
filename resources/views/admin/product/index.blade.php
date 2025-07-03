@@ -5,36 +5,8 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <div class="mb-4 flex justify-between items-center">
-                <!-- Search Form -->
-                <form method="GET" action="{{ route('admin.product.index') }}" id="searchForm"
-                    class="flex md:flex-row md:items-center md:justify-between gap-2">
-                    <div class="flex items-center w-full md:w-1/3">
-                        <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search products..."
-                            class="w-full px-6 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
-                    </div>
-                    <div class="w-full md:w-48">
-                        <select name="category" id="categoryFilter"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100 transition">
-                            <option value="">All Categories</option>
-                            @foreach (['galam', 'bambu', 'atap'] as $cat)
-                                <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
-                                    {{ ucfirst($cat) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <button type="button" id="resetButton"
-                        class="inline-flex items-center px-4 bg-gray-300 border border-transparent rounded-md text-xs font-semibold text-gray-800 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Reset
-                    </button>
-                </form>
-                <a href="{{ route('admin.product.create') }}"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Product
-                </a>
-            </div>
+            <x-filter-add-table :action="route('admin.product.index')" :addRoute="route('admin.product.create')" searchPlaceholder="Search product..."
+                selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="All Categories" textAdd="Product" />
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-800">
@@ -47,7 +19,7 @@
                             Gambar</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Nama</th>                        
+                            Nama</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Harga</th>
@@ -75,7 +47,7 @@
                             </td>
                             <td
                                 class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                {{ $product->name }}</td>                            
+                                {{ $product->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                 Rp {{ number_format($product->price, 0, ',', '.') }}
                             </td>
@@ -110,25 +82,8 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <div class="mb-4 flex justify-between items-center">
-                <!-- Search Form -->
-                <form method="GET" action="{{ route('admin.product.index') }}" id="searchForm"
-                    class="flex md:flex-row md:items-center md:justify-between gap-2">
-                    <div class="items-center w-full md:w-1/3">
-                        <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search users..."
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
-                    </div>
-                    <button type="button" id="resetButton"
-                        class="inline-flex items-center px-3 py-2 bg-gray-300 border border-transparent rounded-md text-xs font-semibold text-gray-800 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Reset
-                    </button>
-                </form>
-                <a href="{{ route('admin.product.create') }}"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Product
-                </a>
-            </div>
+            <x-filter-add-table :action="route('admin.product.index')" :addRoute="route('admin.product.create')" searchPlaceholder="Search product..."
+                selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="All Categories" textAdd="Product" />
             @forelse($products as $product)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-4">
@@ -180,8 +135,8 @@
 
         resetButton.addEventListener('click', function() {
             searchInput.value = '';
-            if(categoryFilter) {
-            categoryFilter.value = '';
+            if (categoryFilter) {
+                categoryFilter.value = '';
             }
             // Redirect to the base URL without query parameters
             window.location.href = window.location.pathname;

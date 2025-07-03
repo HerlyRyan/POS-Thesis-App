@@ -72,7 +72,7 @@
 
             <span class="mx-3">Karyawan</span>
         </a>
-        <a class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.finance.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+        <a class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.finance.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
             href="{{ route('admin.finance.index') }}">
             <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
@@ -117,7 +117,7 @@
 
         <div class="relative group">
             <button id="dropdown-button-report"
-                class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.report_finance') || Route::currentRouteNamed('admin.roles.index') || Route::currentRouteNamed('admin.permissions.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
+                class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.report_finance.*') || Route::currentRouteNamed('admin.report_sales.*') || Route::currentRouteNamed('admin.report_best_sellers.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -132,8 +132,8 @@
                 </svg>
             </button>
             <div id="dropdown-menu-report" class="dropdown_branding w-full">
-                <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.report_finance') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
-                    href="{{ route('admin.report_finance') }}">
+                <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.report_finance.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                    href="{{ route('admin.report_finance.index') }}">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -141,6 +141,26 @@
                     </svg>
 
                     <span class="mx-3">Keuangan</span>
+                </a>
+                <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.report_sales.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                    href="{{ route('admin.report_sales.index') }}">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
+                    </svg>
+
+                    <span class="mx-3">Penjualan</span>
+                </a>
+                <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.report_best_sellers.index') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                    href="{{ route('admin.report_best_sellers') }}">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 14v6m-3-3h6M6 10h2a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2zm10 0h2a2 2 0 002-2V6a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a2 2 0 002 2zM6 20h2a2 2 0 002-2v-2a2 2 0 00-2-2H6a2 2 0 00-2 2v2a2 2 0 002 2z" />
+                    </svg>
+
+                    <span class="mx-3">Produk Terlaris</span>
                 </a>
             </div>
         </div>
@@ -216,9 +236,8 @@
     }
 
     // Inisialisasi dropdown
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         setupDropdown('dropdown-button', 'dropdown-menu');
         setupDropdown('dropdown-button-report', 'dropdown-menu-report');
     });
 </script>
-

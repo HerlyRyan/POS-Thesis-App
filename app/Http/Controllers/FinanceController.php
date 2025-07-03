@@ -107,7 +107,7 @@ class FinanceController extends Controller
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
-        $records = $query->where('source', $id)->orderBy('transaction_date', 'desc')->paginate(10);
+        $records = $query->where('source', $id)->orderBy('transaction_date', 'asc')->paginate(31);
         return view('finance.show', compact(
             'records',
         ));

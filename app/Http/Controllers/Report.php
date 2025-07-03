@@ -37,52 +37,101 @@ class Report extends Controller
     public function showFinance(string $source, Request $request)
     {
         $query = FinanceReports::query();
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('description', 'like', "%{$request->search}%")
                     ->orWhere('category', 'like', "%{$request->search}%");
             });
         }
 
-        if ($request->has('type')) {
+        if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
-        $records = $query->where('source', $source)->orderBy('transaction_date', 'desc')->paginate(10);
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('transaction_date', $request->month);
+        }
+
+        $records = $query->where('source', $source)->orderBy('transaction_date', 'asc')->paginate(31);
         return view('report.finance.show', compact(
             'records',
         ));
     }
 
+    public function printFinance(string $source, Request $request)
+    {
+        $query = FinanceReports::query();
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('description', 'like', "%{$request->search}%")
+                    ->orWhere('category', 'like', "%{$request->search}%");
+            });
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('transaction_date', $request->month);
+        }
+
+        $records = $query->where('source', $source)->orderBy('transaction_date', 'asc')->paginate(31);
+        return view('report.finance.print', compact(
+            'records',
+        ));
+
+        // Pilihan 2: jika ingin langsung PDF
+        /*
+    $pdf = PDF::loadView('report.sales.print_pdf', compact('sales'));
+    return $pdf->download('laporan-penjualan.pdf');
+    */
+    }
+
+    // SALES
     public function indexSales(Request $request)
     {
         $query = Sales::with(['customer.user', 'user']);
 
         // Filter pencarian umum
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('invoice_number', 'like', "%{$request->search}%")
-                    ->orWhereHas('customer.user', function ($q2) use ($request) {
+                    ->orWherefilled('customer.user', function ($q2) use ($request) {
                         $q2->where('name', 'like', "%{$request->search}%");
                     });
             });
         }
 
         // Filter status
-        if ($request->has('status')) {
+        if ($request->filled('status')) {
             $query->where('payment_status', $request->status);
         }
 
         // Filter rentang tanggal
-        if ($request->has('start_date') && $request->has('end_date')) {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
         }
 
         // Filter per bulan
-        if ($request->has('month')) {
+        if ($request->filled('month')) {
             $query->whereMonth('transaction_date', $request->month);
         }
 
-        $sales = $query->orderBy('transaction_date', 'desc')->paginate(10);
+        $sales = $query->orderBy('transaction_date', 'asc')->paginate(10);
+        // dd($request->all(), $query->toSql());
 
         return view('report.sales.index', compact('sales', 'request'));
     }
@@ -116,7 +165,7 @@ class Report extends Controller
             $query->whereMonth('transaction_date', $request->month);
         }
 
-        $sales = $query->orderBy('transaction_date', 'desc')->get();
+        $sales = $query->orderBy('transaction_date', 'asc')->get();
 
         // Pilihan 1: tampilkan view print biasa (HTML print view)
         return view('report.sales.print', compact('sales'));
@@ -131,15 +180,17 @@ class Report extends Controller
     public function indexBestSellingProducts(Request $request)
     {
         $query = Product::withSum(['saleDetails as total_sold' => function ($q) use ($request) {
-            // Filter tanggal berdasarkan relasi ke sale
-            if ($request->filled('start_date') && $request->filled('end_date')) {
-                $q->whereHas('sale', function ($saleQuery) use ($request) {
+            // Filter by rentang tanggal atau per bulan
+            $q->whereHas('sale', function ($saleQuery) use ($request) {
+                if ($request->filled('start_date') && $request->filled('end_date')) {
                     $saleQuery->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
-                });
-            }
+                } elseif ($request->filled('month')) {
+                    $saleQuery->whereMonth('transaction_date', $request->month);
+                }
+            });
         }], 'quantity');
 
-        // Filter pencarian nama produk
+        // Filter berdasarkan nama produk
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
@@ -149,5 +200,31 @@ class Report extends Controller
             ->get();
 
         return view('report.best_sellers.index', compact('topProducts', 'request'));
+    }
+
+
+    public function printBestSellingProducts(Request $request)
+    {
+        $query = Product::withSum(['saleDetails as total_sold' => function ($q) use ($request) {
+            // Filter by rentang tanggal atau per bulan
+            $q->whereHas('sale', function ($saleQuery) use ($request) {
+                if ($request->filled('start_date') && $request->filled('end_date')) {
+                    $saleQuery->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
+                } elseif ($request->filled('month')) {
+                    $saleQuery->whereMonth('transaction_date', $request->month);
+                }
+            });
+        }], 'quantity');
+
+        // Filter berdasarkan nama produk
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $topProducts = $query->orderByDesc('total_sold')
+            ->take(10)
+            ->get();
+
+        return view('report.best_sellers.print', compact('topProducts'));
     }
 }

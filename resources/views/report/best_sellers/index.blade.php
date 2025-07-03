@@ -5,28 +5,7 @@
 
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <div class="mb-4 flex justify-between items-center">
-                <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-2 items-center">
-                    <input type="text" name="search" value="{{ $request->search }}" placeholder="Cari produk..."
-                        class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-
-                    <input type="date" name="start_date" value="{{ $request->start_date }}"
-                        class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-
-                    <input type="date" name="end_date" value="{{ $request->end_date }}"
-                        class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-
-                    <button type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
-                        Cari
-                    </button>
-
-                    <a href="{{ url()->current() }}"
-                        class="px-4 py-2 bg-gray-300 text-gray-800 text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-gray-400">
-                        Reset
-                    </a>
-                </form>
-            </div>
+            <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk best seller..." />            
 
             <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -70,6 +49,7 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4 mt-6">
+            <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk best seller..." />
             @forelse ($topProducts as $product)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="text-sm text-gray-500 dark:text-gray-400">Nama Produk</div>

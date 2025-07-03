@@ -61,11 +61,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');
     Route::get('/laporan/finance', [Report::class, 'indexFinance'])->name('report_finance.index');
     Route::get('/laporan/finance/{source}', [Report::class, 'showFinance'])->name('report_finance.show');
+    Route::get('/laporan/finance/{source}/print', [Report::class, 'printFinance'])->name('report_finance.print');
 
     Route::get('/laporan/sales', [Report::class, 'indexSales'])->name('report_sales.index');
-    Route::get('/report/sales/print', [Report::class, 'printSales'])->name('report_sales.print');
+    Route::get('/laporan/sales/print', [Report::class, 'printSales'])->name('report_sales.print');
 
-    Route::get('/laporan/best_sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers');
+    Route::get('/laporan/best_sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers.index');
+    Route::get('/laporan/best_sellers/print', [Report::class, 'printBestSellingProducts'])->name('report_best_sellers.print');
 });
 
 require __DIR__ . '/auth.php';

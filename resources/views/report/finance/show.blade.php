@@ -1,39 +1,18 @@
 <x-admin-layout>
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Finance Records</h2>
+        <div class="flex justify-between">
+            <h2 class="text-white text-xl">Finance Records</h2>
+            <a href="{{ route('admin.report_finance.index') }}"
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Kembali
+            </a>
+        </div>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <div class="mb-4 flex justify-between items-center">
-                <!-- Search Form -->
-                <form method="GET" action="{{ url()->current() }}" id="searchForm"
-                    class="flex md:flex-row md:items-center md:justify-between gap-2">
-                    <div class="flex items-center w-full md:w-1/3">
-                        <input type="text" id="searchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search records..."
-                            class="w-full px-6 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
-                    </div>
-                    <div class="w-full md:w-48">
-                        <select name="type" id="typeFilter"
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100 transition">
-                            <option value="">All Types</option>
-                            <option value="income" {{ request('type') == 'income' ? 'selected' : '' }}>Income</option>
-                            <option value="expense" {{ request('type') == 'expense' ? 'selected' : '' }}>Expense
-                            </option>
-                        </select>
-                    </div>
-                    <button type="button" id="resetButton"
-                        class="inline-flex items-center px-4 bg-gray-300 border border-transparent rounded-md text-xs font-semibold text-gray-800 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Reset
-                    </button>
-                </form>
-                <a href="{{ route('admin.report_finance.index') }}"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Kembali
-                </a>
-            </div>
-
+            <x-filter-report-table :action="url()->current()" :printRoute="url()->current() . '/print'" searchPlaceholder="Cari record..."
+                selectName="status" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Status" />
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -62,7 +41,7 @@
                                 Deskripsi</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Total</th>                            
+                                Total</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -96,7 +75,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     Rp {{ number_format($record->total, 0, ',', '.') }}
-                                </td>                               
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -116,25 +95,8 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <div class="mb-4 flex justify-between items-center">
-                <!-- Search Form -->
-                <form method="GET" action="{{ url()->current() }}" id="mobileSearchForm"
-                    class="flex md:flex-row md:items-center md:justify-between gap-2">
-                    <div class="items-center w-full md:w-1/3">
-                        <input type="text" id="mobileSearchInput" name="search" value="{{ request('search') }}"
-                            placeholder="Search records..."
-                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100">
-                    </div>
-                    <button type="button" id="mobileResetButton"
-                        class="inline-flex items-center px-3 py-2 bg-gray-300 border border-transparent rounded-md text-xs font-semibold text-gray-800 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Reset
-                    </button>
-                </form>
-                <a href="{{ route('admin.report_finance.index') }}"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Kembali
-                </a>
-            </div>
+            <x-filter-report-table :action="url()->current()" :printRoute="url()->current() . '/print'" searchPlaceholder="Cari record..."
+                selectName="status" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Status" />
             @forelse($records as $record)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
@@ -158,7 +120,7 @@
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
                         Description: {{ $record->description }}
-                    </div>                    
+                    </div>
                 </div>
             @empty
                 <div
@@ -171,51 +133,4 @@
             </div>
         </div>
     </div>
-
-    <script>
-        let debounceTimer;
-        const searchInput = document.getElementById('searchInput');
-        const searchForm = document.getElementById('searchForm');
-        const typeFilter = document.getElementById('typeFilter');
-        const resetButton = document.getElementById('resetButton');
-        const mobileSearchInput = document.getElementById('mobileSearchInput');
-        const mobileResetButton = document.getElementById('mobileResetButton');
-
-        if (typeFilter) {
-            typeFilter.addEventListener('change', function() {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    searchForm.submit();
-                }, 500);
-            });
-        }
-
-        searchInput.addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                searchForm.submit();
-            }, 500);
-        });
-
-        resetButton.addEventListener('click', function() {
-            searchInput.value = '';
-            if (typeFilter) {
-                typeFilter.value = '';
-            }
-            window.location.href = window.location.pathname;
-        });
-
-        // Mobile handlers
-        mobileSearchInput.addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                document.getElementById('mobileSearchForm').submit();
-            }, 500);
-        });
-
-        mobileResetButton.addEventListener('click', function() {
-            mobileSearchInput.value = '';
-            window.location.href = window.location.pathname;
-        });
-    </script>
 </x-admin-layout>

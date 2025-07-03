@@ -2,71 +2,13 @@
     <x-flash-modal />
 
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <div class="flex justify-between">
-            <h2 class="text-white text-xl">Sales Data</h2>
-            <!-- Tombol Print -->
-            <div class="flex md:items-start justify-end">
-                <a href="{{ route('admin.report_sales.print', request()->all()) }}"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Print
-                </a>
-            </div>
-        </div>
+        <h2 class="text-white text-xl">Sales Data</h2>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <div class="mb-4 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                <!-- Filter Form -->
-                <form method="GET" action="{{ route('admin.report_sales.index') }}" id="searchForm"
-                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 w-full">
+            <x-filter-report-table :action="route('admin.report_sales.index')" :printRoute="route('admin.report_sales.print')" searchPlaceholder="Cari invoice / customer..."
+                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum Dibayar', 'cicil' => 'Cicil']" selectLabel="Semua Status" />
 
-                    <!-- Search -->
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari invoice / customer..."
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-
-                    <!-- Status -->
-                    <select name="status"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-                        <option value="">Semua Status</option>
-                        @foreach (['dibayar', 'belum dibayar', 'cicil'] as $status)
-                            <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                {{ ucfirst($status) }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    <!-- Rentang Tanggal -->
-                    <input type="date" name="start_date" value="{{ request('start_date') }}"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-
-                    <input type="date" name="end_date" value="{{ request('end_date') }}"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-
-                    <!-- Bulan -->
-                    <select name="month"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-                        <option value="">Pilih Bulan</option>
-                        @for ($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
-                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
-                            </option>
-                        @endfor
-                    </select>
-
-                    <!-- Tombol Filter dan Reset -->
-                    <div class="col-span-full flex gap-2 mt-2">
-                        <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-blue-700">
-                            Filter
-                        </button>
-                        <a href="{{ route('admin.report_sales.index') }}"
-                            class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-gray-400">
-                            Reset
-                        </a>
-                    </div>
-                </form>
-            </div>
 
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
@@ -155,65 +97,8 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <div class="mb-4 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                <!-- Filter Form -->
-                <form method="GET" action="{{ route('admin.report_sales.index') }}" id="searchForm"
-                    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 w-full">
-
-                    <!-- Search -->
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari invoice / customer..."
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-
-                    <!-- Status -->
-                    <select name="status"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-                        <option value="">Semua Status</option>
-                        @foreach (['dibayar', 'belum dibayar', 'cicil'] as $status)
-                            <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                {{ ucfirst($status) }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    <!-- Rentang Tanggal -->
-                    <input type="date" name="start_date" value="{{ request('start_date') }}"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-                    <input type="date" name="end_date" value="{{ request('end_date') }}"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-
-                    <!-- Bulan -->
-                    <select name="month"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-                        <option value="">Pilih Bulan</option>
-                        @for ($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
-                                {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
-                            </option>
-                        @endfor
-                    </select>
-
-                    <!-- Tombol Filter dan Reset -->
-                    <div class="col-span-full flex gap-2 mt-2">
-                        <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-md hover:bg-blue-700">
-                            Filter
-                        </button>
-                        <a href="{{ route('admin.report_sales.index') }}"
-                            class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-xs font-semibold rounded-md hover:bg-gray-400">
-                            Reset
-                        </a>
-                    </div>
-                </form>
-
-                <!-- Tombol Print -->
-                <div class="flex md:items-start justify-end">
-                    <a href="{{ route('admin.report_sales.print', request()->all()) }}"
-                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Print
-                    </a>
-                </div>
-            </div>
+            <x-filter-report-table :action="route('admin.report_sales.index')" :printRoute="route('admin.report_sales.print')" searchPlaceholder="Cari invoice / customer..."
+                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum Dibayar', 'cicil' => 'Cicil']" selectLabel="Semua Status" />
             @forelse($sales as $sale)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-2">

@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\SaleDetail;
 use App\Models\Sales;
 use App\Services\MidtransService;
+use App\Services\UltraMsgService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -217,6 +218,13 @@ class SalesController extends Controller
                 $product = Product::find($detail->product_id);
                 if ($product) {
                     $product->decrement('stock', $detail->quantity);
+                }
+                if ($product->stock <= 10) {
+                    $whatsapp = new UltraMsgService();
+                    $whatsapp->sendMessage(
+                        '6281253864116', // ganti dengan nomor admin kamu (pakai format internasional tanpa +)
+                        "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!"
+                    );
                 }
             }
 

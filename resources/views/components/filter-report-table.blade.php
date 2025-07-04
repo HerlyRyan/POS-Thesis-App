@@ -5,6 +5,7 @@
     'selectName' => null,
     'selectOptions' => [],
     'selectLabel' => 'All Options',
+    'date' => false,
 ])
 
 <div class="mb-4 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -30,23 +31,25 @@
             </select>
         @endif
 
-        <!-- Rentang Tanggal -->
-        <input type="date" name="start_date" value="{{ request('start_date') }}"
-            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+        @if ($date)
+            <!-- Rentang Tanggal -->
+            <input type="date" name="start_date" value="{{ request('start_date') }}"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
 
-        <input type="date" name="end_date" value="{{ request('end_date') }}"
-            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+            <input type="date" name="end_date" value="{{ request('end_date') }}"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
 
-        <!-- Bulan -->
-        <select name="month"
-            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
-            <option value="">Pilih Bulan</option>
-            @for ($m = 1; $m <= 12; $m++)
-                <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
-                    {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
-                </option>
-            @endfor
-        </select>
+            <!-- Bulan -->
+            <select name="month"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                <option value="">Pilih Bulan</option>
+                @for ($m = 1; $m <= 12; $m++)
+                    <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                    </option>
+                @endfor
+            </select>
+        @endif
 
         <!-- Tombol Aksi -->
         <div class="col-span-full flex flex-wrap gap-2 mt-2">

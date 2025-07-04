@@ -5,7 +5,8 @@
 
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk best seller..." />            
+            <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk best seller..."
+                date='true' />
 
             <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -49,7 +50,8 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4 mt-6">
-            <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk best seller..." />
+            <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk best seller..."
+                date='true' />
             @forelse ($topProducts as $product)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="text-sm text-gray-500 dark:text-gray-400">Nama Produk</div>

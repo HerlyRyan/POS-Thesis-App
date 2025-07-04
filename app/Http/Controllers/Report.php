@@ -227,4 +227,43 @@ class Report extends Controller
 
         return view('report.best_sellers.print', compact('topProducts'));
     }
+
+    // Low Stock
+    public function indexLowStock(Request $request)
+    {
+        $query = Product::where('stock', '<=', 10);
+
+        // Filter berdasarkan nama produk
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter status
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        $lowStockProducts = $query->get();
+
+        return view('report.low_stock.index', compact('lowStockProducts'));
+    }
+
+    public function printLowStock(Request $request)
+    {
+        $query = Product::where('stock', '<=', 10);
+
+        // Filter berdasarkan nama produk
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter status
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        $lowStockProducts = $query->get();
+
+        return view('report.low_stock.print', compact('lowStockProducts'));
+    }
 }

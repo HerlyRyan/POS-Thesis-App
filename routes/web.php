@@ -68,6 +68,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/laporan/best_sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers.index');
     Route::get('/laporan/best_sellers/print', [Report::class, 'printBestSellingProducts'])->name('report_best_sellers.print');
+
+    Route::get('/laporan/low_stock', [Report::class, 'indexLowStock'])->name('report_low_stock.index');
+    Route::get('/laporan/low_stock/print', [Report::class, 'printLowStock'])->name('report_low_stock.print');
 });
 
 require __DIR__ . '/auth.php';

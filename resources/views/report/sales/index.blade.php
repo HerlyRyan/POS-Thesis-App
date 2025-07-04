@@ -7,8 +7,7 @@
         <!-- Desktop View -->
         <div class="hidden md:block">
             <x-filter-report-table :action="route('admin.report_sales.index')" :printRoute="route('admin.report_sales.print')" searchPlaceholder="Cari invoice / customer..."
-                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum Dibayar', 'cicil' => 'Cicil']" selectLabel="Semua Status" />
-
+                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum Dibayar', 'cicil' => 'Cicil']" selectLabel="Semua Status" date='true' />
 
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
@@ -98,7 +97,7 @@
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
             <x-filter-report-table :action="route('admin.report_sales.index')" :printRoute="route('admin.report_sales.print')" searchPlaceholder="Cari invoice / customer..."
-                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum Dibayar', 'cicil' => 'Cicil']" selectLabel="Semua Status" />
+                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum Dibayar', 'cicil' => 'Cicil']" selectLabel="Semua Status" date='true'/>
             @forelse($sales as $sale)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-2">

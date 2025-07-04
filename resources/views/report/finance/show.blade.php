@@ -12,7 +12,7 @@
         <!-- Desktop View -->
         <div class="hidden md:block">
             <x-filter-report-table :action="url()->current()" :printRoute="url()->current() . '/print'" searchPlaceholder="Cari record..."
-                selectName="status" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Status" />
+                selectName="status" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Status" date='true' />
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -96,7 +96,7 @@
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
             <x-filter-report-table :action="url()->current()" :printRoute="url()->current() . '/print'" searchPlaceholder="Cari record..."
-                selectName="status" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Status" />
+                selectName="status" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Status" date='true' />
             @forelse($records as $record)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">

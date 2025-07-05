@@ -5,8 +5,8 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.employees.index')" :route="route('admin.users.create')" searchPlaceholder="Search employee..."
-                selectName="position" :selectOptions="['buruh' => 'Buruh', 'supir' => 'Supir']" selectLabel="All Position" textAdd="Employee" />            
+            <x-filter-add-table :action="route('admin.employees.index')" :route="route('admin.employees.create')" searchPlaceholder="Search employee..."
+                selectName="position" :selectOptions="['buruh' => 'Buruh', 'supir' => 'Supir']" selectLabel="All Position" textAdd="Employee" />
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-800">
@@ -16,19 +16,19 @@
                             No</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Name</th>
+                            Nama</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Phone</th>
+                            Nomor Telepon</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Position</th>
+                            Posisi</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Hourly Rate</th>
+                            Status</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Actions</th>
+                            Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -47,14 +47,18 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                 {{ $employee->position }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                Rp {{ number_format($employee->hourly_rate, 0, ',', '.') }}
+                                <span
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            {{ $employee->status == 'tersedia' ? 'bg-green-100 text-green-800' : 'bg-yellow-500 text-white' }}">
+                                    {{ ucfirst($employee->status) }}
+                                </span>
                             </td>
                             <td
                                 class="flex justify-between items-center px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <a href="{{ route('admin.employees.show', $employee) }}"
-                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">View</a>
+                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                                 <a href="{{ route('admin.employees.edit', $employee) }}"
-                                    class=" text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
+                                    class=" text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Ubah</a>
                             </td>
                         </tr>
                     @empty

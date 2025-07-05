@@ -1,14 +1,13 @@
 <x-admin-layout>
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl text-white font-bold">Edit Data Pekerja Lepas</h1>
+        <h1 class="text-2xl text-white font-bold">Tambah Data Pekerja Lepas</h1>
         <br>
-        <form action="{{ route('admin.employees.update', $employee->id) }}" method="POST" id="employee-form">
+        <form action="{{ route('admin.employees.store') }}" method="POST" id="employee-form">
             @csrf
-            @method('PUT')
 
             <div class="mb-4">
                 <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nama</label>
-                <input type="text" id="name" name="name" value="{{ old('name', $employee->user->name) }}"
+                <input type="text" id="name" name="name" value="{{ old('name') }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
                 @error('name')
@@ -18,7 +17,7 @@
 
             <div class="mb-4">
                 <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email', $employee->user->email) }}"
+                <input type="email" id="email" name="email" value="{{ old('email') }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
                 @error('email')
@@ -32,8 +31,8 @@
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
                     <option value="" disabled {{ old('position') ? '' : 'selected' }}>--Pilih posisi--</option>
-                    <option value="buruh" {{ old('position', $employee->position) == 'buruh' ? 'selected' : '' }}>Buruh</option>
-                    <option value="supir" {{ old('position', $employee->position) == 'supir' ? 'selected' : '' }}>Supir</option>
+                    <option value="buruh" {{ old('position') == 'buruh' ? 'selected' : '' }}>Buruh</option>
+                    <option value="supir" {{ old('position') == 'supir' ? 'selected' : '' }}>Supir</option>
                 </select>
                 @error('position')
                     <span class="text-red-600 text-sm">{{ $message }}</span>
@@ -42,7 +41,7 @@
 
             <div class="mb-4">
                 <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nomor Telepon</label>
-                <input type="text" pattern="\d*" inputmode="numeric" id="phone" name="phone" value="{{ old('phone', $employee->phone) }}"
+                <input type="text" pattern="\d*" inputmode="numeric" id="phone" name="phone" value="{{ old('phone') }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
                 @error('phone')
@@ -55,15 +54,15 @@
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                     Kembali ke Daftar Pekerja
                 </a>
-                <button type="button" x-data @click="$dispatch('open-modal', 'confirm-update')"
+                <button type="button" x-data @click="$dispatch('open-modal', 'confirm-create')"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Simpan Perubahan
+                    Tambah Pekerja
                 </button>
             </div>
         </form>
 
-        <x-confirm-create-update-button :name="'confirm-update'" modalForm="employee-form"
-            confirmMessage="Konfirmasi Ubah Data Pekerja" question="Apakah kamu yakin ingin menyimpan perubahan data pekerja lepas ini?"
-            buttonText="Ya, Simpan" />
+        <x-confirm-create-update-button :name="'confirm-create'" modalForm="employee-form"
+            confirmMessage="Konfirmasi Tambah Pekerja" question="Apakah kamu yakin ingin menyimpan data pekerja lepas ini?"
+            buttonText="Ya, Tambah" />
     </div>
 </x-admin-layout>

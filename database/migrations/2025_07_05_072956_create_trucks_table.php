@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('trucks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // user dari tabel users
-            $table->enum('position', ['buruh', 'supir'])->nullable();            
-            $table->string('phone')->nullable();
-            $table->enum('status', ['bekerja', 'tersedia'])->default('tersedia');
+            $table->string('plate_number')->unique();
+            $table->string('type');
+            $table->string('capacity');
+            $table->enum('status', ['tersedia', 'dipakai', 'diperbaiki'])->default('tersedia');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('trucks');
     }
 };

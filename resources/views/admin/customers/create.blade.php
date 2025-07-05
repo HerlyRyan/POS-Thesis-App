@@ -52,7 +52,7 @@
                 </a>
                 <button type="button" x-data @click="$dispatch('open-modal', 'confirm-create')"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Buat Pelanggan
+                    Tambah Pelanggan
                 </button>
             </div>
         </form>

@@ -21,7 +21,7 @@
         <!-- Select Filter -->
         @if ($selectName && count($selectOptions))
             <select name="{{ $selectName }}" id="filter"
-                class="flex-1 w-full md:w-48 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="w-full md:w-48 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">{{ $selectLabel }}</option>
                 @foreach ($selectOptions as $value => $label)
                     <option value="{{ $value }}" {{ request($selectName) == $value ? 'selected' : '' }}>
@@ -43,7 +43,7 @@
         <a href="{{ $route }}"
             class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             @if ($textAdd)
-                Add New {{ $textAdd }}
+                Tambahkan Data {{ $textAdd }}
             @else
                 Kembali
             @endif

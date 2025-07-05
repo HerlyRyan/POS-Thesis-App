@@ -5,7 +5,7 @@
     </x-slot>
 
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold text-white">Edit Customer</h1>
+        <h1 class="text-2xl font-bold text-white">Ubah Data Customer</h1>
         <br>
         <form action="{{ route('admin.customers.update', $customer->id) }}" method="POST" id="edit-customer-form">
             @csrf
@@ -15,9 +15,8 @@
                 <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nama</label>
                 <div class="flex items-center">
                     <input type="text" id="name" name="name" value="{{ old('name', $customer->user->name) }}"
-                        class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm text-gray-500 cursor-not-allowed"
-                        required readonly>
-                    <span class="ml-2 text-xs text-gray-500 dark:text-gray-400 italic">Edit nama di User Configuration</span>
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                        required>
                 </div>
                 @error('name')
                     <span class="text-red-600 text-sm">{{ $message }}</span>
@@ -25,17 +24,17 @@
             </div>
 
             <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
+                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
                 <div class="flex items-center">
-                    <input type="text" id="name" name="name" value="{{ old('name', $customer->user->email) }}"
-                        class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm text-gray-500 cursor-not-allowed"
-                        required readonly>
-                    <span class="ml-2 text-xs text-gray-500 dark:text-gray-400 italic">Edit Email di User Configuration</span>
+                    <input type="text" id="email" name="email"
+                        value="{{ old('email', $customer->user->email) }}"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                        required>
                 </div>
                 @error('name')
                     <span class="text-red-600 text-sm">{{ $message }}</span>
                 @enderror
-            </div>            
+            </div>
 
             <div class="mb-4">
                 <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nomor
@@ -61,11 +60,11 @@
             <div class="flex items-center justify-between">
                 <a href="{{ route('admin.customers.index') }}"
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                    Kembali ke Customer List
+                    Kembali ke Daftar Pelanggan
                 </a>
                 <button type="button" x-data @click="$dispatch('open-modal', 'confirm-edit')"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Simpan
+                    Simpan Perubahan
                 </button>
             </div>
         </form>

@@ -1,23 +1,27 @@
 <x-admin-layout>
     <x-slot name="header">
-        <h1 class="text-2xl font-bold">Tambah Penjualan</h1>
+        <h1 class="text-2xl font-bold">Tambah Data Penjualan</h1>
     </x-slot>
 
-    <form action="{{ route('admin.sales.store') }}" method="POST" id="sale-form" x-data="saleForm({{ Js::from($products) }})">
-        @csrf
+    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-md">
+        <h1 class="text-2xl text-white font-bold">Tambah Data Penjualan</h1>
+        <br>
 
-        <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-md">
+        <form action="{{ route('admin.sales.store') }}" method="POST" id="sale-form" x-data="saleForm({{ Js::from($products) }})">
+            @csrf
+
             <!-- Invoice -->
             <div class="mb-4">
-                <label for="invoice" class="block font-medium text-gray-700 dark:text-gray-200">Invoice Number</label>
+                <label for="invoice" class="block font-medium text-gray-700 dark:text-gray-200">Nomor Invoice</label>
                 <input type="text" id="invoice" name="invoice" value="{{ $invoiceNumber }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" readonly>
             </div>
 
             <!-- Customer -->
-            <div class="flex gap-4">
+            <div class="flex flex-col gap-1 mb-4">
+                <label for="customer_id" class="block font-medium text-gray-700 dark:text-gray-200">Pelanggan</label>
                 <select name="customer_id" class="product-select w-full rounded border-gray-300">
-                    <option value="">-- Pilih Customer --</option>
+                    <option value="">-- Pilih Pelanggan --</option>
                     @foreach ($customers as $customer)
                         <option value="{{ $customer->id }}">{{ $customer->user->name }}</option>
                     @endforeach
@@ -25,7 +29,8 @@
             </div>
 
             <!-- Produk -->
-            <div class="space-y-4 mt-6">
+            <div class="flex flex-col gap-1 mb-4">
+                <label for="products" class="block font-medium text-gray-700 dark:text-gray-200">Produk</label>
                 <template x-for="(item, index) in products" :key="index">
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-4 items-start">
@@ -47,7 +52,13 @@
 
                             <!-- Tombol Hapus -->
                             <button type="button" @click="removeProduct(index)"
-                                class="text-red-500 font-bold">×</button>
+                                class="flex items-center justify-center w-8 h-8 rounded-full text-red-500 hover:bg-red-100 transition">
+                                <!-- Ikon Trash -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </div>
 
                         <!-- Pesan Error -->
@@ -56,12 +67,17 @@
                         </template>
                     </div>
                 </template>
-
             </div>
 
             <!-- Tambah Produk -->
-            <button type="button" @click="addProduct()" class="mt-4 text-sm text-indigo-600 hover:underline">
-                + Tambah Produk
+            <button type="button" @click="addProduct()"
+                class="flex items-center gap-1 mt-4 text-sm text-indigo-600 hover:underline">
+                <!-- Ikon Plus -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Produk
             </button>
 
             <!-- Metode Pembayaran -->
@@ -70,9 +86,9 @@
                     Pembayaran</label>
                 <select name="payment_method" id="payment_method" x-model="payment_method"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="">-- Pilih Metode Pembayaran --</option>
                     <option value="cash">Cash</option>
                     <option value="transfer">Transfer</option>
-                    <option value="ewallet">E-Wallet</option>
                 </select>
             </div>
 
@@ -84,16 +100,21 @@
             </div>
 
             <!-- Submit -->
-            <div class="mt-6 flex justify-between">
+            <div class="flex items-center justify-between">
                 <a href="{{ route('admin.sales.index') }}"
-                    class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">← Kembali</a>
-
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-                    Simpan Penjualan
+                    class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    Kembali ke Daftar Penjualan
+                </a>
+                <button type="button" x-data @click="$dispatch('open-modal', 'confirm-create')"
+                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Buat Penjualan
                 </button>
             </div>
-        </div>
-    </form>
+            <x-confirm-create-update-button :name="'confirm-create'" modalForm="sales-form"
+                confirmMessage="Konfirmasi Buat Penjualan" question="Apakah kamu yakin ingin menyimpan penjualan ini?"
+                buttonText="Ya, Buat" />
+        </form>
+    </div>
 
     <!-- Alpine.js Script -->
     <script>

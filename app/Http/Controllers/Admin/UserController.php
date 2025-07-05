@@ -69,9 +69,7 @@ class UserController extends Controller
             // Jika ada role 'customer', maka buatkan record Customer
             if (in_array('customer', $roleNames)) {
                 $new_cust = Customer::create([
-                    'user_id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
+                    'user_id' => $user->id,                    
                 ]);
 
                 // Redirect ke edit customer
@@ -126,27 +124,6 @@ class UserController extends Controller
         // Map role IDs to role names
         $roleIds = $request->roles;
         $validRoleNames = Role::whereIn('id', $roleIds)->pluck('name')->toArray();
-
-        // Jika ada role 'customer', maka buatkan record Customer
-        if (in_array('customer', $validRoleNames)) {
-            $new_cust = Customer::create([
-                'user_id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ]);
-
-            // Redirect ke edit customer
-            return redirect()->route('admin.customers.edit', $new_cust->id)->with('success', 'User created successfully.');
-        } else if (in_array('employee', $validRoleNames)) {
-            $new_employee = Employees::create([
-                'user_id' => $user->id,
-                'position' => $request->position ?? 'buruh', // posisi default
-                'hourly_rate' => $request->hourly_rate ?? 0,
-            ]);
-
-            // Redirect ke edit employee
-            return redirect()->route('admin.employees.edit', $new_employee->id)->with('success', 'User created successfully.');
-        }
 
         // Sync roles by name
         $user->syncRoles($validRoleNames);

@@ -31,9 +31,8 @@ class ProductController extends Controller
     }
 
     public function create()
-    {
-        $roles = Product::paginate(10);
-        return view('admin.product.create', compact('roles'));
+    {        
+        return view('admin.product.create');
     }
 
     public function store(Request $request)

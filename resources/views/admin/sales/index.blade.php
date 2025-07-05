@@ -1,12 +1,13 @@
 <x-admin-layout>
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Sales Data</h2>
+        <h2 class="text-white text-xl">Data Penjualan</h2>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.sales.index')" :route="route('admin.sales.create')" searchPlaceholder="Search sales..."
-                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum dibayar', 'cicil' => 'Cicil']" selectLabel="All Stutuses" textAdd="Sale" />
+            <x-filter-add-table :action="route('admin.sales.index')" :route="route('admin.sales.create')"
+                searchPlaceholder="Cari nomor invoice / nama pelanggan..." selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum dibayar', 'cicil' => 'Cicil']"
+                selectLabel="Semua status" textAdd="Penjualan" />
 
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
@@ -18,28 +19,28 @@
                                 No</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Invoice Number</th>
+                                Nomor Invoice</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Customer</th>
+                                Pelanggan</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Sales Person</th>
+                                Penjual</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Total Price</th>
+                                Total Harga</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Payment Method</th>
+                                Metode Pembayaran</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Status</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Date</th>
+                                Tanggal Transaksi</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Actions</th>
+                                Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -123,8 +124,9 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-add-table :action="route('admin.sales.index')" :route="route('admin.sales.create')" searchPlaceholder="Search sales..."
-                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum dibayar', 'cicil' => 'Cicil']" selectLabel="All Stutuses" textAdd="Sale" />
+            <x-filter-add-table :action="route('admin.sales.index')" :route="route('admin.sales.create')"
+                searchPlaceholder="Cari nomor invoice / nama pelanggan..." selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum dibayar', 'cicil' => 'Cicil']"
+                selectLabel="Semua status" textAdd="Penjualan" />
             @forelse($sales as $sale)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-2">

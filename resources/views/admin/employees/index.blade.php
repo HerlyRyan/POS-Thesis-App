@@ -1,7 +1,7 @@
 <x-admin-layout>
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Employees Data</h2>
+        <h2 class="text-white text-xl">Data Pekerja Lepas</h2>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">

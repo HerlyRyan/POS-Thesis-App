@@ -1,12 +1,12 @@
 <x-admin-layout>
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Customers Data</h2>
+        <h2 class="text-white text-xl">Data Pelanggan</h2>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.customers.index')" :route="route('admin.customers.create')" searchPlaceholder="Search customer..."
-                textAdd="Customer" />
+            <x-filter-add-table :action="route('admin.customers.index')" :route="route('admin.customers.create')" searchPlaceholder="Cari nama pelanggan..."
+                textAdd="Pelanggan" />
 
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
@@ -18,19 +18,19 @@
                                 No</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Name</th>
+                                Nama</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Email</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Phone</th>
+                                Nomor Handphone</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Address</th>
+                                Alamat</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Actions</th>
+                                Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -80,8 +80,8 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-add-table :action="route('admin.customers.index')" :route="route('admin.users.create')" searchPlaceholder="Search customer..."
-                textAdd="Customer" />
+            <x-filter-add-table :action="route('admin.customers.index')" :route="route('admin.customers.create')" searchPlaceholder="Cari nama pelanggan..."
+                textAdd="Pelanggan" />
             @forelse($customers as $customer)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">

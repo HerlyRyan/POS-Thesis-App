@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold text-white">Edit Product</h1>
+        <h1 class="text-2xl font-bold text-white">Ubah Data Produk</h1>
         <br>
         <form action="{{ route('admin.product.update', $product->id) }}" method="POST" enctype="multipart/form-data"
             id="edit-product-form">
@@ -102,13 +102,13 @@
             <div class="flex items-center justify-between">
                 <a href="{{ route('admin.product.index') }}"
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                    Kembali ke Product List
+                    Kembali ke Daftar Produk
                 </a>
                 <button type="button" x-data @click="$dispatch('open-modal', 'confirm-edit')"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Simpan
+                    Simpan Perubahan
                 </button>
-            </div>
+            </div>            
         </form>
 
         <x-confirm-create-update-button :name="'confirm-edit'" modalForm="edit-product-form"

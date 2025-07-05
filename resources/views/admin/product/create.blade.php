@@ -1,6 +1,6 @@
 <x-admin-layout>
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl text-white font-bold">Create Product</h1>
+        <h1 class="text-2xl text-white font-bold">Tambah Data Produk</h1>
         <br>
         <form action="{{ route('admin.product.store') }}" method="POST" enctype="multipart/form-data" id="product-form">
             @csrf
@@ -86,7 +86,7 @@
             <div class="flex items-center justify-between">
                 <a href="{{ route('admin.product.index') }}"
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                    Kembali ke Produk List
+                    Kembali ke Daftar Produk
                 </a>
                 <button type="button" x-data @click="$dispatch('open-modal', 'confirm-create')"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

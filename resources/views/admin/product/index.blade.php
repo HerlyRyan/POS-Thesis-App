@@ -1,12 +1,12 @@
 <x-admin-layout>
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Products Data</h2>
+        <h2 class="text-white text-xl">Data Produk</h2>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.product.index')" :route="route('admin.product.create')" searchPlaceholder="Search product..."
-                selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="All Categories" textAdd="Product" />
+            <x-filter-add-table :action="route('admin.product.index')" :route="route('admin.product.create')" searchPlaceholder="Cari produk..."
+                selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="Semua Kategori" textAdd="Produk" />
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-800">
@@ -82,8 +82,8 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-add-table :action="route('admin.product.index')" :route="route('admin.product.create')" searchPlaceholder="Search product..."
-                selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="All Categories" textAdd="Product" />
+            <x-filter-add-table :action="route('admin.product.index')" :route="route('admin.product.create')" searchPlaceholder="Cari produk..."
+                selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="Semua Kategori" textAdd="Produk" />
             @forelse($products as $product)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-4">

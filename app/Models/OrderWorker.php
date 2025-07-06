@@ -11,10 +11,5 @@ class OrderWorker extends Model
 
     protected $fillable = [        
         'worker_id',        
-    ];
-
-    public function worker()
-    {
-        return $this->belongsTo(Employees::class, 'worker_id');
-    }
+    ];    
 }

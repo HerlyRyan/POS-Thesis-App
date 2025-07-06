@@ -94,14 +94,14 @@
                                                 </a>
                                             @endif
                                         @endif
+                                        <a href="{{ route('admin.sales.show', $sale) }}"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                                         <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
                                             modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
                                     @else
                                         <div class="flex items-center gap-2">
                                             <a href="{{ route('admin.sales.show', $sale) }}"
                                                 class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                            <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)"
-                                                modalId="confirm-delete-{{ $sale->id }}" name="Hapus" />
                                         </div>
                                     @endif
                                 </td>
@@ -164,14 +164,14 @@
                                     </a>
                                 @endif
                             @endif
+                            <a href="{{ route('admin.sales.show', $sale) }}"
+                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                             <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)" modalId="confirm-delete-{{ $sale->id }}"
                                 name="Batal" />
                         @else
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('admin.sales.show', $sale) }}"
                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                <x-confirm-delete-button :route="route('admin.sales.destroy', $sale)"
-                                    modalId="confirm-delete-{{ $sale->id }}" name="Hapus" />
                             </div>
                         @endif
                     </div>

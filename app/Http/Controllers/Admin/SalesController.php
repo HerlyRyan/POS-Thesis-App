@@ -41,7 +41,7 @@ class SalesController extends Controller
             $query->where('payment_status', $request->status);
         }
 
-        $sales = $query->paginate(5);
+        $sales = $query->orderBy('transaction_date', 'desc')->paginate(5);
 
         return view('admin.sales.index', compact('sales', 'columns'));
     }
@@ -163,30 +163,7 @@ class SalesController extends Controller
     {
         $sale->load(['customer', 'user', 'details']);
         return view('admin.sales.show', compact('sale'));
-    }
-
-    public function destroy($id): RedirectResponse
-    {
-        // Ambil data sales
-        $sale = Sales::findOrFail($id);
-
-        // Ambil semua detail penjualan
-        $saleDetails = $sale->details; // Asumsikan relasi `details()` sudah ada di model Sales
-
-        // Kembalikan stok untuk setiap produk
-        foreach ($saleDetails as $detail) {
-            $product = Product::find($detail->product_id);
-            if ($product) {
-                $product->increment('stock', $detail->quantity);
-            }
-        }
-
-        // Hapus data sales
-        $sale->delete();
-
-        // Redirect dengan pesan sukses
-        return redirect()->route('admin.sales.index')->with(['success' => 'Data penjualan berhasil dihapus dan stok dikembalikan.']);
-    }
+    }    
 
     public function cancel($id): RedirectResponse
     {

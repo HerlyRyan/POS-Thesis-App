@@ -12,12 +12,17 @@ class Employees extends Model
     protected $fillable = [
         'user_id',
         'position',
-        'hourly_rate',
+        'status',
         'phone'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }       
+
+    public function ordersAsWorker()
+    {
+        return $this->belongsToMany(Order::class, 'order_worker', 'worker_id', 'order_id');
     }
 }

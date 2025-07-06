@@ -22,8 +22,7 @@ class PermissionsSeeder extends Seeder
     {
         // Buat permissions (buat jika belum ada)
         $permissions = [
-            'dashboard_access',
-            'edit_posts',
+            'dashboard_access',            
             'view_reports',
         ];
 
@@ -32,19 +31,12 @@ class PermissionsSeeder extends Seeder
         }
 
         // Buat roles (buat jika belum ada)
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $editor = Role::firstOrCreate(['name' => 'editor']);
-        $viewer = Role::firstOrCreate(['name' => 'viewer']);
+        $admin = Role::firstOrCreate(['name' => 'admin']);     
         $customer = Role::firstOrCreate(['name' => 'customer']);
         $employee = Role::firstOrCreate(['name' => 'employee']);
+        $owner = Role::firstOrCreate(['name' => 'owner']);
 
         // Assign permissions ke role admin
-        $admin->syncPermissions($permissions); // semua permission
-
-        // Assign permission ke role editor
-        $editor->syncPermissions(['dashboard_access', 'edit_posts']);
-
-        // Assign permission ke role viewer
-        $viewer->syncPermissions(['dashboard_access', 'view_reports']);
+        $admin->syncPermissions($permissions); // semua permission        
     }
 }

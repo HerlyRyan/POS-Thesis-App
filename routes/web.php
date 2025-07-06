@@ -49,32 +49,49 @@ Route::group(['middleware' => ['role:admin']], function () {
 // Route::group(['middleware' => ['permission:publish articles']], function () {});
 
 // Group routes that need admin role and authentication
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {    
-    Route::resource('users', UserController::class);
-    Route::resource('roles', RoleController::class);
-    Route::resource('permissions', PermissionController::class);
-    Route::resource('product', ProductController::class);
-    Route::resource('sales', SalesController::class);
-    Route::delete('sales/cancel/{sale}', [SalesController::class, 'cancel'])->name('sales.cancel');
-    Route::resource('customers', CustomerController::class);
-    Route::resource('employees', EmployeeController::class);
-    Route::resource('finance', FinanceController::class);
-    Route::resource('trucks', TrucksController::class);
-    Route::resource('orders', OrderController::class);
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    // Akses khusus role:admin
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('users', UserController::class);
+        Route::resource('roles', RoleController::class);
+        Route::resource('permissions', PermissionController::class);
+        Route::resource('product', ProductController::class);
+        Route::resource('sales', SalesController::class);
+        Route::delete('sales/cancel/{sale}', [SalesController::class, 'cancel'])->name('sales.cancel');
+        Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');
 
-    Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');
-    Route::get('/laporan/finance', [Report::class, 'indexFinance'])->name('report_finance.index');
-    Route::get('/laporan/finance/{source}', [Report::class, 'showFinance'])->name('report_finance.show');
-    Route::get('/laporan/finance/{source}/print', [Report::class, 'printFinance'])->name('report_finance.print');
+        Route::resource('customers', CustomerController::class);
+        Route::resource('employees', EmployeeController::class);
+        Route::resource('finance', FinanceController::class);
+        Route::resource('trucks', TrucksController::class);
+        Route::resource('orders', OrderController::class);
 
-    Route::get('/laporan/sales', [Report::class, 'indexSales'])->name('report_sales.index');
-    Route::get('/laporan/sales/print', [Report::class, 'printSales'])->name('report_sales.print');
+        // Orders
+        Route::get('orders/assign/worker/{order}', [OrderController::class, 'assignWorkerView'])->name('orders.assignWorkerView');
+        Route::put('orders/assign/worker/{order}', [OrderController::class, 'assignWorker'])->name('orders.assignWorker');
+        Route::get('orders/{order}/assign-delivery', [OrderController::class, 'assignDeliveryForm'])->name('orders.assign_delivery_form');
+        Route::post('orders/{order}/assign-delivery', [OrderController::class, 'assignDelivery'])->name('orders.assign_delivery');
+        Route::put('orders/{order}/complete', [OrderController::class, 'markAsCompleted'])->name('orders.complete');
+    });
 
-    Route::get('/laporan/best_sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers.index');
-    Route::get('/laporan/best_sellers/print', [Report::class, 'printBestSellingProducts'])->name('report_best_sellers.print');
+    // Akses role:admin atau owner
+    Route::middleware('role:admin|owner')->group(function () {
+        Route::prefix('laporan')->group(function () {
+            Route::get('/finance', [Report::class, 'indexFinance'])->name('report_finance.index');
+            Route::get('/finance/{source}', [Report::class, 'showFinance'])->name('report_finance.show');
+            Route::get('/finance/{source}/print', [Report::class, 'printFinance'])->name('report_finance.print');
 
-    Route::get('/laporan/low_stock', [Report::class, 'indexLowStock'])->name('report_low_stock.index');
-    Route::get('/laporan/low_stock/print', [Report::class, 'printLowStock'])->name('report_low_stock.print');
+            Route::get('/sales', [Report::class, 'indexSales'])->name('report_sales.index');
+            Route::get('/sales/print', [Report::class, 'printSales'])->name('report_sales.print');
+
+            Route::get('/best_sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers.index');
+            Route::get('/best_sellers/print', [Report::class, 'printBestSellingProducts'])->name('report_best_sellers.print');
+
+            Route::get('/low_stock', [Report::class, 'indexLowStock'])->name('report_low_stock.index');
+            Route::get('/low_stock/print', [Report::class, 'printLowStock'])->name('report_low_stock.print');
+        });
+    });
 });
+
 
 require __DIR__ . '/auth.php';

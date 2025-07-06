@@ -23,9 +23,9 @@ class Order extends Model
         return $this->belongsTo(Sales::class);
     }
 
-    public function workerOrder()
+    public function workers()
     {
-        return $this->belongsTo(OrderWorker::class, 'worker_id');
+        return $this->belongsToMany(Employees::class, 'order_worker', 'order_id', 'worker_id');
     }
 
     public function driver()

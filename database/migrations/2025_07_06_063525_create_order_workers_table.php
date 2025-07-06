@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_workers', function (Blueprint $table) {
+        Schema::create('order_worker', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('worker_id')->nullable()->constrained('employees')->onDelete('set null');
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->foreignId('worker_id')->constrained('users')->onDelete('cascade'); // pekerja adalah user
             $table->timestamps();
         });
     }

@@ -110,7 +110,7 @@
                     Buat Penjualan
                 </button>
             </div>
-            <x-confirm-create-update-button :name="'confirm-create'" modalForm="sales-form"
+            <x-confirm-create-update-button :name="'confirm-create'" modalForm="sale-form"
                 confirmMessage="Konfirmasi Buat Penjualan" question="Apakah kamu yakin ingin menyimpan penjualan ini?"
                 buttonText="Ya, Buat" />
         </form>

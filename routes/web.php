@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SalesController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\Report;
+use App\Http\Controllers\TrucksController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,6 +59,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('customers', CustomerController::class);
     Route::resource('employees', EmployeeController::class);
     Route::resource('finance', FinanceController::class);
+    Route::resource('trucks', TrucksController::class);
+    Route::resource('orders', OrderController::class);
 
     Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');
     Route::get('/laporan/finance', [Report::class, 'indexFinance'])->name('report_finance.index');

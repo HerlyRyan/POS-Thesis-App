@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\FinanceReports;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\SaleDetail;
 use App\Models\Sales;
@@ -240,6 +241,10 @@ class SalesController extends Controller
                 'transaction_date' => now(),
                 'description' => 'Pemasukan dari penjualan invoice #' . $sale->invoice_number,
                 'total' => $total
+            ]);
+
+            Order::create([
+                'sale_id' => $sale->id,
             ]);
 
             // Return redirect response

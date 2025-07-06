@@ -25,9 +25,7 @@ class DatabaseSeeder extends Seeder
     //     $this->call(AdminUserSeeder::class);
     // }
     public function run()
-    {
-        User::factory(5)->create();
-
+    {        
         $this->call(AdminUserSeeder::class);
         $this->call(PermissionsSeeder::class);        
     }

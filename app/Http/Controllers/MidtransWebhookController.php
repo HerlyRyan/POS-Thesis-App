@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FinanceReports;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Sales;
@@ -51,6 +52,10 @@ class MidtransWebhookController extends Controller
                 'transaction_date' => now(),
                 'description' => 'Pemasukan dari penjualan invoice #' . $sale->invoice_number,
                 'total' => $total
+            ]);
+
+            Order::create([
+                'sale_id' => $sale->id,
             ]);
 
             Log::info("Pembayaran berhasil untuk invoice: $orderId");

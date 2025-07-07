@@ -18,8 +18,7 @@
 
 <body class="font-sans antialiased">
     <x-flash-modal />
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        @include('layouts.navigation')
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">        
 
         <!-- Page Heading -->
         @isset($header)

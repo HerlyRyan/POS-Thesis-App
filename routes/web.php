@@ -11,13 +11,12 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SalesController;
+use App\Http\Controllers\ECommerceController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\Report;
 use App\Http\Controllers\TrucksController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [ECommerceController::class, 'index'])->name('welcome');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'permission:dashboard_access'])
@@ -93,5 +92,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     });
 });
 
+Route::prefix('customer')->name('customer.')->middleware(['auth'])->group(
+    function () {
+        Route::get('/cart', [ECommerceController::class, 'cart'])->name('cart');
+        Route::get('/orders', [ECommerceController::class, 'cart'])->name('orders');
+    }
+);
 
 require __DIR__ . '/auth.php';

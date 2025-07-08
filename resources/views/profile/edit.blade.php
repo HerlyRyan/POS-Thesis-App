@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-customer-layout>
     <div class="relative min-h-screen bg-gray-100 dark:bg-gray-900">
         <div class="container mx-auto px-4 py-8">
             <!-- Header with Back Button -->
@@ -36,4 +36,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-customer-layout>

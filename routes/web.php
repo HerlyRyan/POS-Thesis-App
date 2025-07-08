@@ -94,8 +94,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
 Route::prefix('customer')->name('customer.')->middleware(['auth'])->group(
     function () {
-        Route::get('/cart', [ECommerceController::class, 'cart'])->name('cart');
-        Route::get('/orders', [ECommerceController::class, 'cart'])->name('orders');
+        Route::get('/cart', [ECommerceController::class, 'cartIndex'])->name('cart.index');        
+        Route::post('/cart/add', [ECommerceController::class, 'add'])->name('cart.add');
+        Route::put('/cart/update/{id}', [ECommerceController::class, 'update'])->name('cart.update');
+        Route::delete('/cart/delete/{id}', [ECommerceController::class, 'destroy'])->name('cart.delete');
+        Route::post('/cart/checkout', [ECommerceController::class, 'checkout'])->name('cart.checkout');
+
+        Route::get('/orders', [ECommerceController::class, 'cart'])->name('orders.index');
     }
 );
 

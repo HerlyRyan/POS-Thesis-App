@@ -45,10 +45,15 @@
                     </a>
                 @endif
 
-                <x-primary-button
-                    class="bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800">
-                    {{ __('Log in') }}
-                </x-primary-button>
+                <div class="flex space-x-2">
+                    <a href="{{ route('welcome') }}" class="inline-flex items-center px-4 py-2 bg-gray-300 dark:bg-gray-700 border border-transparent rounded-md font-semibold text-xs text-gray-800 dark:text-white uppercase tracking-widest hover:bg-gray-400 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-600 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                        {{ __('Kembali') }}
+                    </a>
+                    <x-primary-button
+                        class="bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800">
+                        {{ __('Log in') }}
+                    </x-primary-button>
+                </div>
             </div>
         </form>
     </div>

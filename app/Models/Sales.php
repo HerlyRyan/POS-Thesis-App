@@ -42,6 +42,6 @@ class Sales extends Model
 
     public function orders()
     {
-        return $this->hasMany(Order::class, 'sale_id');
+        return $this->hasOne(Order::class, 'sale_id');
     }
 }

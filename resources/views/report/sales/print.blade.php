@@ -83,7 +83,7 @@
                     <td>{{ $i + 1 }}</td>
                     <td>{{ $sale->invoice_number }}</td>
                     <td>{{ $sale->customer->user->name ?? 'N/A' }}</td>
-                    <td>{{ $sale->user->name ?? '-' }}</td>
+                    <td>{{ $sale->user->name ?? 'Website' }}</td>
                     <td>{{ ucfirst($sale->payment_method) }}</td>
                     <td>{{ ucfirst($sale->payment_status) }}</td>
                     <td class="right">Rp {{ number_format($sale->total_price, 0, ',', '.') }}</td>

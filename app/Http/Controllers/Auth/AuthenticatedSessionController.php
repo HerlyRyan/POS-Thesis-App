@@ -36,6 +36,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('welcome', absolute: false));
         }
 
+        if ($request->user()->hasRole('owner')) {
+            return redirect()->intended(route('welcome', absolute: false));
+        }
+
         return redirect()->intended(route('test', absolute: false));
     }
 

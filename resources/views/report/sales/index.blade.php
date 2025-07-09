@@ -55,7 +55,7 @@
                                     {{ $sale->customer->user->name ?? 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $sale->user->name ?? 'N/A' }}
+                                    {{ $sale->user->name ?? 'Website' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     Rp {{ number_format($sale->total_price, 0, ',', '.') }}
@@ -97,7 +97,7 @@
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
             <x-filter-report-table :action="route('admin.report_sales.index')" :printRoute="route('admin.report_sales.print')" searchPlaceholder="Cari invoice / customer..."
-                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum Dibayar', 'cicil' => 'Cicil']" selectLabel="Semua Status" date='true'/>
+                selectName="status" :selectOptions="['dibayar' => 'Dibayar', 'belum dibayar' => 'Belum Dibayar', 'cicil' => 'Cicil']" selectLabel="Semua Status" date='true' />
             @forelse($sales as $sale)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-center mb-2">

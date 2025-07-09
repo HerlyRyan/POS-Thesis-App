@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\CartItems;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Sales;
 use Illuminate\Http\Request;
@@ -105,26 +106,32 @@ class ECommerceController extends Controller
     // Proses checkout → simpan ke sales dan sale_details
     public function checkout(Request $request)
     {
-        $cart = $this->getCart();
+        $user = auth()->guard()->user();
+        $cart = Cart::where('user_id', $user->id)->first();
+
+        if (!$cart) {
+            return back()->with('error', 'Keranjang tidak ditemukan');
+        }
 
         $cart->load('cartItems');
 
-        if ($cart->cartItems->isEmpty()) {
-            return back()->with('error', 'Keranjang kosong');
+        $selectedIds = explode(',', $request->selected_items);
+
+        $selectedItems = $cart->cartItems->whereIn('id', $selectedIds);
+
+        if ($selectedItems->isEmpty()) {
+            return back()->with('error', 'Tidak ada item yang dipilih.');
         }
 
-        DB::transaction(function () use ($cart, $request) {
-            $user = auth()->guard()->user();
-            $total = $cart->cartItems->sum('subtotal');
+        DB::transaction(function () use ($user, $selectedItems, $request) {
+            $total = $selectedItems->sum('subtotal');
 
-            $today = now()->format('mdy');
-            $random = strtoupper(Str::random(4));
-            $invoiceNumber = 'INVGS-' . $today . '-' . $random;
+            $invoiceNumber = 'INVGS-' . now()->format('mdy') . '-' . strtoupper(Str::random(4));
 
             $sale = Sales::create([
                 'invoice_number' => $invoiceNumber,
-                'customer_id' => optional($user->customer)->id,
-                'user_id' => $user->id,
+                'customer_id' => $user->customer->id,
+                'user_id' => null,
                 'total_price' => $total,
                 'payment_method' => $request->input('payment_method', 'cash'),
                 'payment_status' => 'belum dibayar',
@@ -132,7 +139,7 @@ class ECommerceController extends Controller
                 'note' => $request->note,
             ]);
 
-            foreach ($cart->cartItems as $item) {
+            foreach ($selectedItems as $item) {
                 $sale->details()->create([
                     'product_id' => $item->product_id,
                     'product_name' => $item->product_name,
@@ -140,13 +147,71 @@ class ECommerceController extends Controller
                     'quantity' => $item->quantity,
                     'subtotal' => $item->subtotal,
                 ]);
+
+                $item->delete();
             }
 
-            // Kosongkan keranjang
-            $cart->cartItems()->delete();
-            $cart->delete();
         });
+        $cart->delete();
 
-        return redirect()->route('customer.cart.index')->with('success', 'Transaksi berhasil disimpan');
+        return redirect()->route('customer.cart.index')->with('success', 'Checkout berhasil');
+    }
+
+    public function ordersIndex(Request $request){
+        $status = $request->input('status', 'belum_dibayar');
+
+        $orders = Sales::with(['details', 'orders'])
+            ->where('customer_id', auth()->guard()->user()->customer->id)
+            ->when($status === 'belum_dibayar', fn($q) => $q->where('payment_status', 'belum dibayar'))
+            ->when(in_array($status, ['draft', 'persiapan', 'pengiriman', 'selesai']), function ($q) use ($status) {
+                $q->whereHas('orders', function ($query) use ($status) {
+                    $query->where('status', $status);
+                });
+            })
+            ->latest('transaction_date')
+            ->get();
+
+        return view('customer.orders', compact('orders'));
+    }
+
+    public function showOrder($id)
+    {
+        $order = Sales::with(['details', 'orders'])->findOrFail($id);            
+        // Optional: cek apakah ini milik user yang sedang login
+        if ($order->customer_id !== auth()->guard()->user()->customer->id) {
+            abort(403);
+        }
+
+        return view('customer.show-order', compact('order'));
+    }
+
+    public function markAsCompleted($id)
+    {
+        $user = auth()->guard()->user();
+
+        $order = Order::with('sale')->findOrFail($id);
+
+        // Validasi: hanya pemilik pesanan yang bisa konfirmasi
+        if ($order->sale->customer_id !== $user->customer->id) {
+            abort(403);
+        }
+
+        if ($order->status !== 'pengiriman') {
+            return redirect()->back()->withErrors(['msg' => 'Pesanan belum dalam status pengiriman.']);
+        }
+
+        // Update status order
+        $order->update(['status' => 'selesai']);
+
+        // Update status truk dan supir
+        if ($order->truck) {
+            $order->truck->update(['status' => 'tersedia']);
+        }
+
+        if ($order->driver) {
+            $order->driver->update(['status' => 'tersedia']);
+        }
+
+        return redirect()->back()->with('success', 'Pesanan berhasil dikonfirmasi selesai.');
     }
 }

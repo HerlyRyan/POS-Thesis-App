@@ -65,11 +65,10 @@
         <div class="flex items-center space-x-4">
             @auth
                 @php
-                    $orderCount = Auth::user()
-                        ->sale()
-                        ->with('orders')
-                        ->get()
-                        ->flatMap->orders->whereIn('status', ['pending', 'processing', 'shipped'])
+                    $orderCount = \App\Models\Order::where('status', '!=', 'selesai')
+                        ->whereHas('sale', function ($q) {
+                            $q->where('customer_id', auth()->user()->customer->id);
+                        })
                         ->count();
                 @endphp
                 <div class="relative" x-data="{ open: false }">
@@ -91,9 +90,12 @@
                         <a href="{{ route('customer.cart.index') }}"
                             class="flex justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
                             <span><i class="fas fa-shopping-cart mr-2"></i> Keranjang</span>
-                            @if (Auth::user()->carts()->count() > 0)
+                            @php
+                                $cartItemsCount = Auth::user()->carts()->count();
+                            @endphp
+                            @if ($cartItemsCount > 0)
                                 <span
-                                    class="bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">{{ Auth::user()->carts()->count() }}</span>
+                                    class="bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">{{ $cartItemsCount }}</span>
                             @endif
                         </a>
                         <a href="{{ route('customer.orders.index') }}"

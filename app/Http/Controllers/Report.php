@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employees;
 use App\Models\FinanceReports;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Sales;
 use Illuminate\Support\Facades\Schema;
@@ -265,5 +267,106 @@ class Report extends Controller
         $lowStockProducts = $query->get();
 
         return view('report.low_stock.print', compact('lowStockProducts'));
+    }
+
+    // Orders
+    public function indexOrders(Request $request)
+    {
+        $query = Order::with(['sale', 'driver', 'truck', 'workers.user']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('sale', function ($q) use ($search) {
+                $q->where('invoice_number', 'like', "%$search%");
+            });
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('report.orders.index', compact('orders'));
+    }
+
+    public function printOrders(Request $request)
+    {
+        $query = Order::with(['sale', 'driver', 'truck', 'workers.user']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('sale', function ($q) use ($search) {
+                $q->where('invoice_number', 'like', "%$search%");
+            });
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('report.orders.print', compact('orders'));
+    }
+
+    public function indexEmployees(Request $request)
+    {
+        $query = Employees::with('user');        
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%");
+            });
+        }
+
+        if ($request->has('position') && $request->position != '') {
+            $query->where('position', $request->position);
+        }
+
+        $employees = $query->paginate(5);
+
+        return view('report.employees.index', compact('employees'));
+    }
+
+    public function printEmployees(Request $request)
+    {
+        $query = Employees::with('user');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%");
+            });
+        }
+
+        if ($request->has('position') && $request->position != '') {
+            $query->where('position', $request->position);
+        }
+
+        $employees = $query->paginate(5);
+
+        return view('report.employees.print', compact('employees'));
     }
 }

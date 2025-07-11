@@ -45,6 +45,10 @@ Route::group(['middleware' => ['role:admin']], function () {
     })->name('admin.ui-elements');
 });
 
+Route::get('/driver/tracking/{truckId}', function ($truckId) {
+    return view('admin.trucks.driver', ['truckId' => $truckId]);
+});
+
 // Route::group(['middleware' => ['permission:publish articles']], function () {});
 
 // Group routes that need admin role and authentication
@@ -71,7 +75,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::get('orders/{order}/assign-delivery', [OrderController::class, 'assignDeliveryForm'])->name('orders.assign_delivery_form');
         Route::post('orders/{order}/assign-delivery', [OrderController::class, 'assignDelivery'])->name('orders.assign_delivery');
         Route::put('orders/{order}/complete', [OrderController::class, 'markAsCompleted'])->name('orders.complete');
-    });
+
+        Route::get('/tracking/truck', [TrucksController::class, 'tracking'])->name('tracking.truck');
+    });    
 
     // Akses role:admin atau owner
     Route::middleware('role:admin|owner')->group(function () {
@@ -88,11 +94,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 
             Route::get('/low_stock', [Report::class, 'indexLowStock'])->name('report_low_stock.index');
             Route::get('/low_stock/print', [Report::class, 'printLowStock'])->name('report_low_stock.print');
+
+            Route::get('/report_orders', [Report::class, 'indexOrders'])->name('report_orders.index');
+            Route::get('/report_orders/print', [Report::class, 'printOrders'])->name('report_orders.print');
+
+            Route::get('/report_employees', [Report::class, 'indexEmployees'])->name('report_employees.index');
+            Route::get('/report_employees/print', [Report::class, 'printEmployees'])->name('report_employees.print');
         });
     });
 });
 
-Route::prefix('customer')->name('customer.')->middleware(['auth'])->group(
+Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer'])->group(
     function () {
         Route::get('/cart', [ECommerceController::class, 'cartIndex'])->name('cart.index');
         Route::post('/cart/add', [ECommerceController::class, 'add'])->name('cart.add');

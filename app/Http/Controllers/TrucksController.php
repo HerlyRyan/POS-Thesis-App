@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Truck;
+use App\Models\TruckTracking;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
@@ -137,5 +138,29 @@ class TrucksController extends Controller
 
         return redirect()->route('admin.trucks.index')
             ->with('success', 'Truck deleted successfully.');
+    }
+
+    public function tracking()
+    {
+        $trucks = Truck::with(['latestTracking'])->get();
+        return view('admin.trucks.tracking', compact('trucks'));
+    }
+
+    public function storeTracking(Request $request)
+    {
+        $validated = $request->validate([
+            'truck_id' => 'required|exists:trucks,id',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        TruckTracking::create([
+            'truck_id' => $validated['truck_id'],
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'status' => 'jalan',
+        ]);
+
+        return response()->json(['message' => 'Lokasi berhasil diperbarui']);
     }
 }

@@ -50,7 +50,7 @@ class OrderController extends Controller
     public function assignWorkerView(Order $order)
     {
         $availableWorkers = Employees::where('position', 'buruh')->where('status', 'tersedia')->get();
-        return view('admin.orders.assignWorker', compact('order', 'availableWorkers'));
+        return view('admin.orders.assign-worker', compact('order', 'availableWorkers'));
     }
 
     public function assignWorker(Request $request, Order $order)
@@ -92,7 +92,7 @@ class OrderController extends Controller
         ]);
 
         $driver = Employees::findOrFail($request->driver_id);
-        $truck = Truck::findOrFail($request->truck_id);        
+        $truck = Truck::findOrFail($request->truck_id);
 
         // Update Order
         $order->update([
@@ -131,7 +131,6 @@ class OrderController extends Controller
         // Update status driver (employee supir) jadi tersedia
         if ($order->driver) {
             $order->driver->update(['status' => 'tersedia']);
-            
         }
 
         return redirect()->route('admin.orders.index')->with('success', 'Order berhasil diselesaikan.');

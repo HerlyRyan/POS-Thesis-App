@@ -18,7 +18,10 @@ class EmployeeController extends Controller
         $columns = Schema::getColumnListing('employee');
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', "%{$request->search}%");
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%");
+            });
         }
 
         if ($request->has('position') && $request->position != '') {
@@ -42,7 +45,7 @@ class EmployeeController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|string',
-            'position' => 'required|in:buruh,supir',            
+            'position' => 'required|in:buruh,supir',
         ]);
 
         // Create user
@@ -59,7 +62,7 @@ class EmployeeController extends Controller
         Employees::create([
             'user_id' => $user->id,
             'position' => $request->position,
-            'phone' => $request->phone,            
+            'phone' => $request->phone,
             'status' => 'tersedia', // Default status
         ]);
 
@@ -77,9 +80,9 @@ class EmployeeController extends Controller
     public function update(Request $request, $id): RedirectResponse
     {
         //validate form
-        $request->validate([            
+        $request->validate([
             'position' => 'string',
-            'phone' => 'string',            
+            'phone' => 'string',
         ]);
 
         //get employee by ID
@@ -89,9 +92,9 @@ class EmployeeController extends Controller
         $user = User::findOrFail($employee->user_id);
 
         //update employee without image
-        $employee->update([            
+        $employee->update([
             'position' => $request->position,
-            'phone' => $request->phone,            
+            'phone' => $request->phone,
         ]);
 
         $user->update([

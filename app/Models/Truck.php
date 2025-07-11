@@ -20,4 +20,14 @@ class Truck extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function trackings()
+    {
+        return $this->hasMany(TruckTracking::class);
+    }
+
+    public function latestTracking()
+    {
+        return $this->hasOne(TruckTracking::class)->latestOfMany();
+    }
 }

@@ -34,9 +34,6 @@
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                                 Status</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                                Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -50,7 +47,7 @@
                                     {{ $order->workers->pluck('user.name')->map(function ($name) {return ucfirst($name);})->join(', ') ?? '-' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ ucfirst(optional(optional($order->driver)->user)->name) ?? '-' }}
+                                    {{ ucfirst($order->driver->user->name ?? '-') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     {{ $order->truck->plate_number ?? '-' }}</td>
@@ -62,37 +59,6 @@
                                         {{ $order->status == 'draft' ? 'bg-red-600 text-white' : ($order->status == 'persiapan' ? 'bg-yellow-100 text-yellow-800' : ($order->status == 'pengiriman' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800')) }}">
                                         {{ ucfirst($order->status) }}
                                     </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    @if ($order->status == 'draft')
-                                        <a href="{{ route('admin.orders.assignWorkerView', $order) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Tetapkan
-                                            Buruh</a>
-                                    @elseif ($order->status == 'persiapan')
-                                        <a href="{{ route('admin.orders.assign_delivery_form', $order) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Tetapkan
-                                            Supir</a>
-                                    @elseif ($order->status == 'pengiriman')
-                                        <form method="POST" action="{{ route('admin.orders.complete', $order) }}"
-                                            class="inline" id="confirm-order-form">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" x-data
-                                                @click.prevent="$dispatch('open-modal', 'confirm-order-update')"
-                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
-                                                Selesai
-                                            </button>
-                                        </form>
-                                        <x-confirm-create-update-button :name="'confirm-order-update'" modalForm="confirm-order-form"
-                                            confirmMessage="Konfirmasi Pengiriman Selesai"
-                                            question="Apakah Anda yakin ingin menyelesaikan pengiriman ini?"
-                                            buttonText="Ya, Selesai" />
-                                    @else
-                                        <a href="{{ route('admin.orders.show', $order) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                    @endif
-                                    <div class="flex items-center gap-2">
-                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -134,12 +100,6 @@
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
                         Tanggal Kirim: {{ \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') }}
-                    </div>
-                    <div class="flex space-x-4">
-                        <a href="{{ route('admin.orders.edit', $order) }}"
-                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
-                        <x-confirm-delete-button :route="route('admin.orders.destroy', $order)" modalId="confirm-delete-mobile-{{ $order->id }}"
-                            name="Hapus" />
                     </div>
                 </div>
             @empty

@@ -26,9 +26,6 @@
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Status</th>
-                        <th
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -52,13 +49,6 @@
                             {{ $employee->status == 'tersedia' ? 'bg-green-100 text-green-800' : 'bg-yellow-500 text-white' }}">
                                     {{ ucfirst($employee->status) }}
                                 </span>
-                            </td>
-                            <td
-                                class="flex justify-between items-center px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('admin.employees.show', $employee) }}"
-                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                <a href="{{ route('admin.employees.edit', $employee) }}"
-                                    class=" text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Ubah</a>
                             </td>
                         </tr>
                     @empty
@@ -90,13 +80,6 @@
                         <p><span class="font-medium">Position:</span> {{ $employee->position }}</p>
                         <p><span class="font-medium">Hourly Rate:</span> Rp
                             {{ number_format($employee->hourly_rate, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="flex space-x-4 mt-3">
-                        <a href="{{ route('admin.employees.show', $employee) }}"
-                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">View</a>
-                        <a href="{{ route('admin.employees.edit', $employee) }}"
-                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
-                        >
                     </div>
                 </div>
             @empty

@@ -26,8 +26,10 @@
             </div>
 
             <div class="mb-4">
-                <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nomor Telepon</label>
-                <input type="text" pattern="\d*" inputmode="numeric" id="phone" name="phone" value="{{ old('phone') }}"
+                <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nomor
+                    Telepon</label>
+                <input type="text" pattern="\d*" inputmode="numeric" id="phone" name="phone"
+                    value="{{ old('phone') }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
                 @error('phone')
@@ -43,6 +45,14 @@
                 @error('address')
                     <span class="text-red-600 text-sm">{{ $message }}</span>
                 @enderror
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Pilih Lokasi di Peta</label>
+                <div id="map" class="w-full h-96 rounded shadow mb-2"></div>
+                <input type="hidden" name="latitude" id="latitude">
+                <input type="hidden" name="longitude" id="longitude">
+                <p class="text-smc font-medium text-gray-700 dark:text-gray-200">Klik pada peta untuk menentukan lokasi tujuan pengiriman.</p>
             </div>
 
             <div class="flex items-center justify-between">
@@ -61,4 +71,50 @@
             confirmMessage="Konfirmasi Tambah Customer" question="Apakah kamu yakin ingin menyimpan data customer ini?"
             buttonText="Ya, Tambah" />
     </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const defaultLat = -3.328; // fallback location
+        const defaultLng = 114.590;
+        let map = L.map('map').setView([defaultLat, defaultLng], 13);
+        let marker;
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Ambil lokasi dari browser
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                // Set input
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+
+                // Update peta
+                map.setView([lat, lng], 15);
+                marker = L.marker([lat, lng]).addTo(map).bindPopup("Lokasi Anda").openPopup();
+            }, function(error) {
+                alert("Gagal mendapatkan lokasi. Silakan izinkan akses lokasi atau pilih manual di peta.");
+            });
+        } else {
+            alert("Browser tidak mendukung geolocation.");
+        }
+
+        // Update lokasi saat peta diklik
+        map.on('click', function(e) {
+            const {
+                lat,
+                lng
+            } = e.latlng;
+
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map).bindPopup("Lokasi dipilih di sini").openPopup();
+        });
+    </script>
 </x-admin-layout>

@@ -57,6 +57,16 @@
                 @enderror
             </div>
 
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">Pilih Lokasi di Peta</label>
+                <div id="map" class="w-full h-96 rounded shadow mb-2"></div>
+                <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude', $customer->latitude) }}">
+                <input type="hidden" name="longitude" id="longitude"
+                    value="{{ old('longitude', $customer->longitude) }}">
+                <p class="text-smc font-medium text-gray-700 dark:text-gray-200">Klik pada peta untuk menentukan lokasi
+                    tujuan pengiriman.</p>
+            </div>
+
             <div class="flex items-center justify-between">
                 <a href="{{ route('admin.customers.index') }}"
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
@@ -73,4 +83,53 @@
             confirmMessage="Konfirmasi Edit Customer" question="Apakah kamu yakin ingin mengubah data pelanggan ini?"
             buttonText="Ya, Simpan" />
     </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const latInput = document.getElementById('latitude');
+        const lngInput = document.getElementById('longitude');
+
+        const defaultLat = -3.328;
+        const defaultLng = 114.590;
+
+        let currentLat = latInput.value ? parseFloat(latInput.value) : defaultLat;
+        let currentLng = lngInput.value ? parseFloat(lngInput.value) : defaultLng;
+
+        const map = L.map('map').setView([currentLat, currentLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        let marker = L.marker([currentLat, currentLng]).addTo(map).bindPopup("Lokasi Customer").openPopup();
+
+        // Jika latitude kosong, coba ambil dari geolocation browser
+        if (!latInput.value || !lngInput.value) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    latInput.value = lat;
+                    lngInput.value = lng;
+
+                    if (marker) map.removeLayer(marker);
+                    marker = L.marker([lat, lng]).addTo(map).bindPopup("Lokasi Anda Sekarang").openPopup();
+                    map.setView([lat, lng], 15);
+                });
+            }
+        }
+
+        // Klik peta untuk ubah lokasi
+        map.on('click', function(e) {
+            const {
+                lat,
+                lng
+            } = e.latlng;
+            latInput.value = lat;
+            lngInput.value = lng;
+
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map).bindPopup("Lokasi Dipilih").openPopup();
+        });
+    </script>
 </x-admin-layout>

@@ -77,7 +77,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::put('orders/{order}/complete', [OrderController::class, 'markAsCompleted'])->name('orders.complete');
 
         Route::get('/tracking/truck', [TrucksController::class, 'tracking'])->name('tracking.truck');
-    });    
+    });
 
     // Akses role:admin atau owner
     Route::middleware('role:admin|owner')->group(function () {
@@ -95,11 +95,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
             Route::get('/low_stock', [Report::class, 'indexLowStock'])->name('report_low_stock.index');
             Route::get('/low_stock/print', [Report::class, 'printLowStock'])->name('report_low_stock.print');
 
-            Route::get('/report_orders', [Report::class, 'indexOrders'])->name('report_orders.index');
-            Route::get('/report_orders/print', [Report::class, 'printOrders'])->name('report_orders.print');
+            Route::get('/orders', [Report::class, 'indexOrders'])->name('report_orders.index');
+            Route::get('/orders/print', [Report::class, 'printOrders'])->name('report_orders.print');
 
-            Route::get('/report_employees', [Report::class, 'indexEmployees'])->name('report_employees.index');
-            Route::get('/report_employees/print', [Report::class, 'printEmployees'])->name('report_employees.print');
+            Route::get('/employees', [Report::class, 'indexEmployees'])->name('report_employees.index');
+            Route::get('/employees/print', [Report::class, 'printEmployees'])->name('report_employees.print');
+
+            Route::get('/customers', [Report::class, 'indexCustomers'])->name('report_customers.index');
+            Route::get('/customer/{id}', [Report::class, 'historyCustomer'])->name('report_customers.show');
+            Route::get('/customers/print-customer', [Report::class, 'printCustomers'])->name('report_customers.print_customer');
+            Route::get('/customer/{id}/print-history', [Report::class, 'printHistoryCustomer'])->name('report_customers.print_history');
+
+            Route::get('/trucks', [Report::class, 'indexTrucks'])->name('report_trucks.index');
+            Route::get('/trucks/print', [Report::class, 'printTrucks'])->name('report_trucks.print');
         });
     });
 });

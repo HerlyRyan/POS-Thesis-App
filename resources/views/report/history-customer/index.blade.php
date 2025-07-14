@@ -5,11 +5,7 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.report_customers.index')" searchPlaceholder="Cari nama pelanggan..." />
-            <a href="{{ route('admin.report_customers.print_customer') }}" target="_blank"
-                class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-green-700">
-                Cetak
-            </a>
+            <x-filter-report-table :action="route('admin.report_customers.index')" :printRoute="route('admin.report_customers.print_customer')" searchPlaceholder="Cari nama pelanggan..." />
 
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
@@ -87,7 +83,7 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-add-table :action="route('admin.report_customers.index')" searchPlaceholder="Cari nama pelanggan..." />
+            <x-filter-report-table :action="route('admin.report_customers.index')" :printRoute="route('admin.report_customers.print_customer')" searchPlaceholder="Cari nama pelanggan..." />
             @forelse($customers as $customer)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">

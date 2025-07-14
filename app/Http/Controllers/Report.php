@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Employees;
 use App\Models\FinanceReports;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Sales;
+use App\Models\Truck;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 
 use Illuminate\Http\Request;
@@ -325,14 +328,14 @@ class Report extends Controller
             $query->whereMonth('created_at', $request->month);
         }
 
-        $orders = $query->orderBy('created_at', 'desc')->paginate(10);
+        $orders = $query->orderBy('created_at', 'desc')->get();
 
         return view('report.orders.print', compact('orders'));
     }
 
     public function indexEmployees(Request $request)
     {
-        $query = Employees::with('user');        
+        $query = Employees::with('user');
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -365,8 +368,122 @@ class Report extends Controller
             $query->where('position', $request->position);
         }
 
-        $employees = $query->paginate(5);
+        $employees = $query->get();
 
         return view('report.employees.print', compact('employees'));
+    }
+
+    public function indexCustomers(Request $request)
+    {
+        $query = Customer::with(['user'])->withCount('sales');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%");
+            });
+        }
+
+        $customers = $query->paginate(5);
+
+        return view('report.history-customer.index', compact('customers'));
+    }
+
+    public function printCustomers(Request $request)
+    {
+        $query = Customer::with(['user'])->withCount('sales');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%");
+            });
+        }
+
+        $customers = $query->get();
+        return view('report.history-customer.print-customer', compact('customers'));
+    }
+
+    public function historyCustomer(Request $request, $id)
+    {
+        $query = Order::with(['sale', 'driver', 'truck', 'workers.user'])->whereHas('sale', function ($q) use ($id) {
+            $q->where('customer_id', $id);
+        });
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('sale', function ($q) use ($search) {
+                $q->where('invoice_number', 'like', "%$search%");
+            });
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->paginate(10);
+        $customer = Customer::with('user')->findOrFail($id);
+
+        return view('report.history-customer.detail', compact('orders', 'customer'));
+    }
+
+    public function printHistoryCustomer(Request $request, $id)
+    {
+        $query = Order::with(['sale', 'driver', 'truck', 'workers.user'])->whereHas('sale', function ($q) use ($id) {
+            $q->where('customer_id', $id);
+        });
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('sale', function ($q) use ($search) {
+                $q->where('invoice_number', 'like', "%$search%");
+            });
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        $orders = $query->orderBy('created_at', 'desc')->get();
+        $customer = Customer::with('user')->findOrFail($id);
+
+        return view('report.history-customer.print-history', compact('orders', 'customer'));
+    }
+
+    public function indexTrucks(Request $request)
+    {
+        $query = Truck::query();        
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('plate_number', 'like', "%{$request->search}%")
+                ->orWhere('type', 'like', "%{$request->search}%");
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        $trucks = $query->paginate(10);
+        return view('report.trucks.index', compact('trucks'));
     }
 }

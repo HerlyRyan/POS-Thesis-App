@@ -19,9 +19,11 @@ class CustomerController extends Controller
         $columns = Schema::getColumnListing('customers');
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', "%{$request->search}%");
+            $search = $request->search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%");
+            });
         }
-
 
         $customers = $query->paginate(5);
 
@@ -40,6 +42,8 @@ class CustomerController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|string',
             'address' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         $user = User::create([
@@ -55,6 +59,8 @@ class CustomerController extends Controller
             'user_id' => $user->id,
             'phone' => $request->phone,
             'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ]);
 
         return redirect()->route('admin.customers.index')->with('success', 'Data berhasil ditambahkan');
@@ -85,6 +91,8 @@ class CustomerController extends Controller
             'email' => 'string|email',
             'phone' => 'string',
             'address' => 'string',
+            'latitude' => 'numeric',
+            'longitude' => 'numeric',
         ]);
 
         //get customer by ID
@@ -97,6 +105,8 @@ class CustomerController extends Controller
         $customer->update([
             'phone' => $request->phone,
             'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ]);
 
         $user->update([

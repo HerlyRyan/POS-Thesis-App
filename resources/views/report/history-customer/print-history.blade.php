@@ -1,74 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+<x-print-layout title="Laporan Pemesanan " :reportTitle="'LAPORAN PEMESANAN'" :companyName="'Galam Sani'" :companyAddress="'Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang,
+    Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia'" :companyPhone="'+62 821-5604-8305'"
+    :companyEmail="'info@galamsani.co.id'" :period="is_numeric(request('month')) && (int) request('month') >= 1 && (int) request('month') <= 12
+        ? \Carbon\Carbon::create(date('Y'), (int) request('month'))->translatedFormat('F Y')
+        : (request('start_date') && request('end_date')
+            ? \Carbon\Carbon::parse(request('start_date'))->format('d M Y') .
+                ' - ' .
+                \Carbon\Carbon::parse(request('end_date'))->format('d M Y')
+            : 'Semua Waktu')">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Laporan Pemesanan</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            font-size: 12px;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th,
-        .table td {
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-        }
-
-        .table th {
-            background-color: #f0f0f0;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 0;
-        }
-
-        .meta {
-            margin-top: 5px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .right {
-            text-align: right;
-        }
-
-        @media print {
-            .no-print {
-                display: none;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <h2>Laporan Pemesanan</h2>
-    <div class="meta">
-        Periode:
-        @if (request('month'))
-            {{ \Carbon\Carbon::create()->month(request('month'))->translatedFormat('F Y') }}
-        @elseif(request('start_date') && request('end_date'))
-            {{ \Carbon\Carbon::parse(request('start_date'))->format('d M Y') }} -
-            {{ \Carbon\Carbon::parse(request('end_date'))->format('d M Y') }}
-        @else
-            Semua Waktu
-        @endif
-    </div>
-
-    <table class="table">
+    <table>
         <thead>
             <tr>
                 <th>No</th>
                 <th>Invoice</th>
+                <th>Produk: Kuantitas</th>
                 <th>Buruh</th>
                 <th>Supir</th>
                 <th>Truk</th>
@@ -77,10 +22,22 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($orders as $i => $order)
+            @forelse ($orders as $order)
                 <tr>
-                    <td>{{ $i + 1 }}</td>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $order->sale->invoice_number ?? '-' }}</td>
+                    <td>
+                        @if ($order->sale && $order->sale->details)
+                            <ul>
+                                @foreach ($order->sale->details as $detail)
+                                    <li>{{ $detail->product_name }}: {{ $detail->quantity }}
+                                        {{ $detail->product->unit }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td>{{ $order->workers->pluck('user.name')->map(function ($name) {return ucfirst($name);})->join(', ') ?? '-' }}
                     </td>
                     <td>{{ ucfirst(optional(optional($order->driver)->user)->name) ?? '-' }}</td>
@@ -88,14 +45,12 @@
                     <td>{{ \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') }}</td>
                     <td>{{ ucfirst($order->status) }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="7" class="text-center">Tidak ada data pemesanan.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 
-    <div class="no-print" style="margin-top: 20px; text-align: center;">
-        <button onclick="window.print()">🖨️ Cetak</button>
-    </div>
-
-</body>
-
-</html>
+</x-print-layout>

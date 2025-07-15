@@ -28,6 +28,9 @@
                                 Invoice</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                                Produk: Kuantitas</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                                 Buruh</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
@@ -50,6 +53,17 @@
                                     {{ $loop->iteration + $orders->firstItem() - 1 }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                     {{ $order->sale->invoice_number ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    @if ($order->sale && $order->sale->details)
+                                        <ul class="list-disc list-inside space-y-1">
+                                            @foreach ($order->sale->details as $detail)
+                                                <li>{{ $detail->product_name }}: {{ $detail->quantity }} {{$detail->product->unit}}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     {{ $order->workers->pluck('user.name')->map(function ($name) {return ucfirst($name);})->join(', ') ?? '-' }}
                                 </td>

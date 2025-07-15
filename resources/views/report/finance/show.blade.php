@@ -12,7 +12,7 @@
         <!-- Desktop View -->
         <div class="hidden md:block">
             <x-filter-report-table :action="url()->current()" :printRoute="url()->current() . '/print'" searchPlaceholder="Cari record..."
-                selectName="status" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Status" date='true' />
+                selectName="type" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Tipe" date='true' />
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -35,10 +35,13 @@
                                 Kategori</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Jumlah</th>
+                                Deskripsi</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Deskripsi</th>
+                                Debit</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Kredit</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Total</th>
@@ -68,10 +71,21 @@
                                     {{ $record->category }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    Rp {{ number_format($record->amount, 0, ',', '.') }}
+                                    {{ $record->description }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $record->description }}
+                                    @if ($record->type === 'income')
+                                        Rp {{ number_format($record->amount, 0, ',', '.') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    @if ($record->type === 'expense')
+                                        Rp {{ number_format($record->amount, 0, ',', '.') }}
+                                    @else
+                                        -
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     Rp {{ number_format($record->total, 0, ',', '.') }}

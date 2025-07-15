@@ -66,7 +66,7 @@
             </button>
 
             @if ($printRoute)
-                <a href="{{ $printRoute }}" target="_blank"
+                <a href="{{ $printRoute . '?' . http_build_query(request()->all()) }}" target="_blank"
                     class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-green-700">
                     Cetak
                 </a>

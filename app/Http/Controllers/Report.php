@@ -9,8 +9,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Sales;
 use App\Models\Truck;
-use App\Models\User;
-use Illuminate\Support\Facades\Schema;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 
@@ -55,7 +54,9 @@ class Report extends Controller
 
         // Filter rentang tanggal
         if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('transaction_date', [$start, $end]);
         }
 
         // Filter per bulan
@@ -85,7 +86,9 @@ class Report extends Controller
 
         // Filter rentang tanggal
         if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('transaction_date', [$start, $end]);
         }
 
         // Filter per bulan
@@ -93,7 +96,7 @@ class Report extends Controller
             $query->whereMonth('transaction_date', $request->month);
         }
 
-        $records = $query->where('source', $source)->orderBy('transaction_date', 'asc')->paginate(31);
+        $records = $query->where('source', $source)->orderBy('transaction_date', 'asc')->get();
         return view('report.finance.print', compact(
             'records',
         ));
@@ -127,7 +130,9 @@ class Report extends Controller
 
         // Filter rentang tanggal
         if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('transaction_date', [$start, $end]);
         }
 
         // Filter per bulan
@@ -162,7 +167,9 @@ class Report extends Controller
 
         // Filter rentang tanggal
         if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('transaction_date', [$start, $end]);
         }
 
         // Filter per bulan
@@ -472,7 +479,7 @@ class Report extends Controller
 
     public function indexTrucks(Request $request)
     {
-        $query = Truck::query();        
+        $query = Truck::query();
 
         if ($request->has('search') && $request->search != '') {
             $query->where('plate_number', 'like', "%{$request->search}%")
@@ -485,5 +492,22 @@ class Report extends Controller
 
         $trucks = $query->paginate(10);
         return view('report.trucks.index', compact('trucks'));
+    }
+
+    public function printTrucks(Request $request)
+    {
+        $query = Truck::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('plate_number', 'like', "%{$request->search}%")
+                ->orWhere('type', 'like', "%{$request->search}%");
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        $trucks = $query->get();
+        return view('report.trucks.print', compact('trucks'));
     }
 }

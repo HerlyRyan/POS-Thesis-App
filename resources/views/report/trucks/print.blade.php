@@ -1,88 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+<x-print-layout title="Laporan Data Truk" :reportTitle="'LAPORAN DATA TRUK'" :companyName="'Galam Sani'" :companyAddress="'Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang,
+Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia'" :companyPhone="'+62 821-5604-8305'"
+    :companyEmail="'info@galamsani.co.id'" :period="'Semua Waktu'">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Laporan Data Truk</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            font-size: 12px;
-        }
+    @if (request('status'))
+        <div class="mb-10">
+            <p>Status: <strong>{{ ucfirst(request('status')) }}</strong></p>
+        </div>
+    @endif
 
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th,
-        .table td {
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-        }
-
-        .table th {
-            background-color: #f0f0f0;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 0;
-        }
-
-        .meta {
-            margin-top: 5px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .right {
-            text-align: right;
-        }
-
-        .status {
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        .tersedia {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        .dipakai {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
-        .diperbaiki {
-            background-color: #fee2e2;
-            color: #b91c1c;
-        }
-
-        @media print {
-            .no-print {
-                display: none;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <h2>Laporan Data Truk</h2>
-    <div class="meta">
-        Status:
-        @if (request('status'))
-            {{ ucfirst(request('status')) }}
-        @else
-            Semua Status
-        @endif
-    </div>
-
-    <table class="table">
+    <table>
         <thead>
             <tr>
                 <th>No</th>
@@ -93,26 +19,24 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($trucks as $i => $truck)
+            @forelse ($trucks as $truck)
                 <tr>
-                    <td>{{ $i + 1 }}</td>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $truck->plate_number }}</td>
                     <td>{{ $truck->type }}</td>
-                    <td>{{ $truck->capacity }} Ton</td>
+                    <td class="text-right">{{ $truck->capacity }} Ton</td>
                     <td>
                         <span class="status {{ $truck->status }}">
                             {{ ucfirst($truck->status) }}
                         </span>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="5" class="text-center">Tidak ada data truk.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 
-    <div class="no-print" style="margin-top: 20px; text-align: center;">
-        <button onclick="window.print()">🖨️ Cetak</button>
-    </div>
-
-</body>
-
-</html>
+</x-print-layout>

@@ -1,74 +1,18 @@
-<!DOCTYPE html>
-<html lang="id">
+<x-print-layout title="Laporan Produk Terlaris" :reportTitle="'LAPORAN PRODUK TERLARIS'" :companyName="'Galam Sani'" :companyAddress="'Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang,
+Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia'" :companyPhone="'+62 821-5604-8305'"
+    :companyEmail="'info@galamsani.co.id'" :period="is_numeric(request('month')) && (int) request('month') >= 1 && (int) request('month') <= 12
+        ? \Carbon\Carbon::create(date('Y'), (int) request('month'))->translatedFormat('F Y')
+        : (request('start_date') && request('end_date')
+            ? \Carbon\Carbon::parse(request('start_date'))->format('d M Y') .
+                ' - ' .
+                \Carbon\Carbon::parse(request('end_date'))->format('d M Y')
+            : 'Semua Waktu')">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Laporan Produk Terlaris</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 13px;
-            color: #333;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .info {
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        table th,
-        table td {
-            border: 1px solid #444;
-            padding: 8px;
-            text-align: left;
-        }
-
-        table th {
-            background-color: #f2f2f2;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        @media print {
-            body {
-                margin: 0;
-            }
-
-            .no-print {
-                display: none;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <h2>Laporan Produk Terlaris</h2>
-
-    <div class="info">
-        @if (request('start_date') && request('end_date'))
-            <p>Periode: {{ \Carbon\Carbon::parse(request('start_date'))->format('d M Y') }} -
-                {{ \Carbon\Carbon::parse(request('end_date'))->format('d M Y') }}</p>
-        @endif
-        @if (request('search'))
+    @if (request('search'))
+        <div class="mb-10">
             <p>Pencarian: <strong>{{ request('search') }}</strong></p>
-        @endif
-    </div>
+        </div>
+    @endif
 
     <table>
         <thead>
@@ -83,7 +27,7 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $product->name }}</td>
-                    <td>{{ $product->total_sold ?? 0 }} unit</td>
+                    <td class="text-right">{{ $product->total_sold ?? 0 }} unit</td>
                 </tr>
             @empty
                 <tr>
@@ -93,10 +37,4 @@
         </tbody>
     </table>
 
-    <br><br>
-    <div class="no-print" style="margin-top: 20px; text-align: center;">
-        <button onclick="window.print()">🖨️ Cetak</button>
-    </div>
-</body>
-
-</html>
+</x-print-layout>

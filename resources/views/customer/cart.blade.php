@@ -1,5 +1,5 @@
 <x-customer-layout>
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+    <div x-data="cartHandler()" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <x-flash-modal />
         <h2 class="text-white text-xl mb-4">Keranjang Belanja</h2>
 
@@ -11,7 +11,9 @@
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-800">
                         <tr>
-                            <th class="px-4"><input type="checkbox" id="select-all" /></th>
+                            <th class="px-4">
+                                <input type="checkbox" @change="toggleAll($event)" />
+                            </th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Produk</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Harga</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Qty</th>
@@ -24,7 +26,10 @@
                             <tr>
                                 <td class="px-4 py-2">
                                     <input type="checkbox" class="item-checkbox" value="{{ $item->id }}"
-                                        data-subtotal="{{ $item->subtotal }}">
+                                        data-subtotal="{{ $item->subtotal }}"
+                                        :checked="selected.includes({{ $item->id }})"
+                                        @change="toggle({{ $item->id }}, {{ $item->subtotal }})" />
+
                                 </td>
                                 <td class="px-4 py-2 text-gray-800 dark:text-gray-200">{{ $item->product_name }}</td>
                                 <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Rp
@@ -54,9 +59,8 @@
                             <td colspan="4" class="px-6 py-4 text-right text-gray-900 dark:text-gray-100">
                                 Total Terpilih:
                             </td>
-                            <td colspan="2" class="px-6 py-4 text-indigo-600 dark:text-indigo-400"
-                                id="selected-total">
-                                Rp 0
+                            <td colspan="2" class="px-6 py-4 text-indigo-600 dark:text-indigo-400">
+                                <span x-text="formatRupiah(total)"></span>
                             </td>
                         </tr>
                     </tbody>
@@ -69,11 +73,13 @@
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                         <div class="flex justify-between items-center mb-2">
                             <label class="flex items-center">
-                                <input type="checkbox" class="item-checkbox mr-2" value="{{ $item->id }}"
-                                    data-subtotal="{{ $item->subtotal }}">
-                                <span class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ $item->product_name }}
-                                </span>
+                                <input type="checkbox" class="item-checkbox" value="{{ $item->id }}"
+                                    data-subtotal="{{ $item->subtotal }}"
+                                    :checked="selected.includes({{ $item->id }})"
+                                    @change="toggle({{ $item->id }}, {{ $item->subtotal }})" />
+
+                                <span
+                                    class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $item->product_name }}</span>
                             </label>
                         </div>
                         <div class="mb-2 text-sm text-gray-500 dark:text-gray-400">
@@ -90,9 +96,7 @@
                                 <input type="number" name="quantity" value="{{ $item->quantity }}" min="1"
                                     class="w-16 border rounded px-2 py-1 text-sm dark:bg-gray-700 dark:text-gray-300 mr-2" />
                                 <button type="submit"
-                                    class="bg-indigo-600 text-white px-2 py-1 text-xs rounded hover:bg-indigo-700">
-                                    Update
-                                </button>
+                                    class="bg-indigo-600 text-white px-2 py-1 text-xs rounded hover:bg-indigo-700">Update</button>
                             </form>
                             <form method="POST" action="{{ route('customer.cart.delete', $item->id) }}">
                                 @csrf @method('DELETE')
@@ -104,7 +108,7 @@
                 @endforeach
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md font-bold">
                     <div class="text-lg text-gray-900 dark:text-gray-100">Total Terpilih:</div>
-                    <div class="text-indigo-600 dark:text-indigo-400" id="selected-total-mobile">Rp 0</div>
+                    <div class="text-indigo-600 dark:text-indigo-400" x-text="formatRupiah(total)"></div>
                 </div>
             </div>
 
@@ -112,13 +116,27 @@
             <form method="POST" action="{{ route('customer.cart.checkout') }}"
                 onsubmit="return confirm('Selesaikan transaksi ini?')">
                 @csrf
-                <input type="hidden" name="selected_items" id="selected-items-hidden">
+                <input type="hidden" name="selected_items" :value="selected.join(',')">
 
                 <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="col-span-2">
-                        <label class="block text-sm text-gray-700 dark:text-gray-200 mb-1">Catatan:</label>
-                        <input type="text" name="note" placeholder="Catatan opsional"
-                            class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-gray-300" />
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 mb-1">Catatan:</label>
+                                <input type="text" name="note" placeholder="Catatan opsional"
+                                    class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-gray-300" />
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-700 dark:text-gray-200 mb-1">Metode
+                                    Pembayaran:</label>
+                                <select name="payment_method"
+                                    class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:text-gray-300">
+                                    <option value="" selected disabled>Pilih metode pembayaran</option>
+                                    <option value="cod">COD (Cash on Delivery)</option>
+                                    <option value="transfer">Transfer Bank</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-span-1 flex items-end">
                         <button type="submit"
@@ -132,45 +150,45 @@
     </div>
 
     <script>
-        function formatRupiah(angka) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR'
-            }).format(angka);
-        }
+        function cartHandler() {
+            return {
+                selected: [],
+                total: 0,
+                toggle(id, subtotal) {
+                    if (this.selected.includes(id)) {
+                        this.selected = this.selected.filter(i => i !== id);
+                        this.total -= subtotal;
+                    } else {
+                        this.selected.push(id);
+                        this.total += subtotal;
+                    }
+                },
+                toggleAll(e) {
+                    this.selected = [];
+                    this.total = 0;
+                    const isChecked = e.target.checked;
 
-        function updateSelectedTotal() {
-            let total = 0;
-            let selectedIds = [];
+                    document.querySelectorAll('.item-checkbox').forEach(cb => {
+                        cb.checked = isChecked;
 
-            document.querySelectorAll('.item-checkbox:checked').forEach(function(checkbox) {
-                total += parseFloat(checkbox.dataset.subtotal);
-                selectedIds.push(checkbox.value);
-            });
+                        const id = parseInt(cb.value);
+                        const subtotal = parseFloat(cb.dataset.subtotal || 0);
 
-            document.getElementById('selected-total').textContent = formatRupiah(total);
-            const mobileTotal = document.getElementById('selected-total-mobile');
-            if (mobileTotal) mobileTotal.textContent = formatRupiah(total);
-
-            const hiddenInput = document.getElementById('selected-items-hidden');
-            if (hiddenInput) hiddenInput.value = selectedIds.join(',');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectAll = document.getElementById('select-all');
-            const checkboxes = document.querySelectorAll('.item-checkbox');
-
-            if (selectAll) {
-                selectAll.addEventListener('change', function() {
-                    checkboxes.forEach(cb => cb.checked = selectAll.checked);
-                    updateSelectedTotal();
-                });
+                        if (isChecked) {
+                            if (!this.selected.includes(id)) {
+                                this.selected.push(id);
+                                this.total += subtotal;
+                            }
+                        }
+                    });
+                },
+                formatRupiah(angka) {
+                    return new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR'
+                    }).format(angka);
+                }
             }
-
-            checkboxes.forEach(cb => cb.addEventListener('change', updateSelectedTotal));
-
-            // Inisialisasi total saat halaman dimuat
-            updateSelectedTotal();
-        });
+        }
     </script>
 </x-customer-layout>

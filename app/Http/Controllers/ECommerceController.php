@@ -7,6 +7,7 @@ use App\Models\CartItems;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Sales;
+use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -128,28 +129,71 @@ class ECommerceController extends Controller
 
             $invoiceNumber = 'INVGS-' . now()->format('mdy') . '-' . strtoupper(Str::random(4));
 
-            $sale = Sales::create([
-                'invoice_number' => $invoiceNumber,
-                'customer_id' => $user->customer->id,
-                'user_id' => null,
-                'total_price' => $total,
-                'payment_method' => $request->input('payment_method', 'cash'),
-                'payment_status' => 'belum dibayar',
-                'transaction_date' => now(),
-                'note' => $request->note,
-            ]);
-
-            foreach ($selectedItems as $item) {
-                $sale->details()->create([
-                    'product_id' => $item->product_id,
-                    'product_name' => $item->product_name,
-                    'price' => $item->price,
-                    'quantity' => $item->quantity,
-                    'subtotal' => $item->subtotal,
+            // Simpan penjualan
+            if ($request->payment_method == 'cod') {
+                $sale = Sales::create([
+                    'invoice_number' => $invoiceNumber,
+                    'customer_id' => $user->customer->id,
+                    'user_id' => null,
+                    'total_price' => $total,
+                    'payment_method' => 'cod',
+                    'payment_status' => 'belum dibayar',
+                    'transaction_date' => now(),
+                    'note' => $request->note,
                 ]);
 
-                $item->delete();
+                foreach ($selectedItems as $item) {
+                    $sale->details()->create([
+                        'product_id' => $item->product_id,
+                        'product_name' => $item->product_name,
+                        'price' => $item->price,
+                        'quantity' => $item->quantity,
+                        'subtotal' => $item->subtotal,
+                    ]);
+
+                    $item->delete();
+                }
             }
+
+            if ($request->payment_method == 'transfer') {
+                $midtrans = new MidtransService();
+
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $request->invoice,
+                        'gross_amount' => $total,
+                    ],
+                    'customer_details' => [
+                        'first_name' => optional($request->user())->name ?? 'Pelanggan',
+                        'email' => $request->user()->email ?? 'email@example.com',
+                    ],
+                ];
+
+                $snap = $midtrans->createTransaction($params);
+
+                $sale = Sales::create([
+                    'invoice_number' => $request->invoice,
+                    'customer_id' => $user->customer->id,
+                    'user_id' => $request->user()->id,
+                    'total_price' => $total,
+                    'payment_method' => 'transfer',
+                    'payment_status' => 'menunggu pembayaran',
+                    'snap_url' => $snap->redirect_url,
+                    'transaction_date' => now(),
+                ]);
+
+                foreach ($selectedItems as $item) {
+                    $sale->details()->create([
+                        'product_id' => $item->product_id,
+                        'product_name' => $item->product_name,
+                        'price' => $item->price,
+                        'quantity' => $item->quantity,
+                        'subtotal' => $item->subtotal,
+                    ]);
+
+                    $item->delete();
+                }
+            }            
 
         });
         $cart->delete();
@@ -162,8 +206,8 @@ class ECommerceController extends Controller
 
         $orders = Sales::with(['details', 'orders'])
             ->where('customer_id', auth()->guard()->user()->customer->id)
-            ->when($status === 'belum_dibayar', fn($q) => $q->where('payment_status', 'belum dibayar'))
-            ->when(in_array($status, ['draft', 'persiapan', 'pengiriman', 'selesai']), function ($q) use ($status) {
+            ->when($status === 'belum_dibayar', fn($q) => $q->where('payment_status', 'menunggu pembayaran'))
+            ->when(in_array($status, ['persiapan', 'pengiriman', 'selesai']), function ($q) use ($status) {
                 $q->whereHas('orders', function ($query) use ($status) {
                     $query->where('status', $status);
                 });

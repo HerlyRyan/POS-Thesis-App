@@ -81,8 +81,17 @@
                                     {{ $sale->transaction_date->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    @if ($sale->payment_status == 'belum dibayar')
-                                        @if ($sale->payment_method == 'cash')
+                                    @if ($sale->payment_status === 'belum dibayar')
+                                        @if ($sale->payment_method === 'cod')
+                                            <x-confirm-cod-payment :route="route('admin.sales.cod_payment', $sale)"
+                                                modalId="confirm-cod-{{ $sale->id }}" />
+                                        @endif
+                                        <a href="{{ route('admin.sales.show', $sale) }}"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
+                                        <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
+                                            modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
+                                    @elseif ($sale->payment_status == 'menunggu pembayaran')
+                                        @if ($sale->payment_method === 'cash' || 'cod')
                                             <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)"
                                                 modalId="confirm-payment-{{ $sale->id }}"
                                                 total="{{ $sale->total_price }}" />
@@ -90,10 +99,11 @@
                                             @if ($sale->snap_url)
                                                 <a href="{{ $sale->snap_url }}" target="_blank"
                                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
-                                                    Pembayaran
+                                                    Link Pembayaran
                                                 </a>
                                             @endif
                                         @endif
+
                                         <a href="{{ route('admin.sales.show', $sale) }}"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                                         <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
@@ -152,18 +162,23 @@
                         Date: {{ $sale->transaction_date->format('d M Y') }}
                     </div>
                     <div class="flex space-x-4">
-                        @if ($sale->payment_status == 'belum dibayar')
-                            @if ($sale->payment_method == 'cash')
+                        @if ($sale->payment_status === 'belum dibayar')
+                            @if ($sale->payment_method === 'cod')
+                                <x-confirm-cod-payment :route="route('admin.sales.cod_payment', $sale)" modalId="confirm-cod-{{ $sale->id }}" />
+                            @endif
+                        @elseif ($sale->payment_status == 'menunggu pembayaran')
+                            @if ($sale->payment_method === 'cash' || 'cod')
                                 <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)" modalId="confirm-payment-{{ $sale->id }}"
                                     total="{{ $sale->total_price }}" />
                             @else
                                 @if ($sale->snap_url)
                                     <a href="{{ $sale->snap_url }}" target="_blank"
                                         class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
-                                        Pembayaran
+                                        Link Pembayaran
                                     </a>
                                 @endif
                             @endif
+
                             <a href="{{ route('admin.sales.show', $sale) }}"
                                 class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                             <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)" modalId="confirm-delete-{{ $sale->id }}"

@@ -62,6 +62,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::resource('sales', SalesController::class);
         Route::delete('sales/cancel/{sale}', [SalesController::class, 'cancel'])->name('sales.cancel');
         Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');
+        Route::put('/sales/cod/{sale}', [SalesController::class, 'cod_confirmation'])->name('sales.cod_payment');
 
         Route::resource('customers', CustomerController::class);
         Route::resource('employees', EmployeeController::class);

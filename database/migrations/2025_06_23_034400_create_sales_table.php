@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete(); // kasir
             $table->decimal('total_price', 12, 2);         
-            $table->enum('payment_method', ['cash', 'transfer', 'ewallet'])->default('cash');
+            $table->enum('payment_method', ['cash', 'transfer', 'cod'])->default('cash');
             $table->string('snap_url')->nullable();
             $table->enum('payment_status', ['dibayar', 'belum dibayar', 'cicil', 'cancelled'])->default('belum dibayar');
             $table->dateTime('transaction_date');

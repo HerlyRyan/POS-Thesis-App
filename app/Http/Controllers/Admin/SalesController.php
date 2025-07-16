@@ -114,7 +114,7 @@ class SalesController extends Controller
                 'user_id' => $user->id,
                 'total_price' => $totalPrice,
                 'payment_method' => $request->payment_method,
-                'payment_status' => 'belum dibayar',
+                'payment_status' => 'menunggu pembayaran',
                 'transaction_date' => now(),
             ]);
 
@@ -146,7 +146,7 @@ class SalesController extends Controller
                 'user_id' => $request->user()->id,
                 'total_price' => $totalPrice,
                 'payment_method' => 'transfer',
-                'payment_status' => 'belum dibayar',
+                'payment_status' => 'menunggu pembayaran',
                 'snap_url' => $snap->redirect_url,
                 'transaction_date' => now(),
             ]);
@@ -219,6 +219,45 @@ class SalesController extends Controller
                 'description' => 'Pemasukan dari penjualan invoice #' . $sale->invoice_number,
                 'total' => $total
             ]);
+
+            Order::create([
+                'sale_id' => $sale->id,
+            ]);
+
+            // Return redirect response
+            return redirect()->route('admin.sales.index')
+                ->with(['success' => 'Pembayaran Berhasil Di Konfirmasi']);
+        });
+    }
+
+    public function cod_confirmation($id): RedirectResponse
+    {
+        // Wrap all database operations in a transaction
+        return DB::transaction(function () use ($id) {
+            // Ambil data sales
+            $sale = Sales::findOrFail($id);
+
+            $sale->update([
+                'payment_status' => 'menunggu pembayaran'
+            ]);
+
+            // Ambil semua detail penjualan
+            $saleDetails = $sale->details;
+
+            // Kurangi stok untuk setiap produk
+            foreach ($saleDetails as $detail) {
+                $product = Product::find($detail->product_id);
+                if ($product) {
+                    $product->decrement('stock', $detail->quantity);
+                }
+                if ($product->stock <= 10) {
+                    $whatsapp = new UltraMsgService();
+                    $whatsapp->sendMessage(
+                        '6281253864116', // ganti dengan nomor admin kamu (pakai format internasional tanpa +)
+                        "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!"
+                    );
+                }
+            }
 
             Order::create([
                 'sale_id' => $sale->id,

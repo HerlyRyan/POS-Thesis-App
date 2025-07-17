@@ -65,7 +65,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center gap-2">
                                         <a href="{{ route('admin.trucks.edit', $truck) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Ubah</a>
                                         <x-confirm-delete-button :route="route('admin.trucks.destroy', $truck)"
                                             modalId="confirm-delete-{{ $truck->id }}" name="Hapus" />
                                     </div>
@@ -115,7 +115,7 @@
                     </div>
                     <div class="flex space-x-4">
                         <a href="{{ route('admin.trucks.edit', $truck) }}"
-                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
+                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Ubah</a>
                         <x-confirm-delete-button :route="route('admin.trucks.destroy', $truck)"
                             modalId="confirm-delete-mobile-{{ $truck->id }}" name="Hapus" />
                     </div>

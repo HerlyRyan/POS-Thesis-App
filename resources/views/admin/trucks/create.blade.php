@@ -1,6 +1,6 @@
 <x-admin-layout>
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl text-white font-bold">Tambah Data Truck</h1>
+        <h1 class="text-2xl text-white font-bold">Tambah Data Truk</h1>
         <br>
         <form action="{{ route('admin.trucks.store') }}" method="POST" id="truck-form">
             @csrf
@@ -16,7 +16,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Tipe Truck</label>
+                <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Tipe Truk</label>
                 <input type="text" id="type" name="type" value="{{ old('type') }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
@@ -53,7 +53,7 @@
             <div class="flex items-center justify-between mt-6">
                 <a href="{{ route('admin.trucks.index') }}"
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                    Kembali ke Daftar Truck
+                    Kembali ke Daftar Truk
                 </a>
                 <button type="button" x-data @click="$dispatch('open-modal', 'confirm-create')"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

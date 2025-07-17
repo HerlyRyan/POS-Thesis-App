@@ -26,7 +26,7 @@
             <div class="mb-4 flex justify-between items-center">
                 <a href="{{ route('admin.finance.create') }}"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Record
+                    Tambah Transaksi Keuangan
                 </a>
             </div>
 

@@ -7,13 +7,13 @@
 
             {{-- Tipe Transaksi --}}
             <div class="mb-4">
-                <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Type</label>
+                <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Tipe</label>
                 <select name="type" id="type"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
-                    <option value="">-- Select Type --</option>
-                    <option value="income" {{ old('type') == 'income' ? 'selected' : '' }}>Income</option>
-                    <option value="expense" {{ old('type') == 'expense' ? 'selected' : '' }}>Expense</option>
+                    <option value="">-- Pilih Tipe Transaksi --</option>
+                    <option value="income" {{ old('type') == 'income' ? 'selected' : '' }}>Masuk</option>
+                    <option value="expense" {{ old('type') == 'expense' ? 'selected' : '' }}>Keluar</option>
                 </select>
                 @error('type')
                     <span class="text-red-600 text-sm">{{ $message }}</span>
@@ -23,7 +23,7 @@
             {{-- Kategori --}}
             <div class="mb-4">
                 <label for="category"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-200">Category</label>
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-200">Kategori</label>
                 <input type="text" id="category" name="category" value="{{ old('category') }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
@@ -34,11 +34,11 @@
 
             {{-- Sumber Dana --}}
             <div class="mb-4">
-                <label for="source" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Source</label>
+                <label for="source" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Sumber/Dampak</label>
                 <select name="source" id="source"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
-                    <option value="">-- Select Source --</option>
+                    <option value="">-- Pilih Sumber/Dampak --</option>
                     <option value="cash" {{ old('source') == 'cash' ? 'selected' : '' }}>Cash</option>
                     <option value="bank" {{ old('source') == 'bank' ? 'selected' : '' }}>Bank</option>
                 </select>
@@ -50,7 +50,7 @@
             {{-- Tanggal Transaksi --}}
             <div class="mb-4">
                 <label for="transaction_date"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-200">Transaction Date</label>
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-200">Tanggal Transaksi</label>
                 <input type="date" id="transaction_date" name="transaction_date"
                     value="{{ old('transaction_date', now()->toDateString()) }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
@@ -62,7 +62,7 @@
 
             {{-- Nominal --}}
             <div class="mb-4">
-                <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Amount</label>
+                <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Jumlah</label>
                 <input type="number" pattern="\d*" inputmode="numeric" id="amount" name="amount"
                     value="{{ old('amount') }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
@@ -75,7 +75,7 @@
             {{-- Deskripsi --}}
             <div class="mb-4">
                 <label for="description"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-200">Deskripsi</label>
                 <textarea id="description" name="description"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     rows="3">{{ old('description') }}</textarea>
@@ -88,11 +88,11 @@
             <div class="flex items-center justify-between">
                 <a href="{{ route('admin.finance.index') }}"
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                    Kembali ke Finance Record
+                    Kembali ke Transaksi Keuangan
                 </a>
                 <button type="button" x-data @click="$dispatch('open-modal', 'confirm-create')"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Simpan Record
+                    Simpan Transaksi
                 </button>
             </div>
         </form>

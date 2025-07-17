@@ -16,12 +16,12 @@
         <!-- Input Search -->
         <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
             placeholder="{{ $searchPlaceholder }}"
-            class="flex-1 w-full md:basis-1/3 max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            class="flex-1 w-full md:basis-1/3 max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
 
         <!-- Select Filter -->
         @if ($selectName && count($selectOptions))
             <select name="{{ $selectName }}" id="filter"
-                class="w-full md:w-48 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                class="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">{{ $selectLabel }}</option>
                 @foreach ($selectOptions as $value => $label)
                     <option value="{{ $value }}" {{ request($selectName) == $value ? 'selected' : '' }}>

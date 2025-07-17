@@ -15,13 +15,12 @@
 
         <!-- Search -->
         <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
-            placeholder="{{ $searchPlaceholder }}"
-            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+            placeholder="{{ $searchPlaceholder }}" class="w-full px-4 py-2 border border-gray-300 rounded-md">
 
         <!-- Select Filter -->
         @if ($selectName && count($selectOptions))
             <select name="{{ $selectName }}" id="filterSelect"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                class="w-full px-4 py-2 border border-gray-300 rounded-md">
                 <option value="">{{ $selectLabel }}</option>
                 @foreach ($selectOptions as $value => $label)
                     <option value="{{ $value }}" {{ request($selectName) == $value ? 'selected' : '' }}>
@@ -34,14 +33,13 @@
         @if ($date)
             <!-- Rentang Tanggal -->
             <input type="date" name="start_date" value="{{ request('start_date') }}"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                class="w-full px-4 py-2 border border-gray-300 rounded-md">
 
             <input type="date" name="end_date" value="{{ request('end_date') }}"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+                class="w-full px-4 py-2 border border-gray-300 rounded-md">
 
             <!-- Bulan -->
-            <select name="month"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100">
+            <select name="month" class="w-full px-4 py-2 border border-gray-300 rounded-md">
                 <option value="">Pilih Bulan</option>
                 @for ($m = 1; $m <= 12; $m++)
                     <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>

@@ -1,12 +1,12 @@
 <x-admin-layout>
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Finance Records</h2>
+        <h2 class="text-white text-xl">Transaksi Keuangan</h2>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="url()->current()" :route="route('admin.finance.index')" searchPlaceholder="Search finance record..."
-                selectName="type" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="All Types" />
+            <x-filter-add-table :action="url()->current()" :route="route('admin.finance.index')" searchPlaceholder="Cari transaksi keuangan..."
+                selectName="type" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Tipe" />
 
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
@@ -59,7 +59,11 @@
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $record->type == 'income' ? 'bg-green-100 text-green-800' : 'bg-red-500 text-white' }}">
-                                        {{ ucfirst($record->type) }}
+                                        @if ($record->type == 'income')
+                                            Masuk
+                                        @else
+                                            Keluar
+                                        @endif
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -90,8 +94,8 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center gap-2">
-                                        <a href="{{ route('admin.finance.edit', $record) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
+                                        {{-- <a href="{{ route('admin.finance.edit', $record) }}"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a> --}}
                                         <x-confirm-delete-button :route="route('admin.finance.destroy', $record)"
                                             modalId="confirm-delete-{{ $record->id }}" name="Delete" />
                                     </div>
@@ -142,8 +146,8 @@
                         Description: {{ $record->description }}
                     </div>
                     <div class="flex space-x-4">
-                        <a href="{{ route('admin.finance.edit', $record) }}"
-                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
+                        {{-- <a href="{{ route('admin.finance.edit', $record) }}"
+                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a> --}}
                         <x-confirm-delete-button :route="route('admin.finance.destroy', $record)" modalId="mobile-confirm-delete-{{ $record->id }}"
                             name="Delete" />
                     </div>

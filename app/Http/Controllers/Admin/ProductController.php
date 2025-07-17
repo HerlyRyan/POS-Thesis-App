@@ -31,7 +31,7 @@ class ProductController extends Controller
     }
 
     public function create()
-    {        
+    {
         return view('admin.product.create');
     }
 
@@ -149,5 +149,21 @@ class ProductController extends Controller
 
         //redirect to index
         return redirect()->route('admin.product.index')->with(['success' => 'Data Berhasil Dihapus!']);
+    }
+
+    public function update_stock_view()
+    {
+        $products = Product::all();
+        return view('admin.product.increase-stock', compact('products'));
+    }
+
+    public function update_stock(Request $request): RedirectResponse
+    {
+        //get product by ID
+        $product = Product::findOrFail($request->productId);
+
+        $product->increment('stock', $request->stock);
+
+        return redirect()->route('admin.product.index')->with(['success' => 'Stock berhasil ditambah!']);
     }
 }

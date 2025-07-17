@@ -5,7 +5,7 @@
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-add-table :action="route('admin.product.index')" :route="route('admin.product.create')" searchPlaceholder="Cari produk..."
+            <x-filter-add-table :action="route('admin.product.index')" :routeProduct="route('admin.product.update-stock-view')" :route="route('admin.product.create')" searchPlaceholder="Cari produk..."
                 selectName="category" :selectOptions="['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap']" selectLabel="Semua Kategori" textAdd="Produk" />
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -25,7 +25,7 @@
                             Harga</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                            Stock</th>
+                            Stok</th>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             Satuan</th>

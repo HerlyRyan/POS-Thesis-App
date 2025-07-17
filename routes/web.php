@@ -59,6 +59,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::resource('roles', RoleController::class);
         Route::resource('permissions', PermissionController::class);
         Route::resource('product', ProductController::class);
+        Route::get('product/update-stock/view', [ProductController::class, 'update_stock_view'])->name('product.update-stock-view');
+        Route::put('product/update-stock/process', [ProductController::class, 'update_stock'])->name('product.update-stock');
         Route::resource('sales', SalesController::class);
         Route::delete('sales/cancel/{sale}', [SalesController::class, 'cancel'])->name('sales.cancel');
         Route::put('/sales/confirmation/{sale}', [SalesController::class, 'payment_confirmation'])->name('sales.confirm_payment');

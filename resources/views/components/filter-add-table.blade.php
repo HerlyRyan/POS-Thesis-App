@@ -6,6 +6,7 @@
     'selectOptions' => [], // isi option
     'selectLabel' => 'All Options',
     'textAdd' => null,
+    'routeProduct' => null
 ])
 
 <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -16,7 +17,6 @@
         <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
             placeholder="{{ $searchPlaceholder }}"
             class="flex-1 w-full md:basis-1/3 max-w-md px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-
 
         <!-- Select Filter -->
         @if ($selectName && count($selectOptions))
@@ -37,6 +37,13 @@
             Reset
         </button>
     </form>
+
+    @if ($routeProduct)
+        <a href="{{ $routeProduct }}"
+            class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            Tambah Stok
+        </a>
+    @endif
 
     <!-- Tombol Tambah -->
     @if ($route)

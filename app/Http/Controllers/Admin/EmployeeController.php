@@ -105,4 +105,12 @@ class EmployeeController extends Controller
         //redirect to index
         return redirect()->route('admin.employees.index')->with(['success' => 'Data Berhasil Diubah!']);
     }
+
+    public function show(string $id)
+    {
+        $employee = Employees::findOrFail($id);
+
+        //render view with employee
+        return view('admin.employees.show', compact('employee'));
+    }
 }

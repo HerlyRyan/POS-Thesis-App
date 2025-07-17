@@ -6,7 +6,7 @@
         <!-- Desktop View -->
         <div class="hidden md:block">
             <x-filter-add-table :action="route('admin.employees.index')" :route="route('admin.employees.create')" searchPlaceholder="Search employee..."
-                selectName="position" :selectOptions="['buruh' => 'Buruh', 'supir' => 'Supir']" selectLabel="All Position" textAdd="Employee" />
+                selectName="position" :selectOptions="['buruh' => 'Buruh', 'supir' => 'Supir']" selectLabel="Semua Posisi" textAdd="Pekerja" />
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-800">
@@ -53,12 +53,13 @@
                                     {{ ucfirst($employee->status) }}
                                 </span>
                             </td>
-                            <td
-                                class="flex justify-between items-center px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('admin.employees.show', $employee) }}"
-                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                <a href="{{ route('admin.employees.edit', $employee) }}"
-                                    class=" text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Ubah</a>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('admin.employees.show', $employee) }}"
+                                        class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
+                                    <a href="{{ route('admin.employees.edit', $employee) }}"
+                                        class=" text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Ubah</a>
+                                </div>
                             </td>
                         </tr>
                     @empty

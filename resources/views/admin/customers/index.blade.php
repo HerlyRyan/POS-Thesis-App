@@ -24,7 +24,7 @@
                                 Email</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Nomor Handphone</th>
+                                Telepon</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Alamat</th>
@@ -58,14 +58,14 @@
                                         <a href="{{ route('admin.customers.show', $customer) }}"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                                         <a href="{{ route('admin.customers.edit', $customer) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Ubah</a>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                    No customers found.
+                                    Tidak ada data pelanggan.
                                 </td>
                             </tr>
                         @endforelse
@@ -91,10 +91,10 @@
                         Email: {{ $customer->user->email }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Phone: {{ $customer->phone }}
+                        Telepon: {{ $customer->phone }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                        Address: {{ $customer->address }}
+                        Alamat: {{ $customer->address }}
                     </div>
                     <div class="flex space-x-4">
                         <a href="{{ route('admin.customers.show', $customer) }}"
@@ -106,7 +106,7 @@
             @empty
                 <div
                     class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md text-center text-gray-500 dark:text-gray-400">
-                    No customers found.
+                    Tidak ada data pelanggan.
                 </div>
             @endforelse
             <div class="mt-4">

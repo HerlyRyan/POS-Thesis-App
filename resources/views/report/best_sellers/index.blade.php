@@ -5,7 +5,7 @@
 
         <!-- Desktop View -->
         <div class="hidden md:block">
-            <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk best seller..."
+            <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk terlaris..."
                 date='true' />
 
             <div class="overflow-x-auto w-full">

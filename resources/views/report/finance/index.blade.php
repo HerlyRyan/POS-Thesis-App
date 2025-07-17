@@ -1,7 +1,7 @@
 <x-admin-layout>
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-white text-xl">Finance Records</h2>
+        <h2 class="text-white text-xl">Transaksi Keuangan</h2>
         <br>
         <!-- Desktop View -->
         <div class="hidden md:block">
@@ -21,13 +21,6 @@
                     <p class="text-lg font-bold text-indigo-600 dark:text-indigo-400">Rp
                         {{ number_format($filteredTotal, 0, ',', '.') }}</p>
                 </div>
-            </div>
-
-            <div class="mb-4 flex justify-between items-center">
-                <a href="{{ route('admin.finance.create') }}"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Add New Record
-                </a>
             </div>
 
             <!-- Wrapper untuk menghindari overflow -->

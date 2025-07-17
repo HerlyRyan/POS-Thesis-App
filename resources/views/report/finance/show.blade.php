@@ -2,7 +2,7 @@
     <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <div class="flex justify-between">
-            <h2 class="text-white text-xl">Finance Records</h2>
+            <h2 class="text-white text-xl">Transaksi {{ $records->first()->source }}</h2>
             <a href="{{ route('admin.report_finance.index') }}"
                 class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Kembali
@@ -61,7 +61,11 @@
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         {{ $record->type == 'income' ? 'bg-green-100 text-green-800' : 'bg-red-500 text-white' }}">
-                                        {{ ucfirst($record->type) }}
+                                        @if ($record->type == 'income')
+                                            Masuk
+                                        @else
+                                            Keluar
+                                        @endif
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">

@@ -163,12 +163,22 @@ class SalesController extends Controller
     {
         $sale->load(['customer', 'user', 'details']);
         return view('admin.sales.show', compact('sale'));
-    }    
+    }
 
     public function cancel($id): RedirectResponse
     {
         // Ambil data sales
         $sale = Sales::findOrFail($id);
+
+        if ($sale->payment_method == 'cod') {
+            $saleDetails = $sale->details;
+
+            // Tambah stok untuk setiap produk
+            foreach ($saleDetails as $detail) {
+                $product = Product::find($detail->product_id);
+                $product->increment('stock', $detail->quantity);
+            }
+        }
 
         // Hapus data sales
         $sale->delete();
@@ -267,5 +277,13 @@ class SalesController extends Controller
             return redirect()->route('admin.sales.index')
                 ->with(['success' => 'Pembayaran Berhasil Di Konfirmasi']);
         });
+    }
+
+    public function printInvoice($saleId)
+    {
+        $sale = Sales::with(['details', 'customer', 'user'])->findOrFail($saleId);
+        return view('admin.sales.print-invoice', compact('sale'));
+        // Or to stream directly to browser:
+        // return $pdf->stream('invoice-' . $sale->invoice_number . '.pdf');
     }
 }

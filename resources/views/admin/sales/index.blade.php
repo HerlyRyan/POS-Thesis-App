@@ -81,39 +81,37 @@
                                     {{ $sale->transaction_date->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    @if ($sale->payment_status === 'belum dibayar')
-                                        @if ($sale->payment_method === 'cod')
-                                            <x-confirm-cod-payment :route="route('admin.sales.cod_payment', $sale)"
-                                                modalId="confirm-cod-{{ $sale->id }}" />
-                                        @endif
+                                    <div class="flex items-center gap-2">
                                         <a href="{{ route('admin.sales.show', $sale) }}"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                        <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
-                                            modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
-                                    @elseif ($sale->payment_status == 'menunggu pembayaran')
-                                        @if ($sale->payment_method === 'cash' || 'cod')
-                                            <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)"
-                                                modalId="confirm-payment-{{ $sale->id }}"
-                                                total="{{ $sale->total_price }}" />
-                                        @else
-                                            @if ($sale->snap_url)
+
+                                        @if ($sale->payment_status === 'dibayar')
+                                            <a href="{{ route('admin.sales.print-invoice', $sale) }}" target="_blank"
+                                                class="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300">
+                                                Cetak Invoice
+                                            </a>
+                                        @elseif ($sale->payment_status === 'belum dibayar')
+                                            @if ($sale->payment_method === 'cod')
+                                                <x-confirm-cod-payment :route="route('admin.sales.cod_payment', $sale)"
+                                                    modalId="confirm-cod-{{ $sale->id }}" />
+                                            @endif
+                                            <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
+                                                modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
+                                        @elseif ($sale->payment_status === 'menunggu pembayaran')
+                                            @if ($sale->payment_method === 'cash' || $sale->payment_method === 'cod')
+                                                <x-confirm-button :route="route('admin.sales.confirm_payment', $sale)"
+                                                    modalId="confirm-payment-{{ $sale->id }}"
+                                                    total="{{ $sale->total_price }}" />
+                                            @elseif ($sale->snap_url)
                                                 <a href="{{ $sale->snap_url }}" target="_blank"
                                                     class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
                                                     Link Pembayaran
                                                 </a>
                                             @endif
+                                            <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
+                                                modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
                                         @endif
-
-                                        <a href="{{ route('admin.sales.show', $sale) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                        <x-confirm-delete-button :route="route('admin.sales.cancel', $sale)"
-                                            modalId="confirm-delete-{{ $sale->id }}" name="Batal" />
-                                    @else
-                                        <div class="flex items-center gap-2">
-                                            <a href="{{ route('admin.sales.show', $sale) }}"
-                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
-                                        </div>
-                                    @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty

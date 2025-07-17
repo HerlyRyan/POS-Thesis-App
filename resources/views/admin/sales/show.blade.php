@@ -9,7 +9,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
                 <p class="text-gray-600 dark:text-gray-100">Invoice Number: <span class="font-semibold">{{ $sale->invoice_number }}</span></p>
-                <p class="text-gray-600 dark:text-gray-100">Customer: <span class="font-semibold">{{ $sale->customer->name ?? '-' }}</span></p>
+                <p class="text-gray-600 dark:text-gray-100">Customer: <span class="font-semibold">{{ $sale->customer->user->name ?? '-' }}</span></p>
                 <p class="text-gray-600 dark:text-gray-100">Sales Person: <span class="font-semibold">{{ $sale->user->name ?? '-' }}</span></p>
             </div>
             <div>

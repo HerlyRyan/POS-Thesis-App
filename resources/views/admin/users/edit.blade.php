@@ -4,12 +4,12 @@
     </x-slot>
 
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <form action="{{ route('admin.users.update', $user) }}" method="POST">
+        <form action="{{ route('admin.users.update', $user) }}" method="POST" id="edit-user-form">
             @csrf
             @method('PUT')
 
             <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
+                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Nama</label>
                 <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" 
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50" 
                     required>
@@ -32,7 +32,7 @@
                 <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
                 <input type="password" id="password" name="password" 
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50">
-                <span class="text-sm text-gray-500">Leave blank to keep current password</span>
+                <span class="text-sm text-gray-500">Kosongkan untuk menyimpan password terakhir</span>
                 @error('password')
                     <span class="text-red-600 text-sm">{{ $message }}</span>
                 @enderror
@@ -55,12 +55,17 @@
 
             <div class="flex items-center justify-between">
                 <a href="{{ route('admin.users.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                    Back to Users List
+                    Kembali ke Daftar Pengguna
                 </a>
-                <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Update User
+                <button type="button" x-data @click="$dispatch('open-modal', 'confirm-edit')"
+                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Simpan Perubahan
                 </button>
             </div>
         </form>
+
+        <x-confirm-create-update-button :name="'confirm-edit'" modalForm="edit-user-form"
+            confirmMessage="Konfirmasi Edit Pengguna" question="Apakah kamu yakin ingin mengubah pengguna ini?"
+            buttonText="Ya, Simpan" />
     </div>
 </x-admin-layout>

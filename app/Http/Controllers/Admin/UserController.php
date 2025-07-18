@@ -16,7 +16,9 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $query = User::query();
-        $roles = Role::all();
+        $roles = Role::all()->pluck('name')->mapWithKeys(function ($item) {
+            return [$item => ucfirst($item)];
+        })->toArray();;
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
@@ -69,7 +71,7 @@ class UserController extends Controller
             // Jika ada role 'customer', maka buatkan record Customer
             if (in_array('customer', $roleNames)) {
                 $new_cust = Customer::create([
-                    'user_id' => $user->id,                    
+                    'user_id' => $user->id,
                 ]);
 
                 // Redirect ke edit customer

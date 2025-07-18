@@ -7,61 +7,62 @@
     <title>{{ $title ?? config('app.name', 'Toko Kayu Galam') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        .hero-section {
-            background-image: url('https://images.unsplash.com/photo-1558185348-c1e6660355c6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            height: 400px;
-            position: relative;
+        /* Base styles for the body and fonts */
+        body {
+            font-family: 'Figtree', sans-serif;
+            @apply bg-gray-50 text-gray-800;
         }
 
-        @media (min-width: 768px) {
-            .hero-section {
-                height: 500px;
-            }
+        /* Custom scrollbar for a sleeker look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
 
-        .hero-overlay {
-            background-color: rgba(0, 0, 0, 0.6);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 0 1rem;
-            text-align: center;
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
         }
 
-        .product-card {
-            transition: all 0.3s ease;
-            border-radius: 0.5rem;
-            overflow: hidden;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        [x-cloak] {
+            display: none !important;
         }
     </style>
 
 </head>
 
-<body class="font-sans antialiased bg-gray-100 dark:bg-zinc-900">
-    <!-- Header -->
+<body class="antialiased">
     <header
-        class="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-white border-b-4 border-indigo-600 shadow-md dark:bg-gray-800">
+        class="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-white shadow-lg border-b border-gray-100">
         <a href="/" class="flex items-center space-x-2">
-            <span class="text-xl font-bold text-indigo-600 dark:text-indigo-400">Galam Sani</span>
+            {{-- <img src="{{ asset('path/to/your/logo.png') }}" alt="Galam Sani Logo" class="h-8 w-auto"> --}}
+            {{-- Replace 'path/to/your/logo.png' with your actual logo path --}}
+            <span class="text-2xl font-extrabold text-indigo-700 tracking-tight">GALAM SANI</span>
         </a>
+        <nav class="hidden md:flex items-center space-x-6">
+            <a href="/"
+                class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Beranda</a>
+            <a href="/products"
+                class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Produk</a>
+            <a href="/about" class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Tentang
+                Kami</a>
+            <a href="/contact"
+                class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Kontak</a>
+        </nav>
         <div class="flex items-center space-x-4">
             @auth
                 @php
@@ -72,45 +73,46 @@
                         ->count();
                 @endphp
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open"
-                        class="flex items-center space-x-2 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none">
-                        <span>{{ explode(' ', Auth::user()->name)[0] }}</span>
+                    <button onclick="toggleUserMenu()" id="userMenuBtn"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-full px-3 py-1 transition-colors duration-200">
+                        <span class="font-semibold text-lg">{{ explode(' ', Auth::user()->name)[0] }}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
                                 d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                 clip-rule="evenodd" />
                         </svg>
                     </button>
-                    <div x-show="open" @click.away="open = false"
-                        class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
+                    <div id="userMenu"
+                        class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-100">
                         <a href="{{ route('profile.edit') }}"
-                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
-                            <i class="fas fa-user mr-2"></i> Profil
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-indigo-600 transition duration-150">
+                            <i class="fas fa-user-circle mr-3 text-lg"></i> Profil Saya
                         </a>
                         <a href="{{ route('customer.cart.index') }}"
-                            class="flex justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
-                            <span><i class="fas fa-shopping-cart mr-2"></i> Keranjang</span>
+                            class="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-indigo-600 transition duration-150">
+                            <span><i class="fas fa-shopping-cart mr-3 text-lg"></i> Keranjang</span>
                             @php
                                 $cartItemsCount = Auth::user()->carts()->count();
                             @endphp
                             @if ($cartItemsCount > 0)
                                 <span
-                                    class="bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">{{ $cartItemsCount }}</span>
+                                    class="bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-semibold">{{ $cartItemsCount }}</span>
                             @endif
                         </a>
                         <a href="{{ route('customer.orders.index') }}"
-                            class="flex justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
-                            <span><i class="fas fa-box mr-2"></i> Pesanan</span>
+                            class="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-indigo-600 transition duration-150">
+                            <span><i class="fas fa-box-open mr-3 text-lg"></i> Pesanan</span>
                             @if ($orderCount > 0)
                                 <span
-                                    class="bg-blue-500 text-white rounded-full px-2 py-0.5 text-xs">{{ $orderCount }}</span>
+                                    class="bg-blue-500 text-white rounded-full px-2 py-0.5 text-xs font-semibold">{{ $orderCount }}</span>
                             @endif
                         </a>
+                        <div class="border-t border-gray-100 my-1"></div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition duration-150">
+                                <i class="fas fa-sign-out-alt mr-3 text-lg"></i> Logout
                             </button>
                         </form>
                     </div>
@@ -118,86 +120,75 @@
             @else
                 <div class="flex space-x-2">
                     <a href="{{ route('register') }}"
-                        class="px-4 py-2 text-sm font-medium text-indigo-600 border border-indigo-600 bg-white rounded-md hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
-                        Register
+                        class="px-4 py-2 text-sm font-medium text-indigo-600 border border-indigo-600 bg-white rounded-md hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 shadow-sm">
+                        Daftar
                     </a>
                     <a href="{{ route('login') }}"
-                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                        class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 shadow">
                         Login
                     </a>
                 </div>
             @endauth
         </div>
+        <button class="md:hidden text-gray-700 hover:text-indigo-600 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
     </header>
 
-    <!-- Slot konten utama -->
-    <main class="py-6 px-4 sm:px-6 lg:px-8">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+    <main class="min-h-screen bg-gray-50">
+        <div class="px-4 sm:px-6 lg:px-8 py-8">
             {{ $slot }}
         </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-                <h3 class="text-lg font-semibold mb-4">Tentang Kami</h3>
-                <p class="text-gray-400">Toko Kayu Galam menyediakan produk kayu berkualitas untuk berbagai kebutuhan
-                    konstruksi dan dekorasi.</p>
-            </div>
-            <div>
-                <h3 class="text-lg font-semibold mb-4">Kontak</h3>
-                <p class="text-gray-400"><i class="fas fa-phone mr-2"></i> +62-xxx-xxxx-xxxx</p>
-                <p class="text-gray-400"><i class="fas fa-envelope mr-2"></i> info@tokogalam.com</p>
-            </div>
-            <div>
-                <h3 class="text-lg font-semibold mb-4">Ikuti Kami</h3>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook fa-lg"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram fa-lg"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter fa-lg"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto px-4 pt-6 mt-6 border-t border-gray-800 text-center text-sm text-gray-400">
-            &copy; {{ date('Y') }} Toko Kayu Galam. Semua Hak Dilindungi.
-        </div>
-    </footer>
-
-    <x-add-to-cart-modal />
-
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Script -->
     <script>
-        function openAddToCartModal(id, name, price, stock) {
-            document.getElementById('modal_product_id').value = id;
-            document.getElementById('modal_product_name').value = name;
-            document.getElementById('modal_product_price').value = price;
-            document.getElementById('modal_product_stock').textContent = 'Stok: ' + stock;
-            document.getElementById('modal_quantity').value = 1;
+        function openAddToCartModal(productId, productName, productPrice, productStock) {
+            document.getElementById('modalProductId').value = productId;
+            document.getElementById('modalProductName').value = productName;
+            document.getElementById('modalProductPrice').value = formatRupiah(productPrice);
+            document.getElementById('modalHiddenPrice').value = productPrice;
 
-            updateModalTotal();
+            const qtyInput = document.getElementById('modalQuantity');
+            qtyInput.setAttribute('max', productStock);
+            qtyInput.value = 1;
 
-            document.getElementById('form_product_id').value = id;
-            document.getElementById('form_buy_product_id').value = id;
-
-            const modal = document.getElementById('addToCartModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeAddToCartModal() {
-            document.getElementById('addToCartModal').classList.add('hidden');
+            updateModalTotal(); // panggil saat buka modal
+            window.dispatchEvent(new CustomEvent('open-modal'));
+            document.body.classList.add('overflow-hidden');
         }
 
         function updateModalTotal() {
-            const qty = parseInt(document.getElementById('modal_quantity').value);
-            const price = parseFloat(document.getElementById('modal_product_price').value);
-            const total = qty * price;
+            const price = parseFloat(document.getElementById('modalHiddenPrice').value);
+            const qty = parseInt(document.getElementById('modalQuantity').value);
+            const total = isNaN(price * qty) ? 0 : price * qty;
+            document.getElementById('modalTotal').value = formatRupiah(total);
+        }
 
-            document.getElementById('modal_total').value = 'Rp ' + total.toLocaleString('id-ID');
-            document.getElementById('form_quantity').value = qty;
-            document.getElementById('form_buy_quantity').value = qty;
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR'
+            }).format(angka);
+        }
+
+        function closeAddToCartModal() {
+            window.dispatchEvent(new CustomEvent('close-modal'));
+            setTimeout(() => {
+                document.body.classList.remove('overflow-hidden');
+            }, 300);
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
         }
     </script>
+
+    <x-add-to-cart-modal />
 </body>
 
 </html>

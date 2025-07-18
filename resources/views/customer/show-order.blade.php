@@ -1,90 +1,125 @@
 <x-customer-layout>
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Detail Pesanan</h2>
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white p-8 rounded-lg shadow-xl border border-gray-200">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-extrabold text-gray-800">Detail Pesanan</h2>
+                <a href="{{ url()->previous() }}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Kembali ke Daftar Pesanan
+                </a>
+            </div>
 
-        <div class="mb-6">
-            <p class="text-gray-700 dark:text-gray-300"><span class="font-semibold">Invoice:</span>
-                {{ $order->invoice_number }}</p>
-            <p class="text-gray-700 dark:text-gray-300"><span class="font-semibold">Tanggal Transaksi:</span>
-                {{ $order->transaction_date->format('d M Y, H:i') }}</p>
-            <p class="text-gray-700 dark:text-gray-300"><span class="font-semibold">Metode Pembayaran:</span>
-                {{ ucfirst($order->payment_method) }}</p>
-            <p class="text-gray-700 dark:text-gray-300"><span class="font-semibold">Status Pembayaran:</span>
-                <span
-                    class="px-2 py-1 rounded text-sm 
-                    {{ $order->payment_status === 'lunas' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800' }}">
-                    {{ ucfirst($order->payment_status) }}
-                </span>
-            </p>
-            @if ($order->orders)
-                <p class="text-gray-700 dark:text-gray-300"><span class="font-semibold">Status Pengiriman:</span>
-                    <span
-                        class="px-2 py-1 rounded text-sm 
-                    {{ $order->orders->status === 'persiapan'
-                        ? 'bg-blue-200 text-blue-800'
-                        : ($order->orders->status === 'pengiriman'
-                            ? 'bg-orange-200 text-orange-800'
-                            : ($order->orders->status === 'selesai'
-                                ? 'bg-green-200 text-green-800'
-                                : 'bg-gray-200 text-gray-800')) }}">
-                        {{ ucfirst($order->orders->status ?? 'Belum dikirim') }}
-                    </span>
-                @else
-                <p class="text-sm text-gray-500 italic">Belum diproses (menunggu pembayaran)</p>
-            @endif
-            @if ($order->orders->status === 'pengiriman' && $order->orders)
-                <form method="POST" action="{{ route('customer.orders.complete', $order->orders->id) }}"
-                    onsubmit="return confirm('Konfirmasi bahwa produk telah diterima?')">
-                    @csrf
-                    @method('PATCH')
-                    <button class="mt-2 bg-green-600 text-white text-sm px-3 py-1 rounded hover:bg-green-700">
-                        Selesai
-                    </button>
-                </form>
-            @endif
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Informasi Pesanan</h3>
+                    <div class="space-y-2">
+                        <p class="text-gray-700"><span class="font-medium text-gray-900">Invoice:</span>
+                            <span class="ml-2 font-mono text-gray-800">{{ $order->invoice_number }}</span>
+                        </p>
+                        <p class="text-gray-700"><span class="font-medium text-gray-900">Tanggal Transaksi:</span>
+                            <span class="ml-2">{{ $order->transaction_date->locale('id')->translatedFormat('d F Y, H:i') }}</span>
+                        </p>
+                        <p class="text-gray-700"><span class="font-medium text-gray-900">Metode Pembayaran:</span>
+                            <span class="ml-2 font-semibold">{{ ucfirst($order->payment_method) }}</span>
+                        </p>
+                        <p class="text-gray-700"><span class="font-medium text-gray-900">Status Pembayaran:</span>
+                            <span
+                                class="ml-2 px-3 py-1 rounded-full text-xs font-semibold {{ $order->payment_status === 'dibayar' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                {{ ucfirst($order->payment_status) }}
+                            </span>
+                        </p>
+                        @if ($order->orders)
+                            <p class="text-gray-700"><span class="font-medium text-gray-900">Status Pengiriman:</span>
+                                <span
+                                    class="ml-2 px-3 py-1 rounded-full text-xs font-semibold
+                                    @if ($order->orders->status === 'persiapan') bg-blue-100 text-blue-800
+                                    @elseif ($order->orders->status === 'pengiriman') bg-orange-100 text-orange-800
+                                    @elseif ($order->orders->status === 'selesai') bg-green-100 text-green-800
+                                    @else bg-gray-100 text-gray-800 @endif">
+                                    {{ ucfirst($order->orders->status ?? 'Belum dikirim') }}
+                                </span>
+                            </p>
+                        @else
+                            <p class="text-sm text-gray-500 italic mt-2">Pesanan belum diproses (menunggu pembayaran).
+                            </p>
+                        @endif
 
-            </p>
-            @if ($order->note)
-                <p class="text-gray-700 dark:text-gray-300"><span class="font-semibold">Catatan:</span>
-                    {{ $order->note }}</p>
-            @endif
-        </div>
+                        @if ($order->orders && $order->orders->status === 'pengiriman')
+                            <form method="POST" action="{{ route('customer.orders.complete', $order->orders->id) }}"
+                                onsubmit="return confirm('Konfirmasi bahwa produk telah diterima? Tindakan ini tidak dapat diurungkan.')"
+                                class="mt-4">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit"
+                                    class="w-full md:w-auto bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                                    Konfirmasi Pesanan Diterima
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
 
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-100 dark:bg-gray-700">
-                    <tr>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Produk</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Harga</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Qty</th>
-                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white dark:bg-gray-900 divide-y dark:divide-gray-800">
-                    @foreach ($order->details as $detail)
+                @if ($order->note)
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Catatan</h3>
+                        <p class="text-gray-700 bg-gray-50 p-4 rounded-md border border-gray-200">
+                            {{ $order->note }}
+                        </p>
+                    </div>
+                @endif
+            </div>
+
+            ---
+
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 mt-8">Rincian Produk</h3>
+            <div class="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <td class="px-4 py-2 text-gray-800 dark:text-gray-200">{{ $detail->product_name }}</td>
-                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Rp
-                                {{ number_format($detail->price, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">{{ $detail->quantity }}</td>
-                            <td class="px-4 py-2 text-gray-600 dark:text-gray-400">Rp
-                                {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Produk</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Harga</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Kuantitas</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Subtotal</th>
                         </tr>
-                    @endforeach
-                </tbody>
-                <tfoot class="bg-gray-50 dark:bg-gray-800 font-bold">
-                    <tr>
-                        <td colspan="3" class="px-4 py-2 text-right text-gray-900 dark:text-gray-100">Total:</td>
-                        <td class="px-4 py-2 text-indigo-600 dark:text-indigo-400">Rp
-                            {{ number_format($order->total_price, 0, ',', '.') }}</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-
-        <div class="mt-6">
-            <a href="{{ url()->previous() }}" class="text-blue-600 hover:underline">Kembali ke daftar
-                pesanan</a>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                        @foreach ($order->details as $detail)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {{ $detail->product_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Rp
+                                    {{ number_format($detail->price, 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $detail->quantity }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Rp
+                                    {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="bg-gray-100">
+                        <tr>
+                            <td colspan="3" class="px-6 py-3 text-right text-base font-bold text-gray-900 uppercase">
+                                Total Pesanan:
+                            </td>
+                            <td class="px-6 py-3 whitespace-nowrap text-base font-bold text-indigo-700">Rp
+                                {{ number_format($order->total_price, 0, ',', '.') }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 </x-customer-layout>

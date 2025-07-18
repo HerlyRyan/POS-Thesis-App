@@ -193,21 +193,21 @@ class ECommerceController extends Controller
 
                     $item->delete();
                 }
-            }            
-
+            }
         });
         $cart->delete();
 
         return redirect()->route('customer.cart.index')->with('success', 'Checkout berhasil');
     }
 
-    public function ordersIndex(Request $request){
+    public function ordersIndex(Request $request)
+    {
         $status = $request->input('status', 'belum_dibayar');
 
         $orders = Sales::with(['details', 'orders'])
             ->where('customer_id', auth()->guard()->user()->customer->id)
             ->when($status === 'belum_dibayar', fn($q) => $q->where('payment_status', 'menunggu pembayaran'))
-            ->when(in_array($status, ['persiapan', 'pengiriman', 'selesai']), function ($q) use ($status) {
+            ->when(in_array($status, ['draft', 'persiapan', 'pengiriman', 'selesai']), function ($q) use ($status) {
                 $q->whereHas('orders', function ($query) use ($status) {
                     $query->where('status', $status);
                 });
@@ -220,7 +220,7 @@ class ECommerceController extends Controller
 
     public function showOrder($id)
     {
-        $order = Sales::with(['details', 'orders'])->findOrFail($id);            
+        $order = Sales::with(['details', 'orders'])->findOrFail($id);
         // Optional: cek apakah ini milik user yang sedang login
         if ($order->customer_id !== auth()->guard()->user()->customer->id) {
             abort(403);

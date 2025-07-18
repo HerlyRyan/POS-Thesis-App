@@ -56,7 +56,7 @@
         <nav class="hidden md:flex items-center space-x-6">
             <a href="/"
                 class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Beranda</a>
-            <a href="/products"
+            <a href="{{ route('products.index') }}"
                 class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Produk</a>
             <a href="/about" class="text-gray-700 hover:text-indigo-600 font-medium transition duration-200">Tentang
                 Kami</a>

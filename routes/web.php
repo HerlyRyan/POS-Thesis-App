@@ -17,6 +17,13 @@ use App\Http\Controllers\Report;
 use App\Http\Controllers\TrucksController;
 
 Route::get('/', [ECommerceController::class, 'index'])->name('welcome');
+Route::get('/about', function () {
+    return view('customer.about');
+})->name('about');
+Route::get('/contact', function () {
+    return view('customer.contact');
+})->name('contact');
+Route::get('/products/index', [ECommerceController::class, 'productIndex'])->name('products.index');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'permission:dashboard_access'])
@@ -117,7 +124,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
 });
 
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer'])->group(
-    function () {
+    function () {        
         Route::get('/cart', [ECommerceController::class, 'cartIndex'])->name('cart.index');
         Route::post('/cart/add', [ECommerceController::class, 'add'])->name('cart.add');
         Route::put('/cart/update/{id}', [ECommerceController::class, 'update'])->name('cart.update');

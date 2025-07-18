@@ -83,7 +83,7 @@
             </h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
-                @forelse ($products as $product)
+                @forelse ($topProducts as $product)
                     <div
                         class="product-card bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition duration-300 border border-gray-200">
                         <div class="relative">
@@ -153,12 +153,8 @@
                 @endforelse
             </div>
 
-            <div class="mt-12 flex justify-center">
-                {{ $products->links('vendor.pagination.tailwind') }}
-            </div>
-
             <div class="text-center mt-10">
-                <a href="/products"
+                <a href="{{ route('products.index') }}"
                     class="inline-block bg-gray-800 text-white font-semibold py-3 px-8 rounded-full hover:bg-gray-900 transition duration-300 ease-in-out focus:outline-none focus:ring-3 focus:ring-offset-2 focus:ring-gray-500">
                     Lihat Semua Produk
                 </a>
@@ -250,7 +246,7 @@
             <h3 class="text-xl font-bold text-white mb-4">Navigasi Cepat</h3>
             <ul class="space-y-2">
                 <li><a href="/" class="hover:text-white transition duration-200">Beranda</a></li>
-                <li><a href="/products" class="hover:text-white transition duration-200">Produk</a></li>
+                <li><a href="{{ route('products.index') }}" class="hover:text-white transition duration-200">Produk</a></li>
                 <li><a href="/about" class="hover:text-white transition duration-200">Tentang Kami</a></li>
                 <li><a href="/contact" class="hover:text-white transition duration-200">Kontak</a></li>
             </ul>

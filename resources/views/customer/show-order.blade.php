@@ -22,7 +22,8 @@
                             <span class="ml-2 font-mono text-gray-800">{{ $order->invoice_number }}</span>
                         </p>
                         <p class="text-gray-700"><span class="font-medium text-gray-900">Tanggal Transaksi:</span>
-                            <span class="ml-2">{{ $order->transaction_date->locale('id')->translatedFormat('d F Y, H:i') }}</span>
+                            <span
+                                class="ml-2">{{ $order->transaction_date->locale('id')->translatedFormat('d F Y, H:i') }}</span>
                         </p>
                         <p class="text-gray-700"><span class="font-medium text-gray-900">Metode Pembayaran:</span>
                             <span class="ml-2 font-semibold">{{ ucfirst($order->payment_method) }}</span>
@@ -37,10 +38,10 @@
                             <p class="text-gray-700"><span class="font-medium text-gray-900">Status Pengiriman:</span>
                                 <span
                                     class="ml-2 px-3 py-1 rounded-full text-xs font-semibold
-                                    @if ($order->orders->status === 'persiapan') bg-blue-100 text-blue-800
-                                    @elseif ($order->orders->status === 'pengiriman') bg-orange-100 text-orange-800
-                                    @elseif ($order->orders->status === 'selesai') bg-green-100 text-green-800
-                                    @else bg-gray-100 text-gray-800 @endif">
+                                    {{ $order->orders->status === 'persiapan' ? 'bg-blue-100 text-blue-800' : 
+                                       ($order->orders->status === 'pengiriman' ? 'bg-orange-100 text-orange-800' : 
+                                        ($order->orders->status === 'selesai' ? 'bg-green-100 text-green-800' : 
+                                         'bg-gray-100 text-gray-800')) }}">
                                     {{ ucfirst($order->orders->status ?? 'Belum dikirim') }}
                                 </span>
                             </p>

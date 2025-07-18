@@ -14,13 +14,13 @@
                         'pengiriman' => 'Pengiriman',
                         'selesai' => 'Selesai',
                     ];
-                    $current = request('status', 'belum_dibayar');
+                    $current = request('status', 'belum dibayar');
                 @endphp
                 @foreach ($tabs as $key => $label)
                     <a href="{{ route('customer.orders.index', ['status' => $key]) }}"
                         class="inline-flex items-center justify-center px-4 py-3 rounded-t-lg border-b-2 transition-colors duration-200
                         {{ $current === $key ? 'border-indigo-600 text-indigo-600 font-semibold' : 'border-transparent text-gray-600 hover:text-indigo-600 hover:border-indigo-400' }}">
-                        @if ($key === 'belum_dibayar')
+                        @if ($key === 'belum dibayar')
                             <i class="far fa-credit-card mr-2 text-lg"></i>
                         @elseif ($key === 'draft')
                             <i class="fas fa-pencil-alt mr-2 text-lg"></i>
@@ -43,7 +43,7 @@
                     Tidak ada pesanan dengan status <strong class="text-gray-700">{{ $tabs[$current] }}</strong> saat
                     ini.
                 </p>
-                @if ($tabs['belum dibayar'])
+                @if ($tabs[$current] === 'belum dibayar')
                     <a href="{{ route('welcome') }}"
                         class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200">
                         <i class="fas fa-shopping-bag mr-2"></i> Mulai Belanja
@@ -72,15 +72,15 @@
                             </p>
 
                             <span
-                                class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full
-                                @if ($order->payment_status === 'belum dibayar') bg-red-100 text-red-800
-                                @elseif($order->payment_status === 'sudah dibayar')
-                                    bg-green-100 text-green-800
-                                @else
-                                    bg-gray-100 text-gray-700 @endif">
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full {{ $order->payment_status === 'belum dibayar'
+                                    ? 'bg-red-100 text-red-800'
+                                    : ($order->payment_status === 'dibayar'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-gray-100 text-gray-700') }}
+                                ">
                                 @if ($order->payment_status === 'belum dibayar')
                                     <i class="fas fa-exclamation-triangle mr-2"></i>
-                                @elseif($order->payment_status === 'sudah dibayar')
+                                @elseif($order->payment_status === 'dibayar')
                                     <i class="fas fa-check-circle mr-2"></i>
                                 @endif
                                 Pembayaran: {{ ucfirst($order->payment_status) }}

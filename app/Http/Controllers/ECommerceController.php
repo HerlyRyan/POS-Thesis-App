@@ -28,11 +28,15 @@ class ECommerceController extends Controller
 
 
     public function index(Request $request)
-    {
-        $query = Product::query();
-        $products = $query->paginate(10);
+    {       
+        // Get top 3 best-selling products of all time without any filters
+        $topProducts = Product::withSum('saleDetails as total_sold', 'quantity')
+            ->orderByDesc('total_sold')
+            ->take(3)
+            ->get();
 
-        return view('welcome', compact('products'));
+        // Pass both regular products and top products to the view
+        return view('welcome', compact('topProducts'));        
     }
 
     public function cartIndex(Request $request)
@@ -202,11 +206,11 @@ class ECommerceController extends Controller
 
     public function ordersIndex(Request $request)
     {
-        $status = $request->input('status', 'belum_dibayar');
+        $status = $request->input('status', 'belum dibayar');
 
         $orders = Sales::with(['details', 'orders'])
             ->where('customer_id', auth()->guard()->user()->customer->id)
-            ->when($status === 'belum_dibayar', fn($q) => $q->where('payment_status', 'menunggu pembayaran'))
+            ->when($status === 'belum dibayar', fn($q) => $q->where('payment_status', 'menunggu pembayaran'))
             ->when(in_array($status, ['draft', 'persiapan', 'pengiriman', 'selesai']), function ($q) use ($status) {
                 $q->whereHas('orders', function ($query) use ($status) {
                     $query->where('status', $status);
@@ -257,5 +261,22 @@ class ECommerceController extends Controller
         }
 
         return redirect()->back()->with('success', 'Pesanan berhasil dikonfirmasi selesai.');
+    }
+
+    public function productIndex(Request $request)
+    {
+        $query = Product::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', "%{$request->search}%");
+        }
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+
+        $products = $query->paginate(5);
+
+        return view('customer.product', compact('products'));
     }
 }

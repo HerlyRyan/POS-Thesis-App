@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Sales;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -48,6 +47,6 @@ class DashboardController extends Controller
             return $found ?: [$month, 0];
         });
 
-        return view('admin.dashboard', compact('totalUsers', 'totalSales', 'totalProducts', 'monthlySales'));
+        return view('dashboard', compact('totalUsers', 'totalSales', 'totalProducts', 'monthlySales'));
     }
 }

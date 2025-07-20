@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\ProfileController;
@@ -27,11 +27,7 @@ Route::get('/products/index', [ECommerceController::class, 'productIndex'])->nam
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'permission:dashboard_access'])
-    ->name('admin.dashboard');
-
-Route::get('/test', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('test');
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -64,29 +64,34 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    @if ($order->status == 'draft')
-                                        <a href="{{ route('admin.orders.assignWorkerView', $order) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Tetapkan
-                                            Buruh</a>
-                                    @elseif ($order->status == 'persiapan')
-                                        <a href="{{ route('admin.orders.assign_delivery_form', $order) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Tetapkan
-                                            Supir</a>
-                                    @elseif ($order->status == 'pengiriman')
-                                        <form method="POST" action="{{ route('admin.orders.complete', $order) }}"
-                                            class="inline" id="confirm-order-form">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" x-data
-                                                @click.prevent="$dispatch('open-modal', 'confirm-order-update')" 
-                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
-                                                Selesai
-                                            </button>
-                                        </form>
-                                        <x-confirm-create-update-button :name="'confirm-order-update'" modalForm="confirm-order-form"
-                                            confirmMessage="Konfirmasi Pengiriman Selesai"
-                                            question="Apakah Anda yakin ingin menyelesaikan pengiriman ini?"
-                                            buttonText="Ya, Selesai" />
+                                    @if (Auth::user()->roles->first()?->name === 'admin')
+                                        @if ($order->status == 'draft')
+                                            <a href="{{ route('admin.orders.assignWorkerView', $order) }}"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Tetapkan
+                                                Buruh</a>
+                                        @elseif ($order->status == 'persiapan')
+                                            <a href="{{ route('admin.orders.assign_delivery_form', $order) }}"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Tetapkan
+                                                Supir</a>
+                                        @elseif ($order->status == 'pengiriman')
+                                            <form method="POST" action="{{ route('admin.orders.complete', $order) }}"
+                                                class="inline" id="confirm-order-form">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" x-data
+                                                    @click.prevent="$dispatch('open-modal', 'confirm-order-update')"
+                                                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
+                                                    Selesai
+                                                </button>
+                                            </form>
+                                            <x-confirm-create-update-button :name="'confirm-order-update'"
+                                                modalForm="confirm-order-form"
+                                                confirmMessage="Konfirmasi Pengiriman Selesai"
+                                                question="Apakah Anda yakin ingin menyelesaikan pengiriman ini?"
+                                                buttonText="Ya, Selesai" />
+                                        @endif
+                                        <a href="{{ route('admin.orders.show', $order) }}"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                                     @else
                                         <a href="{{ route('admin.orders.show', $order) }}"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>

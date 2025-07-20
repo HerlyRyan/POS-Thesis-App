@@ -19,10 +19,15 @@ class Employees extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }       
+    }
 
     public function ordersAsWorker()
     {
         return $this->belongsToMany(Order::class, 'order_worker', 'worker_id', 'order_id');
+    }
+
+    public function activeOrder()
+    {
+        return $this->hasOne(Order::class, 'driver_id')->where('status', 'pengiriman');
     }
 }

@@ -117,10 +117,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
             Route::get('/trucks/print', [Report::class, 'printTrucks'])->name('report_trucks.print');
         });
     });
+
+    Route::middleware('role:admin|employee')->group(function () {
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    });
 });
 
 Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer'])->group(
-    function () {        
+    function () {
         Route::get('/cart', [ECommerceController::class, 'cartIndex'])->name('cart.index');
         Route::post('/cart/add', [ECommerceController::class, 'add'])->name('cart.add');
         Route::put('/cart/update/{id}', [ECommerceController::class, 'update'])->name('cart.update');

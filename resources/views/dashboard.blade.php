@@ -1,4 +1,57 @@
 <x-admin-layout>
+    @php
+        $user = Auth::user();
+        $role = $user->roles->first()?->name;
+    @endphp
+    @if ($role === 'employee')
+        @php
+            $position = $user->employee->position;
+            $employee = $user->employee;
+            $truckId = $employee?->activeOrder?->truck_id;
+        @endphp
+        @if ($role === 'employee' && $position === 'supir')            
+            <script>
+                const truckId = @json($truckId);
+                console.log(truckId)
+                const token = '{{ csrf_token() }}';
+
+                function updateLocation(position) {
+                    fetch('/api/truck-location/update', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': token,
+                            },
+                            body: JSON.stringify({
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                                truck_id: truckId
+                            })
+                        })
+                        .then(() => {
+                            document.getElementById('status').innerText = 'Lokasi terkirim';
+                        })
+                        .catch(() => {
+                            document.getElementById('status').innerText = 'Gagal kirim lokasi';
+                        });
+                }
+
+                function errorHandler(error) {
+                    document.getElementById('status').innerText = 'Error: ' + error.message;
+                    console.log(error)
+                }
+
+                setInterval(() => {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(updateLocation, errorHandler);
+                    } else {
+                        document.getElementById('status').innerText = 'Browser tidak mendukung lokasi.';
+                    }
+                }, 15000); // 15 detik
+            </script>
+        @endif
+    @endif
+
     @if (session('login_success'))
         <div class="py-4 mb-4 fixed top-16 right-0 z-50 w-auto max-w-[calc(100%-16rem)]" id="login-notification">
             <div class="mr-4">

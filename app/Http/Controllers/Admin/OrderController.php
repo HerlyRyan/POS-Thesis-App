@@ -34,6 +34,11 @@ class OrderController extends Controller
         return view('admin.orders.edit', compact('order'));
     }
 
+    public function show(Order $order)
+    {
+        return view('admin.orders.show', compact('order'));
+    }
+
     public function update(Request $request, Order $order)
     {
         $request->validate([

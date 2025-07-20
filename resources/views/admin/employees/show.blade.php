@@ -1,24 +1,37 @@
 <x-admin-layout>
     <x-slot name="header">
-        <h1 class="text-2xl font-bold">Employee Details</h1>
+        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">Detail Pekerja</h1>
     </x-slot>
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <div class="mb-4">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Informasi Pekerja Lepas</h2>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Nama: <span
-                    class="font-medium">{{ $employee->user->name }}</span></p>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Email: <span
-                    class="font-medium">{{ $employee->user->email }}</span></p>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Posisi: <span
-                    class="font-medium">{{ $employee->position }}</span></p>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">Telepon: <span
-                    class="font-medium">{{ $employee->phone }}</span></p>
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 border-b-2 border-indigo-500 pb-2">Informasi
+            Pekerja</h2>
+
+        <div class="space-y-4">
+            <h3 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ $employee->user->name }}</h3>
+            <hr class="border-gray-300 dark:border-gray-600">
+
+            <p class="text-lg text-gray-700 dark:text-gray-300">
+                <strong class="font-semibold">Email:</strong>
+                <span class="font-medium text-indigo-600 dark:text-indigo-400">{{ $employee->user->email }}</span>
+            </p>
+
+            <p class="text-lg text-gray-700 dark:text-gray-300">
+                <strong class="font-semibold">Posisi:</strong>
+                <span class="font-medium">{{ $employee->position ?? '-' }}</span>
+            </p>
+
+            <p class="text-lg text-gray-700 dark:text-gray-300">
+                <strong class="font-semibold">Telepon:</strong>
+                <span class="font-medium">{{ $employee->phone ?? '-' }}</span>
+            </p>
         </div>
 
-        <div class="flex items-center justify-between mt-4">
+        {{-- Action Buttons --}}
+        <div
+            class="flex flex-col sm:flex-row items-center justify-between mt-8 pt-6 border-t-2 border-gray-200 dark:border-gray-700">
             <a href="{{ route('admin.employees.index') }}"
-                class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                class="text-gray-600 dark:text-gray-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition duration-300 ease-in-out mb-4 sm:mb-0">
                 Kembali ke Daftar Pekerja
             </a>
             <a href="{{ route('admin.employees.edit', $employee) }}"

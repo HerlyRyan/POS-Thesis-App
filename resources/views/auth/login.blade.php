@@ -1,57 +1,69 @@
 <x-guest-layout>
-    <x-flash-modal />
-    <div class="bg-white p-6">
-        <h2 class="text-white text-xl">Login</h2>
-        <br>
-        <!-- Session Status -->
+    {{-- Ini akan otomatis menyesuaikan dengan lebar sm:max-w-md dari guest-layout.blade.php --}}
+    {{-- Pastikan guest-layout Anda memiliki <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg"> --}}
+    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">Masuk Akun</h1>
+
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
-            <!-- Email Address -->
             <div class="mb-4">
-                <x-input-label for="email" :value="__('Email')" class="" />
-                <x-text-input id="email" class="block mt-1 w-full rounded-lg border-gray-300" type="email"
-                    name="email" :value="old('email')" required autofocus autocomplete="username" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
+                <input id="email"
+                    class="block mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    type="email" name="email" value="{{ old('email') }}" required autofocus
+                    autocomplete="username" />
+                @error('email')
+                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                @enderror
             </div>
 
-            <!-- Password -->
             <div class="mb-4">
-                <x-input-label for="password" :value="__('Password')" class="" />
-                <x-text-input id="password" class="block mt-1 w-full rounded-lg border-gray-300 " type="password"
-                    name="password" required autocomplete="current-password" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input id="password"
+                    class="block mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    type="password" name="password" required autocomplete="current-password" />
+                @error('password')
+                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                @enderror
             </div>
 
-            <!-- Remember Me -->
             <div class="block mb-4">
                 <label for="remember_me" class="inline-flex items-center">
                     <input id="remember_me" type="checkbox"
-                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                        name="remember">
-                    <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                    <span class="ms-2 text-sm text-gray-600">Ingat Saya</span>
                 </label>
             </div>
 
-            <div class="flex items-center justify-between mt-4">
+            <div class="flex items-center justify-between mt-6">
                 @if (Route::has('password.request'))
-                    <a class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 text-sm"
-                        href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
+                    <a class="text-indigo-600 hover:text-indigo-800 text-sm" href="{{ route('password.request') }}">
+                        Lupa Password Anda?
                     </a>
                 @endif
 
-                <div class="flex space-x-2">
+                <div class="flex space-x-3">
                     <a href="{{ route('welcome') }}"
-                        class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-800 tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition ease-in-out duration-150 uppercase">
-                        {{ __('Kembali') }}
+                        class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        Kembali
                     </a>
-                    <x-primary-button class="bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500">
-                        {{ __('Log in') }}
-                    </x-primary-button>
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-indigo-900 transition ease-in-out duration-150">
+                        Masuk
+                    </button>
                 </div>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Belum punya akun?
+                    <a href="{{ route('register') }}" class="font-medium text-indigo-600 hover:text-indigo-800">
+                        Daftar di sini
+                    </a>
+                </p>
             </div>
         </form>
     </div>

@@ -32,8 +32,12 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone' => 'required|string',
+            'address' => 'required|string',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         $user = User::create([
@@ -41,19 +45,21 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        
+
         $user->assignRole('customer');
 
         Customer::create([
             'user_id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('test', absolute: false));
+        return redirect(route('welcome', absolute: false));
     }
 }

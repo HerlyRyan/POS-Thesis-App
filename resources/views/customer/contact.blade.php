@@ -16,12 +16,12 @@
                     <div>
                         <h3 class="text-xl font-semibold text-gray-800 mb-2">Alamat Kami</h3>
                         <p class="text-gray-700">
-                            [Alamat Lengkap Anda]<br>
-                            [Kota, Kode Pos]<br>
-                            [Provinsi, Negara]
+                            Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang<br>
+                            Kota Banjarbaru, 70722<br>
+                            Kalimantan Selatan, Indonesia
                         </p>
-                        <a href="https://maps.google.com/?q=[Alamat Lengkap Anda Tanpa Spasi, contoh:Jl.MerdekaNo.10,Banjarmasin]"
-                            target="_blank" class="text-indigo-600 hover:underline mt-2 inline-block">Lihat di Peta</a>
+                        <a href="https://maps.app.goo.gl/m6GXTZ9ALofc3FMd8" target="_blank"
+                            class="text-indigo-600 hover:underline mt-2 inline-block">Lihat di Peta</a>
                     </div>
                 </div>
                 <div class="bg-gray-50 p-6 rounded-lg shadow-sm flex items-start space-x-4">
@@ -29,14 +29,12 @@
                     <div>
                         <h3 class="text-xl font-semibold text-gray-800 mb-2">Telepon</h3>
                         <p class="text-gray-700 mb-2">
-                            Customer Service: <a href="tel:[Nomor Telepon CS Anda]"
-                                class="text-indigo-600 hover:underline">[Nomor Telepon CS Anda]</a>
+                            Customer Service: <a href="tel:08888888888"
+                                class="text-indigo-600 hover:underline">08888888888</a>
                         </p>
                         <p class="text-gray-700">
-                            WhatsApp: <a
-                                href="https://wa.me/[Nomor WhatsApp Anda Tanpa Simbol/Spasi, contoh:6281234567890]"
-                                target="_blank" class="text-green-600 hover:underline font-semibold">[Nomor WhatsApp
-                                Anda]</a>
+                            WhatsApp: <a href="https://wa.me/6281253864116" target="_blank"
+                                class="text-green-600 hover:underline font-semibold">6281253864116</a>
                         </p>
                         <p class="text-sm text-gray-500 mt-2">Jam Kerja: Senin - Jumat, 09:00 - 17:00 WITA</p>
                     </div>
@@ -46,12 +44,12 @@
                     <div>
                         <h3 class="text-xl font-semibold text-gray-800 mb-2">Email</h3>
                         <p class="text-gray-700">
-                            Informasi Umum: <a href="mailto:[Email Umum Anda]"
-                                class="text-indigo-600 hover:underline">[Email Umum Anda]</a>
+                            Informasi Umum: <a href="mailto:info@galamsani"
+                                class="text-indigo-600 hover:underline">info@galamsani</a>
                         </p>
                         <p class="text-gray-700">
-                            Dukungan Pelanggan: <a href="mailto:[Email Dukungan Anda]"
-                                class="text-indigo-600 hover:underline">[Email Dukungan Anda]</a>
+                            Dukungan Pelanggan: <a href="mailto:cs@galamsani"
+                                class="text-indigo-600 hover:underline">cs@galamsani</a>
                         </p>
                     </div>
                 </div>
@@ -84,12 +82,12 @@
                 di Laravel untuk menangani pengiriman form ini (misal: mengirim email ke admin).
                 Ini hanya tampilan UI form-nya.
             --}}
-            <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+            {{-- <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
                 <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">Kirim Pesan Kepada Kami</h2>
                 <form
                     action="https://www.reddit.com/r/Backend/comments/18syzdt/add_contact_me_form_on_personal_website/"
                     method="POST" class="max-w-2xl mx-auto">
-                    @csrf {{-- Laravel CSRF token --}}
+                    @csrf 
                     <div class="mb-5">
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
                         <input type="text" name="name" id="name" required
@@ -121,7 +119,7 @@
                         </button>
                     </div>
                 </form>
-            </div>
+            </div> --}}
         </div>
     </div>
 </x-customer-layout>

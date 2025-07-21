@@ -43,8 +43,8 @@
                     Tidak ada pesanan dengan status <strong class="text-gray-700">{{ $tabs[$current] }}</strong> saat
                     ini.
                 </p>
-                @if ($tabs[$current] === 'belum dibayar')
-                    <a href="{{ route('welcome') }}"
+                @if ($current === 'belum dibayar')
+                    <a href="{{ route('products.index') }}"
                         class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200">
                         <i class="fas fa-shopping-bag mr-2"></i> Mulai Belanja
                     </a>

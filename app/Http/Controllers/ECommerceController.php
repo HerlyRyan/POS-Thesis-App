@@ -28,7 +28,7 @@ class ECommerceController extends Controller
 
 
     public function index(Request $request)
-    {       
+    {
         // Get top 3 best-selling products of all time without any filters
         $topProducts = Product::withSum('saleDetails as total_sold', 'quantity')
             ->orderByDesc('total_sold')
@@ -36,7 +36,7 @@ class ECommerceController extends Controller
             ->get();
 
         // Pass both regular products and top products to the view
-        return view('welcome', compact('topProducts'));        
+        return view('welcome', compact('topProducts'));
     }
 
     public function cartIndex(Request $request)
@@ -184,6 +184,7 @@ class ECommerceController extends Controller
                     'payment_status' => 'menunggu pembayaran',
                     'snap_url' => $snap->redirect_url,
                     'transaction_date' => now(),
+                    'note' => $request->note,
                 ]);
 
                 foreach ($selectedItems as $item) {

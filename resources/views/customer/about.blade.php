@@ -6,7 +6,8 @@
                     <i class="fas fa-info-circle text-indigo-600 mr-3"></i> Tentang Kami
                 </h1>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    Kisah di balik [Nama Bisnis Anda]. Kami percaya pada [nilai inti Anda].
+                    Kisah di balik Galam Sani. Kami percaya pada Kualitas dari segi Produk sampai ke Pengalaman
+                    berbelanja.
                 </p>
             </div>
 
@@ -14,14 +15,15 @@
                 <div>
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">Misi & Visi Kami</h2>
                     <p class="text-gray-700 leading-relaxed mb-4">
-                        Di [Nama Bisnis Anda], kami memiliki misi untuk menyediakan produk/layanan [jelaskan
-                        produk/layanan utama Anda] terbaik dengan kualitas tak tertandingi dan harga yang terjangkau.
-                        Kami berdedikasi untuk [sebutkan dedikasi atau tujuan utama, misal: kepuasan pelanggan, inovasi,
-                        keberlanjutan].
+                        Di Galam Sani, kami memiliki misi untuk menyediakan produk galam terbaik dengan kualitas tak
+                        tertandingi dan harga yang terjangkau.
+                        Kami berdedikasi untuk kepuasan pelanggan, inovasi,
+                        keberlanjutan.
                     </p>
                     <p class="text-gray-700 leading-relaxed">
-                        Visi kami adalah menjadi [sebutkan visi Anda, misal: pemimpin pasar, penyedia solusi terdepan]
-                        di industri [industri Anda], membangun hubungan yang kuat dengan pelanggan dan komunitas kami.
+                        Visi kami adalah menjadi penyedia galam yang amanah dan berkualitas
+                        di industri jual beli kayu galam, membangun hubungan yang kuat dengan pelanggan dan komunitas
+                        kami.
                     </p>
                 </div>
                 <div>

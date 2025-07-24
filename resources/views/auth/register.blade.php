@@ -1,7 +1,11 @@
-<x-guest-layout>
-    {{-- Div ini akan mewarisi lebar sm:max-w-xl dari guest-layout setelah modifikasi --}}
+<x-guest-layout>   
     <div class="bg-white p-8 rounded-lg shadow-xl">
-        <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">Daftar Akun Baru</h1>
+        <div class="flex flex-col items-center mb-6">
+            <a href="/">
+                <img src="{{ asset('/storage/logo.png') }}" alt="Galam Sani Logo" class="h-13 w-13 mb-4">
+            </a>
+            <h1 class="text-3xl font-bold text-gray-800">Daftar Akun Baru</h1>
+        </div>
 
         <form action="{{ route('register') }}" method="POST" id="register-form">
             @csrf

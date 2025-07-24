@@ -1,6 +1,6 @@
-<x-print-layout title="Laporan Pemesanan " :reportTitle="'LAPORAN PEMESANAN'" :companyName="'Galam Sani'" :companyAddress="'Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang,
-    Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia'" :companyPhone="'+62 821-5604-8305'"
-    :companyEmail="'info@galamsani.co.id'" :period="is_numeric(request('month')) && (int) request('month') >= 1 && (int) request('month') <= 12
+<x-print-layout title="Laporan History Pemesanan " :reportTitle="'LAPORAN HISTORY PEMESANAN'" :companyName="'Galam Sani'" :companyAddress="'Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang,
+    Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia'"
+    :companyPhone="'+62 821-5604-8305'" :companyEmail="'info@galamsani.co.id'" :period="is_numeric(request('month')) && (int) request('month') >= 1 && (int) request('month') <= 12
         ? \Carbon\Carbon::create(date('Y'), (int) request('month'))->translatedFormat('F Y')
         : (request('start_date') && request('end_date')
             ? \Carbon\Carbon::parse(request('start_date'))->format('d M Y') .
@@ -13,11 +13,9 @@
             <tr>
                 <th>No</th>
                 <th>Invoice</th>
-                <th>Produk: Kuantitas</th>
-                <th>Buruh</th>
-                <th>Supir</th>
-                <th>Truk</th>
                 <th>Tanggal Kirim</th>
+                <th>Produk: Kuantitas</th>
+                <th>Total</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -26,6 +24,7 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $order->sale->invoice_number ?? '-' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') }}</td>
                     <td>
                         @if ($order->sale && $order->sale->details)
                             <ul>
@@ -38,11 +37,7 @@
                             -
                         @endif
                     </td>
-                    <td>{{ $order->workers->pluck('user.name')->map(function ($name) {return ucfirst($name);})->join(', ') ?? '-' }}
-                    </td>
-                    <td>{{ ucfirst(optional(optional($order->driver)->user)->name) ?? '-' }}</td>
-                    <td>{{ $order->truck->plate_number ?? '-' }}</td>
-                    <td>{{ \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') }}</td>
+                    <td>Rp {{ number_format($order->sale->total_price, 0, ',', '.') }}</td>
                     <td>{{ ucfirst($order->status) }}</td>
                 </tr>
             @empty

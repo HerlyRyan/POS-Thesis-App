@@ -6,7 +6,7 @@
     'selectOptions' => [], // isi option
     'selectLabel' => 'All Options',
     'textAdd' => null,
-    'routeProduct' => null
+    'routeProduct' => null,
 ])
 
 <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -38,24 +38,26 @@
         </button>
     </form>
 
-    @if ($routeProduct)
-        <a href="{{ $routeProduct }}"
-            class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-            Tambah Stok
-        </a>
-    @endif
+    <div class="flex flex-wrap md:flex-row md:items-center items-center gap-3">
+        @if ($routeProduct)
+            <a href="{{ $routeProduct }}"
+                class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                Tambah Stok
+            </a>
+        @endif
 
-    <!-- Tombol Tambah -->
-    @if ($route)
-        <a href="{{ $route }}"
-            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            @if ($textAdd)
-                Tambahkan Data {{ $textAdd }}
-            @else
-                Kembali
-            @endif
-        </a>
-    @endif
+        <!-- Tombol Tambah -->
+        @if ($route)
+            <a href="{{ $route }}"
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                @if ($textAdd)
+                    Tambahkan Data {{ $textAdd }}
+                @else
+                    Kembali
+                @endif
+            </a>
+        @endif
+    </div>
 
     <script>
         let debounceTimer;

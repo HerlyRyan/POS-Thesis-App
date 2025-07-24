@@ -28,9 +28,6 @@
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Status</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -60,14 +57,6 @@
                                     : 'bg-red-100 text-red-800') }}">
                                         {{ ucfirst($truck->status) }}
                                     </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex items-center gap-2">
-                                        <a href="{{ route('admin.trucks.edit', $truck) }}"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
-                                        <x-confirm-delete-button :route="route('admin.trucks.destroy', $truck)"
-                                            modalId="confirm-delete-{{ $truck->id }}" name="Hapus" />
-                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -110,12 +99,6 @@
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
                         Kapasitas: {{ $truck->capacity }}
-                    </div>
-                    <div class="flex space-x-4">
-                        <a href="{{ route('admin.trucks.edit', $truck) }}"
-                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Edit</a>
-                        <x-confirm-delete-button :route="route('admin.trucks.destroy', $truck)" modalId="confirm-delete-mobile-{{ $truck->id }}"
-                            name="Hapus" />
                     </div>
                 </div>
             @empty

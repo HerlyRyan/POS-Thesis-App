@@ -28,19 +28,13 @@
                                 Invoice</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                                Tanggal Kirim</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                                 Produk: Kuantitas</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                                Buruh</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                                Supir</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                                Truk</th>
-                            <th
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-                                Tanggal Kirim</th>
+                                Total</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                                 Status</th>
@@ -53,27 +47,22 @@
                                     {{ $loop->iteration + $orders->firstItem() - 1 }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                     {{ $order->sale->invoice_number ?? '-' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    {{ \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                     @if ($order->sale && $order->sale->details)
                                         <ul class="list-disc list-inside space-y-1">
                                             @foreach ($order->sale->details as $detail)
-                                                <li>{{ $detail->product_name }}: {{ $detail->quantity }} {{$detail->product->unit}}</li>
+                                                <li>{{ $detail->product_name }}: {{ $detail->quantity }}
+                                                    {{ $detail->product->unit }}</li>
                                             @endforeach
                                         </ul>
                                     @else
                                         -
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $order->workers->pluck('user.name')->map(function ($name) {return ucfirst($name);})->join(', ') ?? '-' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ ucfirst($order->driver->user->name ?? '-') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $order->truck->plate_number ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    Rp {{ number_format($order->sale->total_price, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 

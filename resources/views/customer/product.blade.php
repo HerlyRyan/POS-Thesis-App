@@ -32,8 +32,7 @@
                         class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         <option value="">Semua Kategori</option>
                         @foreach (['galam' => 'Galam', 'bambu' => 'Bambu', 'atap' => 'Atap'] as $slug => $name)
-                            <option value="{{ $slug }}"
-                                {{ request('category') === $slug ? 'selected' : '' }}>
+                            <option value="{{ $slug }}" {{ request('category') === $slug ? 'selected' : '' }}>
                                 {{ $name }}
                             </option>
                         @endforeach
@@ -140,8 +139,8 @@
             @endforelse
         </div>
 
-        <div class="mt-12 flex justify-center">
-            {{ $products->links('vendor.pagination.tailwind') }}
+        <div class="mt-4">
+            {{ $products->appends(request()->query())->links() }}
         </div>
     </div>
 

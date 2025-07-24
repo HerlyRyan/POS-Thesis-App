@@ -114,14 +114,17 @@ class Report extends Controller
         $query = Sales::with(['customer.user', 'user']);
 
         // Filter pencarian umum
-        if ($request->filled('search')) {
+        if ($request->has('search') && $request->search != '') {
             $query->where(function ($q) use ($request) {
                 $q->where('invoice_number', 'like', "%{$request->search}%")
-                    ->orWherefilled('customer.user', function ($q2) use ($request) {
-                        $q2->where('name', 'like', "%{$request->search}%");
+                    ->orWhereHas('customer', function ($q) use ($request) {
+                        $q->whereHas('user', function ($q2) use ($request) {
+                            $q2->where('name', 'like', "%{$request->search}%");
+                        });
                     });
             });
         }
+
 
         // Filter status
         if ($request->filled('status')) {

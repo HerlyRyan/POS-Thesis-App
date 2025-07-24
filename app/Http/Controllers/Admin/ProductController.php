@@ -25,7 +25,7 @@ class ProductController extends Controller
             $query->where('category', $request->category);
         }
 
-        $products = $query->paginate(5);
+        $products = $query->orderByDesc('name')->paginate(5);
 
         return view('admin.product.index', compact('products', 'columns'));
     }

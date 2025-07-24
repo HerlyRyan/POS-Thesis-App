@@ -49,8 +49,7 @@
     <header
         class="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-white shadow-lg border-b border-gray-100">
         <a href="/" class="flex items-center space-x-2">
-            {{-- <img src="{{ asset('path/to/your/logo.png') }}" alt="Galam Sani Logo" class="h-8 w-auto"> --}}
-            {{-- Replace 'path/to/your/logo.png' with your actual logo path --}}
+            <img src="{{ asset('/storage/logo.png') }}" alt="Galam Sani Logo" class="h-8 w-auto">            
             <span class="text-2xl font-extrabold text-indigo-700 tracking-tight">GALAM SANI</span>
         </a>
         <nav class="hidden md:flex items-center space-x-6">

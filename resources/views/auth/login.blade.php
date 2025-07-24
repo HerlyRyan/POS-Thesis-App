@@ -1,8 +1,14 @@
 <x-guest-layout>
-    {{-- Ini akan otomatis menyesuaikan dengan lebar sm:max-w-md dari guest-layout.blade.php --}}
-    {{-- Pastikan guest-layout Anda memiliki <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg"> --}}
-    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-xl mx-auto">
-        <h1 class="text-3xl font-extrabold text-gray-900 text-center mb-6">Masuk Akun</h1>
+    <div class="bg-white p-8 rounded-lg shadow-xl">
+        <div class="flex flex-col items-center mb-6">
+            <a href="/">
+                <img src="{{ asset('/storage/logo.png') }}" alt="Galam Sani Logo" class="h-13 w-13 mb-4">
+            </a>
+            <h1 class="text-3xl font-bold text-gray-800">
+                Masuk ke Akun Anda
+            </h1>
+            <p class="text-gray-500 mt-2">Selamat datang kembali! Silakan masukkan detail Anda.</p>
+        </div>
 
         <x-auth-session-status class="mb-4" :status="session('status')" />
 

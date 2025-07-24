@@ -179,7 +179,7 @@
 
     <header class="report-header">
         <div class="company-logo">
-            <img src="{{ asset('logo-kab-solok.png') }}" alt="Logo Galam Sani"> {{-- Replace with actual path --}}
+            <img src="{{ asset('/storage/logo.png') }}" alt="Logo Galam Sani">
         </div>
         <div class="company-info">
             <h1>{{$companyName}}</h1>

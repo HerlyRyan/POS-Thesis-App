@@ -276,7 +276,7 @@ class ECommerceController extends Controller
             $query->where('category', $request->category);
         }
 
-        $products = $query->paginate(5);
+        $products = $query->paginate(6);
 
         return view('customer.product', compact('products'));
     }

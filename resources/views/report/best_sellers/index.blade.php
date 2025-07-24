@@ -33,7 +33,7 @@
                                     {{ $product->name }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $product->total_sold ?? 0 }} unit
+                                    {{ $product->total_sold ?? 0 }} {{ $product->unit}}
                                 </td>
                             </tr>
                         @empty

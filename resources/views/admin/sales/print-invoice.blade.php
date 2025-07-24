@@ -133,10 +133,10 @@
                         <tr>
                             <td class="company-info">
                                 **Galam Sani**<br>
-                                [Your Company Address Line 1]<br>
-                                [Your Company Address Line 2]<br>
-                                Phone: [Your Company Phone Number]<br>
-                                Email: [Your Company Email]
+                                Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang<br>
+                                Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia<br>
+                                Telepon: +62 821-5604-8305<br>
+                                Email: info@galamsani.co.id
                             </td>
 
                             <td class="customer-info">

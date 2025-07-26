@@ -71,30 +71,67 @@
                                     {{ number_format($order->total_price, 0, ',', '.') }}</strong>
                             </p>
 
-                            <span
-                                class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full {{ $order->payment_status === 'belum dibayar'
-                                    ? 'bg-red-100 text-red-800'
-                                    : ($order->payment_status === 'dibayar'
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-gray-100 text-gray-700') }}
-                                ">
-                                @if ($order->payment_status === 'belum dibayar')
-                                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                                @elseif($order->payment_status === 'dibayar')
-                                    <i class="fas fa-check-circle mr-2"></i>
-                                @endif
-                                Pembayaran: {{ ucfirst($order->payment_status) }}
-                            </span>
+                            <div class="mt-4 pt-3 border-t border-gray-200">
+                                <h4 class="text-sm font-semibold text-gray-600 mb-2">Produk:</h4>
+                                <ul class="space-y-3 text-sm text-gray-600">
+                                    @foreach ($order->details as $detail)
+                                        <li class="flex justify-between items-center">
+                                            <div>
+                                                <i class="fas fa-tag text-gray-400 mr-2"></i>
+                                                <span>{{ $detail->product->name }} ({{ $detail->quantity }} pcs)</span>
+                                            </div>
+                                            @if ($current === 'selesai')
+                                                @php
+                                                    $product = $detail->product;
+                                                    $reviewGiven = $product->reviews->contains(function ($review) use (
+                                                        $order,
+                                                    ) {
+                                                        return $review->sales_id === $order->id;
+                                                    });
+                                                @endphp
+                                                @if (!$reviewGiven)
+                                                    <a href="{{ route('customer.product.comments', ['sales' => $order->id, 'product' => $detail->product->id]) }}"
+                                                        class="inline-flex items-center px-3 py-1 bg-amber-500 text-white text-xs rounded-md hover:bg-amber-600 transition">
+                                                        <i class="fas fa-star mr-1.5"></i> Beri Ulasan
+                                                    </a>
+                                                @else
+                                                    <span
+                                                        class="inline-flex items-center px-3 py-1 bg-gray-200 text-gray-600 text-xs rounded-md">
+                                                        <i class="fas fa-check-circle mr-1.5"></i> Ulasan Diberikan
+                                                    </span>
+                                                @endif
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+
+                            <div class="mt-4">
+                                <span
+                                    class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full {{ $order->payment_status === 'belum dibayar'
+                                        ? 'bg-red-100 text-red-800'
+                                        : ($order->payment_status === 'dibayar'
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-gray-100 text-gray-700') }}
+                                    ">
+                                    @if ($order->payment_status === 'belum dibayar')
+                                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                                    @elseif($order->payment_status === 'dibayar')
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                    @endif
+                                    Pembayaran: {{ ucfirst($order->payment_status) }}
+                                </span>
+                            </div>
                         </div>
 
                         <div
-                            class="flex flex-col sm:flex-row md:flex-col lg:flex-row items-stretch md:items-end space-y-3 sm:space-y-0 sm:space-x-3 md:space-x-0 md:space-y-3 lg:space-x-3 lg:space-y-0">
+                            class="flex flex-col sm:flex-row md:flex-col lg:flex-row items-stretch md:items-end space-y-3 sm:space-y-0 sm:space-x-3 md:space-x-0 md:space-y-3 lg:space-x-3 lg:space-y-0 mt-4 md:mt-0">
                             <a href="{{ route('customer.orders.show', $order->id) }}"
                                 class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200">
                                 <i class="fas fa-info-circle mr-2"></i> Detail Pesanan
                             </a>
 
-                            @if ($order->status === 'pengiriman' && $order->payment_status === 'sudah dibayar')
+                            @if ($order->status === 'pengiriman' && $order->payment_status === 'dibayar')
                                 <form method="POST" action="{{ route('customer.orders.complete', $order->id) }}"
                                     onsubmit="return confirm('Konfirmasi bahwa produk telah diterima dan pesanan selesai?')">
                                     @csrf

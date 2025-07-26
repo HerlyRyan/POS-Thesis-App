@@ -24,6 +24,7 @@ Route::get('/contact', function () {
     return view('customer.contact');
 })->name('contact');
 Route::get('/products/index', [ECommerceController::class, 'productIndex'])->name('products.index');
+Route::get('/product/{id}', [ECommerceController::class, 'productShow'])->name('products.show');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified', 'permission:dashboard_access'])
@@ -136,6 +137,9 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer
         Route::get('/orders/{id}', [ECommerceController::class, 'showOrder'])
             ->name('orders.show');
         Route::patch('/customer/orders/{order}/complete', [ECommerceController::class, 'markAsCompleted'])->name('orders.complete');
+
+        Route::get('/products/comment/{sales}/{product}', [ECommerceController::class, 'productComment'])->name('product.comments');
+        Route::post('/create/product/comment/{sales}/{product}', [ECommerceController::class, 'createComment'])->name('create.product.comment');
     }
 );
 

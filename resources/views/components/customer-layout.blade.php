@@ -185,9 +185,7 @@
             const menu = document.getElementById('userMenu');
             menu.classList.toggle('hidden');
         }
-    </script>
-
-    <x-add-to-cart-modal />
+    </script>    
 </body>
 
 </html>

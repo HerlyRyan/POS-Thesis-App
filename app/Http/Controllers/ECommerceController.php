@@ -6,9 +6,11 @@ use App\Models\Cart;
 use App\Models\CartItems;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductReview;
 use App\Models\Sales;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -20,10 +22,10 @@ class ECommerceController extends Controller
         $user = auth()->guard()->user();
 
         if ($createIfNotExists) {
-            return Cart::firstOrCreate(['user_id' => $user->id]);
+            return Cart::create(['user_id' => $user->id]);
         }
 
-        return Cart::where('user_id', $user->id)->first();
+        return Cart::where('user_id', $user->id)->with('cartItems')->get();
     }
 
 
@@ -41,16 +43,20 @@ class ECommerceController extends Controller
 
     public function cartIndex(Request $request)
     {
-        $cart = $this->getCart();
+        $carts = $this->getCart(); // ini collection
 
-        if (!$cart) {
-            return view('customer.cart', ['cart' => null]);
+        if ($carts->isEmpty()) {
+            return view('customer.cart', ['cartItems' => collect()]);
         }
 
-        $cart->load('cartItems');
+        // Gabungkan semua cartItems jadi satu collection
+        $cartItems = $carts->flatMap(function ($cart) {
+            return $cart->cartItems;
+        });
 
-        return view('customer.cart', compact('cart'));
+        return view('customer.cart', compact('cartItems'));
     }
+
 
     // Tambah produk ke keranjang
     public function add(Request $request)
@@ -112,17 +118,19 @@ class ECommerceController extends Controller
     public function checkout(Request $request)
     {
         $user = auth()->guard()->user();
-        $cart = Cart::where('user_id', $user->id)->first();
+        $carts = Cart::where('user_id', $user->id)->with('cartItems')->get();
 
-        if (!$cart) {
+        if ($carts->isEmpty()) {
             return back()->with('error', 'Keranjang tidak ditemukan');
         }
 
-        $cart->load('cartItems');
-
         $selectedIds = explode(',', $request->selected_items);
 
-        $selectedItems = $cart->cartItems->whereIn('id', $selectedIds);
+        // Gabungkan semua cartItems dari semua cart
+        $allItems = $carts->flatMap->cartItems;
+
+        // Filter hanya item yang dipilih
+        $selectedItems = $allItems->whereIn('id', $selectedIds);
 
         if ($selectedItems->isEmpty()) {
             return back()->with('error', 'Tidak ada item yang dipilih.');
@@ -133,7 +141,6 @@ class ECommerceController extends Controller
 
             $invoiceNumber = 'INVGS-' . now()->format('mdy') . '-' . strtoupper(Str::random(4));
 
-            // Simpan penjualan
             if ($request->payment_method == 'cod') {
                 $sale = Sales::create([
                     'invoice_number' => $invoiceNumber,
@@ -155,7 +162,7 @@ class ECommerceController extends Controller
                         'subtotal' => $item->subtotal,
                     ]);
 
-                    $item->delete();
+                    $item->delete(); // Hapus item yang dicheckout
                 }
             }
 
@@ -196,21 +203,34 @@ class ECommerceController extends Controller
                         'subtotal' => $item->subtotal,
                     ]);
 
-                    $item->delete();
+                    $item->delete(); // Hapus item yang dicheckout
                 }
             }
         });
-        $cart->delete();
+
+        // Hapus cart yang sudah tidak punya item
+        foreach ($carts as $cart) {
+            if ($cart->cartItems()->count() === 0) {
+                $cart->delete();
+            }
+        }
 
         return redirect()->route('customer.cart.index')->with('success', 'Checkout berhasil');
     }
 
+
     public function ordersIndex(Request $request)
     {
         $status = $request->input('status', 'belum dibayar');
+        $customerId = auth()->guard()->user()->customer->id;
 
-        $orders = Sales::with(['details', 'orders'])
-            ->where('customer_id', auth()->guard()->user()->customer->id)
+        $orders = Sales::with([
+            'details.product.reviews' => function ($query) use ($customerId) {
+                $query->where('customer_id', $customerId);
+            },
+            'orders'
+        ])
+            ->where('customer_id', $customerId)
             ->when($status === 'belum dibayar', fn($q) => $q->where('payment_status', 'menunggu pembayaran'))
             ->when(in_array($status, ['draft', 'persiapan', 'pengiriman', 'selesai']), function ($q) use ($status) {
                 $q->whereHas('orders', function ($query) use ($status) {
@@ -275,9 +295,59 @@ class ECommerceController extends Controller
         if ($request->has('category') && $request->category != '') {
             $query->where('category', $request->category);
         }
-
+        $query->withCount(['saleDetails as sold_count' => function ($query) {
+            $query->select(DB::raw("SUM(quantity)"));
+        }]);
         $products = $query->paginate(6);
 
         return view('customer.product', compact('products'));
+    }
+
+    public function productShow(string $id)
+    {
+        //get product by ID
+        $product = Product::withCount(['saleDetails as sold_count' => function ($query) {
+            $query->select(DB::raw("SUM(quantity)"));
+        }])->findOrFail($id);
+
+        return view('customer.product-show', compact('product'));
+    }
+
+    public function productComment(Request $request, string $salesId, string $productId)
+    {
+        $product = Product::with('reviews')->findOrFail($productId);
+        $user = $request->user();
+
+        // Cek apakah sudah ada review dari user untuk produk dan sales tertentu
+        $existingReview = $product->reviews()
+            ->where('customer_id', $user->customer->id)
+            ->where('sales_id', $salesId)
+            ->first();
+
+        return view('customer.comment', compact('product', 'user', 'salesId', 'existingReview'));
+    }
+
+    public function createComment(Request $request, $salesId, $productId)
+    {
+        $customerId = Auth::user()->customer->id;
+
+        $existing = ProductReview::where('customer_id')
+            ->where('product_id', $productId)
+            ->where('sales_id', $salesId) // Hanya di invoice ini
+            ->exists();
+
+        if ($existing) {
+            return redirect()->back()->with('error', 'Kamu sudah memberikan ulasan untuk produk ini pada invoice ini.');
+        }
+
+        ProductReview::create([
+            'customer_id' => $customerId,
+            'product_id' => $productId,
+            'sales_id' => $salesId,
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->route('customer.orders.index', ['status' => 'selesai'])->with('success', 'Ulasan berhasil dikirim.');
     }
 }

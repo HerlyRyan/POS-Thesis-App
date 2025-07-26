@@ -5,7 +5,7 @@
             <i class="fas fa-shopping-cart text-indigo-600 mr-3"></i> Keranjang Belanja Anda
         </h2>
 
-        @if (!$cart || $cart->cartItems->isEmpty())
+        @if ($cartItems->isEmpty())
             <div class="py-12 text-center">
                 <p class="text-gray-500 text-lg mb-4">Keranjang belanja Anda masih kosong.</p>
                 <a href="{{ route('welcome') }}"
@@ -37,7 +37,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach ($cart->cartItems as $item)
+                        @foreach ($cartItems as $item)
                             <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <input type="checkbox"
@@ -92,7 +92,7 @@
             </div>
 
             <div class="block md:hidden space-y-6 mb-8">
-                @foreach ($cart->cartItems as $item)
+                @foreach ($cartItems as $item)
                     <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
                         <div class="flex items-center justify-between mb-3">
                             <label class="flex items-center space-x-3">

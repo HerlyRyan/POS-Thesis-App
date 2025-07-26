@@ -107,12 +107,12 @@
         td {
             border: 1px solid #000;
             padding: 6px;
-            text-align: left;
+            text-align: center;
             page-break-inside: avoid;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #f2f2f2;            
         }
 
         .text-right {

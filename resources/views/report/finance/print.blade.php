@@ -27,7 +27,13 @@ Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia'" :companyPhone="'+62 821-
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ \Carbon\Carbon::parse($record->transaction_date)->format('d/m/Y') }}</td>
-                    <td>{{ ucfirst($record->type) }}</td>
+                    <td>
+                        @if ($record->type == 'income')
+                            Masuk
+                        @else
+                            Keluar
+                        @endif
+                    </td>
                     <td>{{ ucfirst($record->source) }}</td>
                     <td>{{ ucfirst($record->category) }}</td>
                     <td>{{ $record->description }}</td>

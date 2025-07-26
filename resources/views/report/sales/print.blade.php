@@ -12,26 +12,26 @@
         <thead>
             <tr>
                 <th>No</th>
+                <th>Tanggal</th>
                 <th>No. Invoice</th>
-                <th>Customer</th>
-                <th>Sales</th>
+                <th>Pelanggan</th>
+                <th>Penjual</th>
                 <th>Metode Pembayaran</th>
                 <th>Status</th>
                 <th>Total</th>
-                <th>Tanggal</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($sales as $i => $sale)
                 <tr>
                     <td>{{ $i + 1 }}</td>
+                    <td>{{ \Carbon\Carbon::parse($sale->transaction_date)->format('d-m-Y') }}</td>
                     <td>{{ $sale->invoice_number }}</td>
                     <td>{{ $sale->customer->user->name ?? 'N/A' }}</td>
                     <td>{{ $sale->user->name ?? 'Website' }}</td>
                     <td>{{ ucfirst($sale->payment_method) }}</td>
                     <td>{{ ucfirst($sale->payment_status) }}</td>
                     <td class="right">Rp {{ number_format($sale->total_price, 0, ',', '.') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($sale->transaction_date)->format('d-m-Y') }}</td>
                 </tr>
             @endforeach
         </tbody>

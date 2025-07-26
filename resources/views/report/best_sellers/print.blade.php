@@ -22,12 +22,12 @@ Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia'" :companyPhone="'+62 821-
                 <th>Total Terjual</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="text-align: center">
             @forelse ($topProducts as $product)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $product->name }}</td>
-                    <td class="text-right">{{ $product->total_sold ?? 0 }} {{ $product->unit }}</td>
+                    <td>{{ $product->total_sold ?? 0 }} {{ $product->unit }}</td>
                 </tr>
             @empty
                 <tr>

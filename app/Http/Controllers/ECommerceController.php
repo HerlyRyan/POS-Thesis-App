@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductReview;
 use App\Models\Sales;
+use App\Models\TruckTracking;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -281,7 +282,9 @@ class ECommerceController extends Controller
             $order->driver->update(['status' => 'tersedia']);
         }
 
-        return redirect()->back()->with('success', 'Pesanan berhasil dikonfirmasi selesai.');
+        TruckTracking::findOrFail($order->truck->id)->delete();
+
+        return redirect()->route('customer.orders.index', ['status' => 'selesai'])->with('success', 'Pesanan berhasil dikonfirmasi selesai.');
     }
 
     public function productIndex(Request $request)
@@ -349,5 +352,11 @@ class ECommerceController extends Controller
         ]);
 
         return redirect()->route('customer.orders.index', ['status' => 'selesai'])->with('success', 'Ulasan berhasil dikirim.');
+    }
+
+    public function truckTracking(string $id)
+    {
+        $sale = Sales::with(['orders', 'orders.truck.latestTracking'])->findOrFail($id);
+        return view('customer.track-location', compact('sale'));
     }
 }

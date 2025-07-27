@@ -66,6 +66,15 @@
                                 <i class="far fa-calendar-alt mr-2"></i> Tanggal:
                                 {{ $order->transaction_date->format('d F Y, H:i') }} WITA
                             </p>
+                            {{-- Menampilkan estimasi sampai untuk status persiapan & pengiriman --}}
+                            @if ($current === 'persiapan' || $current === 'pengiriman')
+                                <p class="text-sm text-gray-500 mb-1">
+                                    <i class="far fa-calendar-check mr-2 text-green-600"></i> Estimasi Sampai:
+                                    {{-- Asumsi estimasi 3 hari setelah tanggal transaksi. Sesuaikan dengan logika bisnis Anda. --}}
+                                    <span
+                                        class="font-semibold text-gray-700">{{ $order->transaction_date->addDays(3)->format('d F Y') }}</span>
+                                </p>
+                            @endif
                             <p class="text-md text-gray-700 font-semibold mb-3">
                                 Total: <strong class="text-indigo-700">Rp
                                     {{ number_format($order->total_price, 0, ',', '.') }}</strong>
@@ -130,6 +139,14 @@
                                 class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200">
                                 <i class="fas fa-info-circle mr-2"></i> Detail Pesanan
                             </a>
+
+                            {{-- Tombol Lacak Lokasi untuk status pengiriman --}}
+                            @if ($current === 'pengiriman')
+                                <a href="{{ route('customer.track.location', $order->id) }}"
+                                    class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition duration-200">
+                                    <i class="fas fa-map-marker-alt mr-2"></i> Lacak Lokasi
+                                </a>
+                            @endif
 
                             @if ($order->status === 'pengiriman' && $order->payment_status === 'dibayar')
                                 <form method="POST" action="{{ route('customer.orders.complete', $order->id) }}"

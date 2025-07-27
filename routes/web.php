@@ -140,6 +140,8 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer
 
         Route::get('/products/comment/{sales}/{product}', [ECommerceController::class, 'productComment'])->name('product.comments');
         Route::post('/create/product/comment/{sales}/{product}', [ECommerceController::class, 'createComment'])->name('create.product.comment');
+
+        Route::get('/tracking/loc/{id}', [ECommerceController::class, 'truckTracking'])->name('track.location');
     }
 );
 

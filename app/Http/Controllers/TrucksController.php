@@ -154,12 +154,14 @@ class TrucksController extends Controller
             'longitude' => 'required|numeric',
         ]);
 
-        TruckTracking::create([
-            'truck_id' => $validated['truck_id'],
-            'latitude' => $validated['latitude'],
-            'longitude' => $validated['longitude'],
-            'status' => 'jalan',
-        ]);
+        TruckTracking::updateOrCreate(
+            ['truck_id' => $validated['truck_id']], // kondisi pencarian
+            [ // data yang ingin diupdate atau dibuat
+                'latitude' => $validated['latitude'],
+                'longitude' => $validated['longitude'],
+                'status' => 'jalan',
+            ]
+        );
 
         return response()->json(['message' => 'Lokasi berhasil diperbarui']);
     }

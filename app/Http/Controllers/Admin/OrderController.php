@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employees;
 use App\Models\Order;
 use App\Models\Truck;
+use App\Models\TruckTracking;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -116,6 +117,14 @@ class OrderController extends Controller
         $driver->update(['status' => 'bekerja']);
         $truck->update(['status' => 'dipakai']);
 
+        TruckTracking::create([
+            'truck_id' => $truck->id,
+            'latitude' => -3.4868733,
+            'longitude' => 114.7087524,
+            19,
+            'status' => 'jalan',
+        ]);
+
         return redirect()->route('admin.orders.index')->with('success', 'Supir dan truk berhasil ditetapkan.');
     }
 
@@ -137,6 +146,8 @@ class OrderController extends Controller
         if ($order->driver) {
             $order->driver->update(['status' => 'tersedia']);
         }
+
+        TruckTracking::findOrFail($order->truck->id)->delete();
 
         return redirect()->route('admin.orders.index')->with('success', 'Order berhasil diselesaikan.');
     }

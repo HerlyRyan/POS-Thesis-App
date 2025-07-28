@@ -7,198 +7,222 @@
     <style>
         body {
             font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif;
-            font-size: 12px;
+            font-size: 14px;
             line-height: 1.6;
             color: #333;
+            background-color: #f7f7f7;
             margin: 0;
-            padding: 20px;
-            -webkit-print-color-adjust: exact; /* For better print colors */
+            padding: 0;
+            -webkit-print-color-adjust: exact;
         }
-        .invoice-box {
+        .invoice-container {
             max-width: 800px;
-            margin: auto;
-            padding: 30px;
-            border: 1px solid #eee;
-            box-shadow: 0 0 10px rgba(0, 0, 0, .15);
-            font-size: 14px;
-            line-height: 24px;
-            color: #555;
+            margin: 20px auto;
+            padding: 40px;
             background: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
         }
-        .invoice-box table {
-            width: 100%;
-            line-height: inherit;
-            text-align: left;
-            border-collapse: collapse;
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #007bff;
         }
-        .invoice-box table td {
-            padding: 8px 5px;
-            vertical-align: top;
+        .invoice-header .logo-container {
+            flex: 1;
         }
-        .invoice-box table tr td:nth-child(2) {
+        .invoice-header .logo-container img {
+            max-width: 150px;
+        }
+        .invoice-header .invoice-details {
+            flex: 1;
             text-align: right;
         }
-        .invoice-box table tr.top table td {
-            padding-bottom: 20px;
+        .invoice-header h1 {
+            margin: 0;
+            color: #007bff;
+            font-size: 2.4em;
+            font-weight: 700;
         }
-        .invoice-box table tr.top table td.title {
-            font-size: 45px;
-            line-height: 45px;
-            color: #333;
+        .invoice-header .invoice-details p {
+            margin: 0;
+            font-size: 1em;
+            line-height: 1.5;
         }
-        .invoice-box table tr.information table td {
-            padding-bottom: 25px;
+        .company-customer-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
         }
-        .invoice-box table tr.heading td {
-            background: #eee;
-            border-bottom: 1px solid #ddd;
-            font-weight: bold;
-            padding: 8px 5px;
+        .company-customer-info .info-block {
+            width: 48%;
         }
-        .invoice-box table tr.details td {
-            padding-bottom: 20px;
-        }
-        .invoice-box table tr.item td {
+        .company-customer-info h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #555;
             border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            font-size: 1.1em;
         }
-        .invoice-box table tr.item.last td {
+        .company-customer-info p {
+            margin: 0;
+            line-height: 1.6;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .invoice-table th, .invoice-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .invoice-table thead th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            border-bottom: 2px solid #ccc;
+        }
+        .invoice-table tbody tr:last-child td {
             border-bottom: none;
         }
-        .invoice-box table tr.total td:nth-child(2) {
-            border-top: 2px solid #eee;
+        .invoice-table .text-center { text-align: center; }
+        .invoice-table .text-right { text-align: right; }
+        .invoice-summary {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 30px;
+        }
+        .invoice-summary table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+        .invoice-summary td {
+            padding: 10px 15px;
+        }
+        .invoice-summary .total {
+            font-size: 1.4em;
             font-weight: bold;
-            text-align: right;
-            padding-top: 10px;
+            color: #007bff;
+            border-top: 2px solid #007bff;
+            border-bottom: 2px solid #007bff;
         }
-        .invoice-box table tr.total td:nth-child(1) {
-            text-align: right;
-            padding-top: 10px;
+        .invoice-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-size: 0.9em;
+            color: #777;
         }
-        .invoice-box .header-info {
-            float: right;
-            text-align: right;
+        .invoice-footer .notes {
+            margin-bottom: 20px;
         }
-        .invoice-box .customer-info {
-            text-align: left;
+        .invoice-footer .notes strong {
+            color: #333;
         }
-        .invoice-box .company-info {
-            text-align: left;
-        }
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
-        }
-
-        /* Responsive Styles (for screens, less critical for print) */
-        @media only screen and (max-width: 600px) {
-            .invoice-box table tr.top table td {
-                width: 100%;
-                display: block;
-                text-align: center;
+        @media print {
+            body {
+                background-color: #fff;
             }
-            .invoice-box table tr.information table td {
-                width: 100%;
-                display: block;
-                text-align: center;
+            .invoice-container {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
+                max-width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="invoice-box">
-        <table>
-            <tr class="top">
-                <td colspan="4">
-                    <table>
-                        <tr>
-                            <td class="title">
-                                {{-- You can put a logo here if you have one --}}
-                                {{-- <img src="your_logo.png" style="width:100%; max-width:150px;"> --}}
-                                <h1>FAKTUR</h1>
-                            </td>
-                            <td>
-                                No. Faktur: **{{ $sale->invoice_number }}**<br>
-                                Tanggal: {{ \Carbon\Carbon::parse($sale->transaction_date)->format('d F Y H:i') }}<br>
-                                Jatuh Tempo: N/A (sesuai status pembayaran)
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+    <div class="invoice-container">
+        <header class="invoice-header">
+            <div class="logo-container">
+                <img src="{{ asset('/storage/logo.png') }}" alt="Logo Galam Sani">
+            </div>
+            <div class="invoice-details">
+                <h1>INVOICE</h1>
+                <p><strong>No. Faktur:</strong> {{ $sale->invoice_number }}</p>
+                <p><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($sale->transaction_date)->format('d F Y') }}</p>
+                <p><strong>Status:</strong> <span style="font-weight:bold; color: {{ $sale->payment_status == 'dibayar' ? '#28a745' : '#dc3545' }};">{{ ucfirst(str_replace('_', ' ', $sale->payment_status)) }}</span></p>
+            </div>
+        </header>
 
-            <tr class="information">
-                <td colspan="4">
-                    <table>
-                        <tr>
-                            <td class="company-info">
-                                **Galam Sani**<br>
-                                Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang<br>
-                                Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia<br>
-                                Telepon: +62 821-5604-8305<br>
-                                Email: info@galamsani.co.id
-                            </td>
+        <section class="company-customer-info">
+            <div class="info-block">
+                <h3>Dari:</h3>
+                <p><strong>Galam Sani</strong></p>
+                <p>Jl. Jurusan Pelaihari KM. 24, Landasan Ulin Selatan, Liang Anggang</p>
+                <p>Kota Banjarbaru, Kalimantan Selatan, 70722</p>
+                <p>+62 821-5604-8305</p>
+            </div>
+            <div class="info-block" style="text-align: right;">
+                <h3>Untuk:</h3>
+                @if ($sale->customer)
+                    <p><strong>{{ $sale->customer->user->name }}</strong></p>
+                    <p>{{ $sale->customer->address ?? 'Alamat tidak tersedia' }}</p>
+                    <p>{{ $sale->customer->phone ?? 'Telepon tidak tersedia' }}</p>
+                @else
+                    <p><strong>Pelanggan Umum</strong></p>
+                @endif
+            </div>
+        </section>
 
-                            <td class="customer-info">
-                                @if ($sale->customer)
-                                    **{{ $sale->customer->name }}**<br>
-                                    {{ $sale->customer->address ?? 'N/A' }}<br>
-                                    {{ $sale->customer->phone ?? 'N/A' }}
-                                @else
-                                    **Guest Customer**<br>
-                                    N/A<br>
-                                    N/A
-                                @endif
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-
-            <tr class="heading">
-                <td>Payment Method</td>
-                <td colspan="3">Payment Status</td>
-            </tr>
-            <tr class="details">
-                <td>{{ ucfirst($sale->payment_method) }}</td>
-                <td colspan="3">{{ ucfirst(str_replace('_', ' ', $sale->payment_status)) }}</td>
-            </tr>
-
-            <tr class="heading">
-                <td>Product Name</td>
-                <td style="text-align: center;">Qty</td>
-                <td style="text-align: right;">Unit Price</td>
-                <td style="text-align: right;">Subtotal</td>
-            </tr>
-
-            @foreach ($sale->details as $detail)
-            <tr class="item">
-                <td>{{ $detail->product_name }}</td>
-                <td style="text-align: center;">{{ $detail->quantity }}</td>
-                <td style="text-align: right;">Rp {{ number_format($detail->price, 2, ',', '.') }}</td>
-                <td style="text-align: right;">Rp {{ number_format($detail->subtotal, 2, ',', '.') }}</td>
-            </tr>
-            @endforeach
-
-            <tr class="total">
-                <td colspan="3">Total:</td>
-                <td>Rp {{ number_format($sale->total_price, 2, ',', '.') }}</td>
-            </tr>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Produk</th>
+                    <th class="text-center">Kuantitas</th>
+                    <th class="text-right">Harga Satuan</th>
+                    <th class="text-right">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($sale->details as $detail)
+                <tr>
+                    <td>{{ $detail->product_name }}</td>
+                    <td class="text-center">{{ $detail->quantity }}</td>
+                    <td class="text-right">Rp {{ number_format($detail->price, 0, ',', '.') }}</td>
+                    <td class="text-right">Rp {{ number_format($detail->subtotal, 0, ',', '.') }}</td>
+                </tr>
+                @endforeach
+            </tbody>
         </table>
 
-        <div style="margin-top: 30px; text-align: center;">
+        <section class="invoice-summary">
+            <table>
+                <tr>
+                    <td class="text-right">Metode Pembayaran:</td>
+                    <td class="text-right" style="font-weight: bold;">{{ ucfirst($sale->payment_method) }}</td>
+                </tr>
+                <tr>
+                    <td class="text-right total">Total</td>
+                    <td class="text-right total">Rp {{ number_format($sale->total_price, 0, ',', '.') }}</td>
+                </tr>
+            </table>
+        </section>
+
+        <footer class="invoice-footer">
             @if ($sale->note)
-                <p><strong>Note:</strong> {{ $sale->note }}</p>
+                <div class="notes">
+                    <strong>Catatan:</strong>
+                    <p>{{ $sale->note }}</p>
+                </div>
             @endif
             <p>Kasir: {{ $sale->user ? $sale->user->name : 'N/A' }}</p>
-            <p style="font-size: 11px; margin-top: 20px;">
-                Terima kasih telah membeli!<br>
-                Tolong simpan faktur ini untuk bukti pembelian.
+            <p><strong>Terima kasih atas pembelian Anda!</strong></p>
+            <p style="font-size: 0.8em; margin-top: 20px;">
+                Dicetak pada: {{ \Carbon\Carbon::now()->format('d F Y H:i:s') }}
             </p>
-            <p style="font-size: 10px; margin-top: 10px;">
-                Tergenerate pada: {{ \Carbon\Carbon::now()->format('d F Y H:i:s') }}
-            </p>
-        </div>
+        </footer>
     </div>
 </body>
 </html>

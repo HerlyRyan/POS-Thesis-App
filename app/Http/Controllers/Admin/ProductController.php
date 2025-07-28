@@ -153,7 +153,7 @@ class ProductController extends Controller
 
     public function update_stock_view()
     {
-        $products = Product::all();
+        $products = Product::orderBy('stock', 'asc')->get();
         return view('admin.product.increase-stock', compact('products'));
     }
 

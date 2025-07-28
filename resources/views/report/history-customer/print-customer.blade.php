@@ -27,7 +27,7 @@ Kota Banjarbaru, Kalimantan Selatan, 70722, Indonesia'" :companyPhone="'+62 821-
                     <td>{{ $customer->user->email }}</td>
                     <td>{{ $customer->phone ?? '-' }}</td>
                     <td>{{ $customer->address ?? '-' }}</td>
-                    <td class="text-right">{{ $customer->sales_count ?? '0' }}</td>
+                    <td>{{ $customer->sales_count ?? '0' }}</td>
                 </tr>
             @empty
                 <tr>

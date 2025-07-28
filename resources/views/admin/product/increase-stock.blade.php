@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold text-white">Tambah Stock Produk</h1>
+        <h1 class="text-2xl font-bold text-white">Tambah Stok Produk</h1>
         <br>
         <form action="{{ route('admin.product.update-stock') }}" method="POST" enctype="multipart/form-data"
             id="edit-product-form">
@@ -12,15 +12,16 @@
             @method('PUT')
 
             <div class="flex flex-col gap-1 mb-4">
-                <label for="productId" class="block font-medium text-gray-700 dark:text-gray-200">Pelanggan</label>
+                <label for="productId" class="block font-medium text-gray-700 dark:text-gray-200">Produk</label>
                 <select name="productId" class="product-select w-full rounded border-gray-300">
                     <option value="">-- Pilih Produk --</option>
                     @foreach ($products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                        <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->stock }}
+                            {{ $product->unit }})</option>
                     @endforeach
                 </select>
             </div>
-            
+
             <div class="mb-4">
                 <label for="stock" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Stok</label>
                 <input type="text" pattern="\d*" inputmode="numeric" id="stock" name="stock"
@@ -41,7 +42,7 @@
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Simpan Perubahan
                 </button>
-            </div>            
+            </div>
         </form>
 
         <x-confirm-create-update-button :name="'confirm-edit'" modalForm="edit-product-form"

@@ -9,7 +9,7 @@
             $employee = $user->employee;
             $truckId = $employee?->activeOrder?->truck_id;
         @endphp
-        @if ($role === 'employee' && $position === 'supir')            
+        @if ($role === 'employee' && $position === 'supir')
             <script>
                 const truckId = @json($truckId);
                 console.log(truckId)
@@ -161,13 +161,26 @@
     </div>
 
     <div class="mt-8">
-
-    </div>
-
-    <div class="flex flex-col mt-8">
         <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Sales Performance</h2>
-            <div class="relative" style="height: 350px;">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700">Sales Performance</h2>
+                    <p class="text-sm text-gray-500">Grafik penjualan bulanan untuk tahun {{ $selectedYear }}</p>
+                </div>
+                <form method="GET" action="{{ route('dashboard') }}" class="mt-4 sm:mt-0">
+                    <label for="year" class="sr-only">Pilih Tahun:</label>
+                    <select name="year" id="year" onchange="this.form.submit()"
+                        class="block w-full sm:w-auto rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        @foreach ($availableYears as $year)
+                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                                {{ $year }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+
+            <div class="relative h-80">
                 <canvas id="salesChart"></canvas>
             </div>
         </div>
@@ -189,55 +202,184 @@
             ['December', 0],
         ];
     @endphp
+
+    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Distribusi Lokasi Pelanggan</h2>
+        <div id="customerMap" style="height: 400px;"></div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Status Pengiriman</h2>
+        <div class="relative" style="height: 300px;">
+            <canvas id="shippingStatusChart"></canvas>
+        </div>
+    </div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
+            // Sales Performance Chart
+            const salesCtx = document.getElementById('salesChart')?.getContext('2d');
+            if (salesCtx) {
+                const salesData = @json($monthlySales);
+                const salesLabels = salesData.map(item => item[0]);
+                const salesValues = salesData.map(item => item[1]);
 
-            // Replace this with your actual sales data from the backend
-            const salesData = @json($monthlySales);
+                const gradient = salesCtx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, 'rgba(79, 70, 229, 0.5)');
+                gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
 
-            const months = salesData.map(item => item[0]);
-            const values = salesData.map(item => item[1]);
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Monthly Sales',
-                        data: values,
-                        backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                        borderColor: 'rgba(79, 70, 229, 1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                drawBorder: false
+                new Chart(salesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: salesLabels,
+                        datasets: [{
+                            label: 'Penjualan Bulanan',
+                            data: salesValues,
+                            backgroundColor: gradient,
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(79, 70, 229, 1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(200, 200, 200, 0.2)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
                             }
                         },
-                        x: {
-                            grid: {
+                        plugins: {
+                            legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: '#fff',
+                                titleColor: '#333',
+                                bodyColor: '#666',
+                                borderColor: '#ddd',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += 'Rp ' + new Intl.NumberFormat('id-ID').format(
+                                                context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
                             }
                         }
-                    },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        }
                     }
+                });
+            }
+
+            // Customer Location Distribution Map
+            const customerMap = L.map('customerMap').setView([-3.3, 114.6], 8);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(customerMap);
+
+            const customerData = @json($customerLocations);
+
+            // Inisialisasi cluster group
+            const markers = L.markerClusterGroup();
+
+            customerData.forEach(customer => {
+                if (customer.latitude && customer.longitude) {
+                    const marker = L.marker([customer.latitude, customer.longitude])
+                        .bindPopup(`<strong>${customer.name}</strong><br>${customer.address}`);
+                    markers.addLayer(marker);
                 }
             });
+
+            customerMap.addLayer(markers);
+
+            // Shipping Status Chart
+            const shippingCtx = document.getElementById('shippingStatusChart')?.getContext('2d');
+            if (shippingCtx) {
+                const shippingStatusData = @json($shippingStatusChartData);
+                const statusLabels = shippingStatusData.map(item => item.status.charAt(0).toUpperCase() + item
+                    .status.slice(1));
+                const statusCounts = shippingStatusData.map(item => item.total);
+
+                new Chart(shippingCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusLabels,
+                        datasets: [{
+                            data: statusCounts,
+                            backgroundColor: [
+                                'rgba(251, 191, 36, 0.8)', // draft (amber-400)
+                                'rgba(59, 130, 246, 0.8)', // persiapan (blue-500)
+                                'rgba(16, 185, 129, 0.8)', // pengiriman (emerald-500)
+                                'rgba(139, 92, 246, 0.8)', // selesai (violet-500)
+                            ],
+                            borderColor: [
+                                'rgba(251, 191, 36, 1)',
+                                'rgba(59, 130, 246, 1)',
+                                'rgba(16, 185, 129, 1)',
+                                'rgba(139, 92, 246, 1)',
+                            ],
+                            borderWidth: 1,
+                            hoverOffset: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '80%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    boxWidth: 12,
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         });
 
         function dismissNotification() {

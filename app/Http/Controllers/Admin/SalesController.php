@@ -170,7 +170,7 @@ class SalesController extends Controller
         // Ambil data sales
         $sale = Sales::findOrFail($id);
 
-        if ($sale->payment_method == 'cod') {
+        if ($sale->payment_method == 'cod' && $sale->payment_status == 'menunggu pembayaran') {
             $saleDetails = $sale->details;
 
             // Tambah stok untuk setiap produk

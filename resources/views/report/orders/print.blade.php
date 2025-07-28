@@ -31,10 +31,10 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $order->sale->invoice_number ?? '-' }}</td>
-                    <td>{{ $order->workers->count() > 0 ? $order->workers->pluck('user.name')->map(function ($name) {return ucfirst($name);})->join(', ') : '-' }}</td>
-                    <td>{{ ucfirst($order->driver->user->name ?? '-') }}</td>
-                    <td>{{ $order->truck->plate_number ?? '-' }}</td>
-                    <td>{{ $order->shipping_date ? \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') : '-' }}</td>
+                    <td>{{ $order->workers->count() > 0 ? $order->workers->pluck('user.name')->map(function ($name) {return ucfirst($name);})->join(', ') : 'Belum Ditentukan' }}</td>
+                    <td>{{ ucfirst($order->driver->user->name ?? 'Belum Ditentukan') }}</td>
+                    <td>{{ $order->truck->plate_number ?? 'Belum Ditentukan' }}</td>
+                    <td>{{ $order->shipping_date ? \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') : 'Belum Ditentukan' }}</td>
                     <td>{{ $order->status ? ucfirst($order->status) : '-' }}</td>
                 </tr>
             @empty

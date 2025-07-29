@@ -46,16 +46,46 @@
                                     {{ $loop->iteration + $orders->firstItem() - 1 }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                     {{ $order->sale->invoice_number ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $order->workers->pluck('user.name')->map(function ($name) {return ucfirst($name);})->join(', ') ?? '-' }}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    @if ($order->workers->count() > 0)
+                                        {{ $order->workers->pluck('user.name')->map(fn($name) => ucfirst($name))->join(', ') }}
+                                    @else
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            Belum Ditentukan
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ ucfirst(optional(optional($order->driver)->user)->name) ?? '-' }}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    @if ($order->driver && $order->driver->user)
+                                        {{ ucfirst($order->driver->user->name) }}
+                                    @else
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            Belum Ditentukan
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $order->truck->plate_number ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    @if ($order->truck)
+                                        {{ $order->truck->plate_number }}
+                                    @else
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            Belum Ditentukan
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                    @if ($order->shipping_date)
+                                        {{ \Carbon\Carbon::parse($order->shipping_date)->format('d M Y') }}
+                                    @else
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            Belum Ditentukan
+                                        </span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -63,7 +93,7 @@
                                         {{ ucfirst($order->status) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td class="flex items-center space-x-4 px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     @if (Auth::user()->roles->first()?->name === 'admin')
                                         @if ($order->status == 'draft')
                                             <a href="{{ route('admin.orders.assignWorkerView', $order) }}"
@@ -89,6 +119,15 @@
                                                 confirmMessage="Konfirmasi Pengiriman Selesai"
                                                 question="Apakah Anda yakin ingin menyelesaikan pengiriman ini?"
                                                 buttonText="Ya, Selesai" />
+                                        @elseif ($order->status === 'selesai' && !$order->payments->count())
+                                            <a href="{{ route('admin.order_payments.create', $order) }}"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">
+                                                Buat Pembayaran
+                                            </a>
+                                        @elseif ($order->status === 'selesai' && $order->payments->count())
+                                            <a href="{{ route('admin.order_payments.index', $order->id) }}"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Riwayat
+                                                Pembayaran</a>
                                         @endif
                                         <a href="{{ route('admin.orders.show', $order) }}"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
@@ -96,8 +135,6 @@
                                         <a href="{{ route('admin.orders.show', $order) }}"
                                             class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300">Detail</a>
                                     @endif
-                                    <div class="flex items-center gap-2">
-                                    </div>
                                 </td>
                             </tr>
                         @empty

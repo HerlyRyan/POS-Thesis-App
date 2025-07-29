@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SalesController;
 use App\Http\Controllers\ECommerceController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Report;
 use App\Http\Controllers\TrucksController;
 
@@ -83,6 +84,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::get('orders/{order}/assign-delivery', [OrderController::class, 'assignDeliveryForm'])->name('orders.assign_delivery_form');
         Route::post('orders/{order}/assign-delivery', [OrderController::class, 'assignDelivery'])->name('orders.assign_delivery');
         Route::put('orders/{order}/complete', [OrderController::class, 'markAsCompleted'])->name('orders.complete');
+        Route::get('/order-payments/{id}', [OrderPaymentController::class, 'index'])->name('order_payments.index');
+        Route::get('/orders/{order}/pay', [OrderPaymentController::class, 'create'])->name('order_payments.create');
+        Route::post('/order-payments', [OrderPaymentController::class, 'store'])->name('order_payments.store');
+        Route::get('/order-payments/print_evidence/{id}', [OrderPaymentController::class, 'print_evidence'])->name('order_payments.evidence');
 
         Route::get('/tracking/truck', [TrucksController::class, 'tracking'])->name('tracking.truck');
     });

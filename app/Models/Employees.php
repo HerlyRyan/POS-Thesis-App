@@ -30,4 +30,9 @@ class Employees extends Model
     {
         return $this->hasOne(Order::class, 'driver_id')->where('status', 'pengiriman');
     }
+
+    public function orderPayments()
+    {
+        return $this->hasMany(OrderPayments::class);
+    }
 }

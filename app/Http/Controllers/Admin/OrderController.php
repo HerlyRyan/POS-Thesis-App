@@ -8,12 +8,26 @@ use App\Models\Order;
 use App\Models\Truck;
 use App\Models\TruckTracking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function index(Request $request)
     {
         $query = Order::with(['sale', 'driver', 'truck', 'workers.user']);
+
+        $user = Auth::user();
+        
+        if ($user->roles->first()?->name === 'employee') {
+            $employeeId = $user->id;            
+
+            $query->where(function ($q) use ($employeeId) {
+                $q->where('driver_id', $employeeId)
+                    ->orWhereHas('workers', function ($q2) use ($employeeId) {
+                        $q2->where('employees.id', $employeeId);
+                    });
+            });
+        }
 
         if ($request->filled('search')) {
             $search = $request->search;

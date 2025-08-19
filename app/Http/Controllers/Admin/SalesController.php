@@ -10,7 +10,7 @@ use App\Models\Product;
 use App\Models\SaleDetail;
 use App\Models\Sales;
 use App\Services\MidtransService;
-use App\Services\UltraMsgService;
+use App\Services\FonnteService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +23,13 @@ use Illuminate\Support\Facades\Response;
 
 class SalesController extends Controller
 {
+    protected $fonnte;
+
+    public function __construct(FonnteService $fonnte)
+    {
+        $this->fonnte = $fonnte;
+    }
+
     public function index(Request $request): View
     {
         $query = Sales::with('customer'); // Add relationship loading
@@ -208,11 +215,8 @@ class SalesController extends Controller
                     $product->decrement('stock', $detail->quantity);
                 }
                 if ($product->stock <= 10) {
-                    $whatsapp = new UltraMsgService();
-                    $whatsapp->sendMessage(
-                        '6281253864116', // ganti dengan nomor admin kamu (pakai format internasional tanpa +)
-                        "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!"
-                    );
+                    $message = "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!";
+                    $this->fonnte->sendMessage('085821331091', $message);
                 }
             }
 
@@ -261,11 +265,8 @@ class SalesController extends Controller
                     $product->decrement('stock', $detail->quantity);
                 }
                 if ($product->stock <= 10) {
-                    $whatsapp = new UltraMsgService();
-                    $whatsapp->sendMessage(
-                        '6281253864116', // ganti dengan nomor admin kamu (pakai format internasional tanpa +)
-                        "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!"
-                    );
+                    $message = "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!";
+                    $this->fonnte->sendMessage('085821331091', $message);
                 }
             }
 

@@ -7,10 +7,18 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Sales;
+use App\Services\FonnteService;
 use Illuminate\Support\Facades\Log;
 
 class MidtransWebhookController extends Controller
 {
+    protected $fonnte;
+
+    public function __construct(FonnteService $fonnte)
+    {
+        $this->fonnte = $fonnte;
+    }
+
     public function handle(Request $request)
     {
         Log::info('Midtrans Webhook Payload: ', $request->all());
@@ -37,6 +45,10 @@ class MidtransWebhookController extends Controller
                 $product = Product::find($detail->product_id);
                 if ($product) {
                     $product->decrement('stock', $detail->quantity);
+                }
+                if ($product->stock <= 10) {
+                    $message = "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!";
+                    $this->fonnte->sendMessage('085821331091', $message);
                 }
             }
 

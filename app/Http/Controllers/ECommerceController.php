@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductReview;
 use App\Models\Sales;
 use App\Models\TruckTracking;
+use App\Services\FonnteService;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,13 @@ use Illuminate\Support\Str;
 
 class ECommerceController extends Controller
 {
+    protected $fonnte;
+
+    public function __construct(FonnteService $fonnte)
+    {
+        $this->fonnte = $fonnte;
+    }
+
     // Ambil keranjang aktif milik user (kasir)
     private function getCart(bool $createIfNotExists = false)
     {
@@ -139,7 +147,7 @@ class ECommerceController extends Controller
 
         DB::transaction(function () use ($user, $selectedItems, $request) {
             $total = $selectedItems->sum('subtotal');
-
+            
             $invoiceNumber = 'INVGS-' . now()->format('mdy') . '-' . strtoupper(Str::random(4));
 
             if ($request->payment_method == 'cod') {
@@ -172,7 +180,7 @@ class ECommerceController extends Controller
 
                 $params = [
                     'transaction_details' => [
-                        'order_id' => $request->invoice,
+                        'order_id' => $invoiceNumber,
                         'gross_amount' => $total,
                     ],
                     'customer_details' => [
@@ -184,7 +192,7 @@ class ECommerceController extends Controller
                 $snap = $midtrans->createTransaction($params);
 
                 $sale = Sales::create([
-                    'invoice_number' => $request->invoice,
+                    'invoice_number' => $invoiceNumber,
                     'customer_id' => $user->customer->id,
                     'user_id' => $request->user()->id,
                     'total_price' => $total,
@@ -207,7 +215,28 @@ class ECommerceController extends Controller
                     $item->delete(); // Hapus item yang dicheckout
                 }
             }
+
+            // Send Message
+            $customerName = $user->name;            
+            $paymentMethod = $request->payment_method === 'cod' ? 'Bayar di Tempat (COD)' : 'Transfer Bank';
+    
+            $itemsList = '';
+            foreach ($selectedItems as $item) {
+                $itemsList .= "- {$item->product_name} (Qty: {$item->quantity})\n";
+            }
+    
+            $message = "🔔 *Pesanan Baru Masuk* 🔔\n\n" .
+                   "Ada pesanan baru dari pelanggan:\n" .
+                   "*Nama:* {$customerName}\n" .
+                   "*No. Invoice:* {$invoiceNumber}\n" .
+                   "*Total:* Rp {$total}\n" .
+                   "*Pembayaran:* {$paymentMethod}\n\n" .
+                   "*Item yang dipesan:*\n" .
+                   $itemsList . "\n" .
+                   "Mohon segera diproses. Terima kasih.";
+            $this->fonnte->sendMessage('085821331091', $message);
         });
+
 
         // Hapus cart yang sudah tidak punya item
         foreach ($carts as $cart) {

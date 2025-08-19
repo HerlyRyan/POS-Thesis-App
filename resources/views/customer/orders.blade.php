@@ -160,7 +160,7 @@
                                 </form>
                             @endif
 
-                            @if ($order->payment_method === 'transfer' && $order->payment_status === 'belum dibayar' && $order->snap_url)
+                            @if ($order->payment_method === 'transfer' && $order->payment_status === 'menunggu pembayaran' && $order->snap_url)
                                 <a href="{{ $order->snap_url }}" target="_blank"
                                     class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
                                     <i class="fas fa-money-check-alt mr-2"></i> Bayar Sekarang

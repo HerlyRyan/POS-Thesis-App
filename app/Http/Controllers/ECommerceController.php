@@ -147,7 +147,7 @@ class ECommerceController extends Controller
 
         DB::transaction(function () use ($user, $selectedItems, $request) {
             $total = $selectedItems->sum('subtotal');
-            
+
             $invoiceNumber = 'INVGS-' . now()->format('mdy') . '-' . strtoupper(Str::random(4));
 
             if ($request->payment_method == 'cod') {
@@ -217,23 +217,23 @@ class ECommerceController extends Controller
             }
 
             // Send Message
-            $customerName = $user->name;            
+            $customerName = $user->name;
             $paymentMethod = $request->payment_method === 'cod' ? 'Bayar di Tempat (COD)' : 'Transfer Bank';
-    
+
             $itemsList = '';
             foreach ($selectedItems as $item) {
                 $itemsList .= "- {$item->product_name} (Qty: {$item->quantity})\n";
             }
-    
+
             $message = "🔔 *Pesanan Baru Masuk* 🔔\n\n" .
-                   "Ada pesanan baru dari pelanggan:\n" .
-                   "*Nama:* {$customerName}\n" .
-                   "*No. Invoice:* {$invoiceNumber}\n" .
-                   "*Total:* Rp {$total}\n" .
-                   "*Pembayaran:* {$paymentMethod}\n\n" .
-                   "*Item yang dipesan:*\n" .
-                   $itemsList . "\n" .
-                   "Mohon segera diproses. Terima kasih.";
+                "Ada pesanan baru dari pelanggan:\n" .
+                "*Nama:* {$customerName}\n" .
+                "*No. Invoice:* {$invoiceNumber}\n" .
+                "*Total:* Rp {$total}\n" .
+                "*Pembayaran:* {$paymentMethod}\n\n" .
+                "*Item yang dipesan:*\n" .
+                $itemsList . "\n" .
+                "Mohon segera diproses. Terima kasih.";
             $this->fonnte->sendMessage('085821331091', $message);
         });
 
@@ -299,19 +299,21 @@ class ECommerceController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Pesanan belum dalam status pengiriman.']);
         }
 
-        // Update status order
-        $order->update(['status' => 'selesai']);
+        DB::transaction(function () use ($order) {
+            // Update status order
+            $order->update(['status' => 'selesai']);
 
-        // Update status truk dan supir
-        if ($order->truck) {
-            $order->truck->update(['status' => 'tersedia']);
-        }
+            // Update status truk dan supir
+            if ($order->truck) {
+                $order->truck->update(['status' => 'tersedia']);
+            }
 
-        if ($order->driver) {
-            $order->driver->update(['status' => 'tersedia']);
-        }
+            if ($order->driver) {
+                $order->driver->update(['status' => 'tersedia']);
+            }
 
-        TruckTracking::findOrFail($order->truck->id)->delete();
+            TruckTracking::where('truck_id', $order->truck->id)->delete();
+        });
 
         return redirect()->route('customer.orders.index', ['status' => 'selesai'])->with('success', 'Pesanan berhasil dikonfirmasi selesai.');
     }

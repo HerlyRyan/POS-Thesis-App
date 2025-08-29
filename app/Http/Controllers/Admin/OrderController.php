@@ -9,6 +9,7 @@ use App\Models\Truck;
 use App\Models\TruckTracking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -148,20 +149,21 @@ class OrderController extends Controller
             return redirect()->back()->withErrors(['msg' => 'Order belum dalam status pengiriman.']);
         }
 
-        // Update status order
-        $order->update(['status' => 'selesai']);
+        DB::transaction(function () use ($order) {
+            // Update status order
+            $order->update(['status' => 'selesai']);
 
-        // Update status truck jadi tersedia
-        if ($order->truck) {
-            $order->truck->update(['status' => 'tersedia']);
-        }
+            // Update status truk dan supir
+            if ($order->truck) {
+                $order->truck->update(['status' => 'tersedia']);
+            }
 
-        // Update status driver (employee supir) jadi tersedia
-        if ($order->driver) {
-            $order->driver->update(['status' => 'tersedia']);
-        }
+            if ($order->driver) {
+                $order->driver->update(['status' => 'tersedia']);
+            }
 
-        TruckTracking::findOrFail($order->truck->id)->delete();
+            TruckTracking::where('truck_id', $order->truck->id)->delete();
+        });
 
         return redirect()->route('admin.orders.index')->with('success', 'Order berhasil diselesaikan.');
     }

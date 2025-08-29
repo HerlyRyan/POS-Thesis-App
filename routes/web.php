@@ -141,7 +141,7 @@ Route::prefix('customer')->name('customer.')->middleware(['auth', 'role:customer
         Route::get('/orders', [ECommerceController::class, 'ordersIndex'])->name('orders.index');
         Route::get('/orders/{id}', [ECommerceController::class, 'showOrder'])
             ->name('orders.show');
-        Route::patch('/customer/orders/{order}/complete', [ECommerceController::class, 'markAsCompleted'])->name('orders.complete');
+        Route::patch('/customer/orders/{id}/complete', [ECommerceController::class, 'markAsCompleted'])->name('orders.complete');
 
         Route::get('/products/comment/{sales}/{product}', [ECommerceController::class, 'productComment'])->name('product.comments');
         Route::post('/create/product/comment/{sales}/{product}', [ECommerceController::class, 'createComment'])->name('create.product.comment');

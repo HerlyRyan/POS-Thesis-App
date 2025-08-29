@@ -187,8 +187,11 @@ class SalesController extends Controller
             }
         }
 
-        // Hapus data sales
-        $sale->delete();
+        $sale->update([
+            'payment_status' => 'cancelled'
+        ]);
+
+        Order::where('sale_id', $sale->id)->delete();
 
         // Redirect dengan pesan sukses
         return redirect()->route('admin.sales.index')->with(['success' => 'Data penjualan berhasil dibatalkan.']);
@@ -208,16 +211,22 @@ class SalesController extends Controller
             // Ambil semua detail penjualan
             $saleDetails = $sale->details;
 
-            // Kurangi stok untuk setiap produk
-            foreach ($saleDetails as $detail) {
-                $product = Product::find($detail->product_id);
-                if ($product) {
-                    $product->decrement('stock', $detail->quantity);
+            if ($sale->payment_method == 'cash') {
+                // Kurangi stok untuk setiap produk
+                foreach ($saleDetails as $detail) {
+                    $product = Product::find($detail->product_id);
+                    if ($product) {
+                        $product->decrement('stock', $detail->quantity);
+                    }
+                    if ($product->stock <= 10) {
+                        $message = "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!";
+                        $this->fonnte->sendMessage('085821331091', $message);
+                    }
                 }
-                if ($product->stock <= 10) {
-                    $message = "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!";
-                    $this->fonnte->sendMessage('085821331091', $message);
-                }
+
+                Order::create([
+                    'sale_id' => $sale->id,
+                ]);
             }
 
             // Tambahkan ke laporan keuangan
@@ -234,9 +243,6 @@ class SalesController extends Controller
                 'total' => $total
             ]);
 
-            Order::create([
-                'sale_id' => $sale->id,
-            ]);
 
             // Return redirect response
             return redirect()->route('admin.sales.index')

@@ -8,64 +8,100 @@
     'date' => false,
 ])
 
-<div class="mb-4 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-    <!-- Filter Form -->
-    <form method="GET" action="{{ $action }}" id="searchForm"
-        class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 w-full">
+<div class="mb-4">
+    <form method="GET" action="{{ $action }}" id="searchForm">
+        <!-- Unified Filter Container -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 items-end">
+                <!-- Search -->
+                <div>
+                    <label for="searchInput" class="block text-sm font-medium text-gray-700">Cari Data</label>
+                    <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
+                        placeholder="{{ $searchPlaceholder }}"
+                        class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
 
-        <!-- Search -->
-        <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
-            placeholder="{{ $searchPlaceholder }}" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                <!-- Select Filter -->
+                @if ($selectName && count($selectOptions))
+                    <div>
+                        <label for="filterSelect"
+                            class="block text-sm font-medium text-gray-700">{{ $selectLabel }}</label>
+                        <select name="{{ $selectName }}" id="filterSelect"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Semua</option>
+                            @foreach ($selectOptions as $value => $label)
+                                <option value="{{ $value }}"
+                                    {{ request($selectName) == $value ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
 
-        <!-- Select Filter -->
-        @if ($selectName && count($selectOptions))
-            <select name="{{ $selectName }}" id="filterSelect"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md">
-                <option value="">{{ $selectLabel }}</option>
-                @foreach ($selectOptions as $value => $label)
-                    <option value="{{ $value }}" {{ request($selectName) == $value ? 'selected' : '' }}>
-                        {{ $label }}
-                    </option>
-                @endforeach
-            </select>
-        @endif
+                @if ($date)
+                    <!-- Start Date -->
+                    <div>
+                        <label for="start_date" class="block text-sm font-medium text-gray-700">Tanggal Awal</label>
+                        <input type="date" name="start_date" id="start_date" value="{{ request('start_date') }}"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
 
-        @if ($date)
-            <!-- Rentang Tanggal -->
-            <input type="date" name="start_date" value="{{ request('start_date') }}"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                    <!-- End Date -->
+                    <div>
+                        <label for="end_date" class="block text-sm font-medium text-gray-700">Tanggal Akhir</label>
+                        <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
 
-            <input type="date" name="end_date" value="{{ request('end_date') }}"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                    <!-- Month -->
+                    <div>
+                        <label for="month" class="block text-sm font-medium text-gray-700">Bulan</label>
+                        <select name="month" id="month"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Pilih Bulan</option>
+                            @for ($m = 1; $m <= 12; $m++)
+                                <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                                    {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
 
-            <!-- Bulan -->
-            <select name="month" class="w-full px-4 py-2 border border-gray-300 rounded-md">
-                <option value="">Pilih Bulan</option>
-                @for ($m = 1; $m <= 12; $m++)
-                    <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
-                        {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
-                    </option>
-                @endfor
-            </select>
-        @endif
+                    <!-- Year -->
+                    <div>
+                        <label for="year" class="block text-sm font-medium text-gray-700">Tahun</label>
+                        <select name="year" id="year"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Pilih Tahun</option>
+                            @for ($y = date('Y'); $y >= date('Y') - 10; $y--)
+                                <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>
+                                    {{ $y }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
+                @endif
+            </div>
+        </div>
 
-        <!-- Tombol Aksi -->
-        <div class="col-span-full flex flex-wrap gap-2 mt-2">
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
             @if ($date)
                 <button type="submit"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-blue-700">
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Filter
                 </button>
             @endif
 
             <button type="button" id="resetButton"
-                class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-gray-400">
+                class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-sm font-semibold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 Reset
             </button>
 
             @if ($printRoute)
                 <a href="{{ $printRoute . '?' . http_build_query(request()->all()) }}" target="_blank"
-                    class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-xs uppercase tracking-widest font-semibold rounded-md hover:bg-green-700">
+                    class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                     Cetak
                 </a>
             @endif
@@ -81,23 +117,30 @@
             const resetButton = document.getElementById('resetButton');
             let debounceTimer;
 
+            // Debounced submit for search and select (non-date filters)
+            const debouncedSubmit = () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    // Only submit if date filters are not the primary trigger
+                    if (!{{ $date ? 'true' : 'false' }}) {
+                        form.submit();
+                    }
+                }, 500);
+            };
+
             if (searchInput) {
-                searchInput.addEventListener('input', () => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => form.submit(), 500);
-                });
+                searchInput.addEventListener('input', debouncedSubmit);
             }
 
             if (selectFilter) {
-                selectFilter.addEventListener('change', () => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => form.submit(), 500);
-                });
+                selectFilter.addEventListener('change', debouncedSubmit);
             }
 
-            resetButton.addEventListener('click', () => {
-                window.location.href = "{{ $action }}";
-            });
+            if (resetButton) {
+                resetButton.addEventListener('click', () => {
+                    window.location.href = "{{ $action }}";
+                });
+            }
         })();
     </script>
 </div>

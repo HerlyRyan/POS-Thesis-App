@@ -88,7 +88,7 @@
 
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
-            <x-filter-report-table :action="route('admin.report_orders.index')" :printRoute="route('admin.report_orders.print')" searchPlaceholder="Cari invoice atau status..."
+            <x-filter-report-table :action="url()->current()" :printRoute="route('admin.report_customers.print_history', $customer)" searchPlaceholder="Cari invoice atau status..."
                 selectName="status" :selectOptions="['persiapan' => 'Persiapan', 'pengiriman' => 'Pengiriman', 'selesai' => 'Selesai']" selectLabel="Semua Status" date='true' />
 
             @forelse($orders as $order)

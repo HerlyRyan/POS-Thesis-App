@@ -64,6 +64,11 @@ class Report extends Controller
             $query->whereMonth('transaction_date', $request->month);
         }
 
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('transaction_date', $request->year);
+        }
+
         $records = $query->where('source', $source)->orderBy('transaction_date', 'asc')->paginate(31);
         return view('report.finance.show', compact(
             'records',
@@ -94,6 +99,11 @@ class Report extends Controller
         // Filter per bulan
         if ($request->filled('month')) {
             $query->whereMonth('transaction_date', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('transaction_date', $request->year);
         }
 
         $records = $query->where('source', $source)->orderBy('transaction_date', 'asc')->get();
@@ -143,6 +153,11 @@ class Report extends Controller
             $query->whereMonth('transaction_date', $request->month);
         }
 
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('transaction_date', $request->year);
+        }
+
         $sales = $query->orderBy('transaction_date', 'asc')->paginate(10);
         // dd($request->all(), $query->toSql());
 
@@ -180,6 +195,11 @@ class Report extends Controller
             $query->whereMonth('transaction_date', $request->month);
         }
 
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('transaction_date', $request->year);
+        }
+
         $sales = $query->orderBy('transaction_date', 'asc')->get();
 
         // Pilihan 1: tampilkan view print biasa (HTML print view)
@@ -201,6 +221,8 @@ class Report extends Controller
                     $saleQuery->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
                 } elseif ($request->filled('month')) {
                     $saleQuery->whereMonth('transaction_date', $request->month);
+                } else if ($request->filled('year')) {
+                    $saleQuery->whereYear('transaction_date', $request->year);
                 }
             });
         }], 'quantity');
@@ -227,6 +249,8 @@ class Report extends Controller
                     $saleQuery->whereBetween('transaction_date', [$request->start_date, $request->end_date]);
                 } elseif ($request->filled('month')) {
                     $saleQuery->whereMonth('transaction_date', $request->month);
+                } else if ($request->filled('year')) {
+                    $saleQuery->whereYear('transaction_date', $request->year);
                 }
             });
         }], 'quantity');
@@ -308,6 +332,11 @@ class Report extends Controller
             $query->whereMonth('created_at', $request->month);
         }
 
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
         $orders = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('report.orders.index', compact('orders'));
@@ -336,6 +365,11 @@ class Report extends Controller
         // Filter per bulan
         if ($request->filled('month')) {
             $query->whereMonth('created_at', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
         }
 
         $orders = $query->orderBy('created_at', 'desc')->get();
@@ -441,6 +475,11 @@ class Report extends Controller
             $query->whereMonth('created_at', $request->month);
         }
 
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
         $orders = $query->orderBy('created_at', 'desc')->paginate(10);
         $customer = Customer::with('user')->findOrFail($id);
 
@@ -472,6 +511,11 @@ class Report extends Controller
         // Filter per bulan
         if ($request->filled('month')) {
             $query->whereMonth('created_at', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
         }
 
         $orders = $query->orderBy('created_at', 'desc')->get();

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->enum('category', ['galam', 'bambu', 'atap']);
             $table->float('price');
+            $table->decimal('cost_price', 12, 2)->default(0);
             $table->integer('stock');
             $table->string('unit');
             $table->string('image');

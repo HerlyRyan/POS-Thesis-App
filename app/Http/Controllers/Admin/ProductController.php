@@ -42,6 +42,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'category' => 'required|in:galam,bambu,atap',
             'price' => 'required|numeric',
+            'cost_price' => 'required|numeric',
             'stock' => 'required|integer',
             'unit' => 'required|string',
             'image' => 'required|mimes:jpg,jpeg,png,gif,svg,webp|max:2048',
@@ -57,6 +58,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'category' => $request->category,
             'price' => $request->price,
+            'cost_price' => $request->cost_price,
             'stock' => $request->stock,
             'unit' => $request->unit
         ]);
@@ -90,6 +92,7 @@ class ProductController extends Controller
             'description' => 'string',
             'category' => 'in:galam,bambu,atap',
             'price' => 'numeric',
+            'cost_price' => 'numeric',
             'stock' => 'integer',
             'unit' => 'string',
             'image' => 'mimes:jpg,jpeg,png,gif,svg,webp|max:2048',
@@ -115,6 +118,7 @@ class ProductController extends Controller
                 'description' => $request->description,
                 'category' => $request->category,
                 'price' => $request->price,
+                'cost_price' => $request->cost_price,
                 'stock' => $request->stock,
                 'unit' => $request->unit
             ]);
@@ -126,6 +130,7 @@ class ProductController extends Controller
                 'description' => $request->description,
                 'category' => $request->category,
                 'price' => $request->price,
+                'cost_price' => $request->cost_price,
                 'stock' => $request->stock,
                 'unit' => $request->unit
             ]);

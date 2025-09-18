@@ -51,7 +51,18 @@
             </div>
 
             <div class="mb-4">
-                <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Harga</label>
+                <label for="cost_price" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Harga Pokok Penjualan</label>
+                <input type="text" pattern="\d*" inputmode="numeric" id="cost_price" name="cost_price"
+                    value="{{ old('cost_price', $product->cost_price) }}"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                    required>
+                @error('cost_price')
+                    <span class="text-red-600 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Harga Jual</label>
                 <input type="text" pattern="\d*" inputmode="numeric" id="price" name="price"
                     value="{{ old('price', $product->price) }}"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"

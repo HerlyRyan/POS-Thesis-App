@@ -6,7 +6,10 @@ use App\Models\Customer;
 use App\Models\Employees;
 use App\Models\FinanceReports;
 use App\Models\Order;
+use App\Models\Payable;
 use App\Models\Product;
+use App\Models\Receivable;
+use App\Models\SaleDetail;
 use App\Models\Sales;
 use App\Models\Truck;
 use Carbon\Carbon;
@@ -28,13 +31,29 @@ class Report extends Controller
         $bankExpense = FinanceReports::where('source', 'bank')->where('type', 'expense')->sum('amount');
         $bankBalance = $bankIncome - $bankExpense;
 
+        // Receivable
+        $paid_receivables = Receivable::sum('paid_amount');
+        $remaining_receivables = Receivable::sum('remaining_amount');
+        $total_receivables = Receivable::sum('total_amount');
+
+        // Payable
+        $paid_payables = Payable::sum('installment_amount');
+        $remaining_payables = Payable::sum('remaining_amount');
+        $total_payables = Payable::sum('total_amount');
+
         // Total berdasarkan filter (semua jenis source & type)
         $filteredTotal = $cashBalance + $bankBalance;
 
         return view('report.finance.index', compact(
             'filteredTotal',
             'cashBalance',
-            'bankBalance'
+            'bankBalance',
+            'paid_receivables',
+            'remaining_receivables',
+            'total_receivables',
+            'paid_payables',
+            'remaining_payables',
+            'total_payables',
         ));
     }
 
@@ -212,28 +231,10 @@ class Report extends Controller
     */
     }
 
-    // Sales Growth
-    public function indexSalesGrowth(Request $request)
+    // Business Growth
+    public function indexBusinessGrowth(Request $request)
     {
-        $query = Sales::with(['customer.user', 'user']);
-
-        // Filter pencarian umum
-        if ($request->has('search') && $request->search != '') {
-            $query->where(function ($q) use ($request) {
-                $q->where('invoice_number', 'like', "%{$request->search}%")
-                    ->orWhereHas('customer', function ($q) use ($request) {
-                        $q->whereHas('user', function ($q2) use ($request) {
-                            $q2->where('name', 'like', "%{$request->search}%");
-                        });
-                    });
-            });
-        }
-
-
-        // Filter status
-        if ($request->filled('status')) {
-            $query->where('payment_status', $request->status);
-        }
+        $query = Sales::with(['customer.user', 'user'])->where('payment_status', 'dibayar');
 
         // Filter rentang tanggal
         if ($request->filled('start_date') && $request->filled('end_date')) {
@@ -252,30 +253,82 @@ class Report extends Controller
             $query->whereYear('transaction_date', $request->year);
         }
 
-        $sales = $query->orderBy('transaction_date', 'asc')->paginate(10);
-        // dd($request->all(), $query->toSql());
+        // ==============================
+        // Hitung Total Penjualan (Omzet)
+        // ==============================
+        $totalPenjualan = (clone $query)->sum('total_price');
 
-        return view('report.sales-growth.index', compact('sales', 'request'));
+        // ==============================
+        // Hitung Total Modal
+        // ==============================
+        $totalModal = SaleDetail::join('products', 'sale_details.product_id', '=', 'products.id')
+            ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
+            ->when($request->filled('start_date') && $request->filled('end_date'), function ($q) use ($request) {
+                $start = Carbon::parse($request->start_date)->startOfDay();
+                $end = Carbon::parse($request->end_date)->endOfDay();
+                $q->whereBetween('sales.transaction_date', [$start, $end]);
+            })
+            ->when($request->filled('month'), function ($q) use ($request) {
+                $q->whereMonth('sales.transaction_date', $request->month);
+            })
+            ->when($request->filled('year'), function ($q) use ($request) {
+                $q->whereYear('sales.transaction_date', $request->year);
+            })
+            ->selectRaw('SUM(products.cost_price * sale_details.quantity) as modal')
+            ->value('modal');
+
+        // ==============================
+        // Hitung Laba (Omzet - Modal)
+        // ==============================
+        $totalLaba = $totalPenjualan - $totalModal;
+
+        // ==============================
+        // Hitung Utang & Piutang
+        // ==============================
+        $totalUtang = Payable::when($request->filled('year'), fn($q) => $q->whereYear('created_at', $request->year))
+            ->when($request->filled('month'), fn($q) => $q->whereMonth('created_at', $request->month))
+            ->sum('total_amount');
+
+        $totalPiutang = Receivable::when($request->filled('year'), fn($q) => $q->whereYear('created_at', $request->year))
+            ->when($request->filled('month'), fn($q) => $q->whereMonth('created_at', $request->month))
+            ->sum('total_amount');
+
+        // ==============================
+        // Ambil data penjualan per bulan
+        // ==============================
+        $salesChart = (clone $query)
+            ->selectRaw('YEAR(transaction_date) as tahun, MONTH(transaction_date) as bulan, SUM(total_price) as total')
+            ->groupBy('tahun', 'bulan')
+            ->orderBy('tahun')
+            ->orderBy('bulan')
+            ->get();
+
+        // Normalisasi data: semua bulan ada
+        $year = $request->year ?? now()->year;
+        $labels = [];
+        $values = [];
+
+        for ($m = 1; $m <= 12; $m++) {
+            $labels[] = Carbon::create()->month($m)->format('F'); // Nama bulan full
+            $row = $salesChart->firstWhere('bulan', $m);
+            $values[] = $row ? $row->total : 0;
+        }
+
+        return view('report.business-overview.index', [
+            'totalPenjualan' => $totalPenjualan,
+            'totalModal'     => $totalModal,
+            'totalLaba'      => $totalLaba,
+            'totalUtang'     => $totalUtang,
+            'totalPiutang'   => $totalPiutang,
+            'labels'         => $labels,
+            'values'         => $values,
+            'request'        => $request
+        ]);
     }
 
-    public function printSalesGrowth(Request $request)
+    public function printBusinessGrowth(Request $request)
     {
-        $query = Sales::with(['customer.user', 'user']);
-
-        // Filter umum
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('invoice_number', 'like', "%{$request->search}%")
-                    ->orWhereHas('customer.user', function ($q2) use ($request) {
-                        $q2->where('name', 'like', "%{$request->search}%");
-                    });
-            });
-        }
-
-        // Filter status
-        if ($request->filled('status')) {
-            $query->where('payment_status', $request->status);
-        }
+        $query = Sales::with(['customer.user', 'user'])->where('payment_status', 'dibayar');
 
         // Filter rentang tanggal
         if ($request->filled('start_date') && $request->filled('end_date')) {
@@ -294,10 +347,77 @@ class Report extends Controller
             $query->whereYear('transaction_date', $request->year);
         }
 
-        $sales = $query->orderBy('transaction_date', 'asc')->get();
+        // ==============================
+        // Hitung Total Penjualan (Omzet)
+        // ==============================
+        $totalPenjualan = (clone $query)->sum('total_price');
 
-        // Pilihan 1: tampilkan view print biasa (HTML print view)
-        return view('report.sales-growth.print', compact('sales'));
+        // ==============================
+        // Hitung Total Modal
+        // ==============================
+        $totalModal = SaleDetail::join('products', 'sale_details.product_id', '=', 'products.id')
+            ->join('sales', 'sale_details.sale_id', '=', 'sales.id')
+            ->when($request->filled('start_date') && $request->filled('end_date'), function ($q) use ($request) {
+                $start = Carbon::parse($request->start_date)->startOfDay();
+                $end = Carbon::parse($request->end_date)->endOfDay();
+                $q->whereBetween('sales.transaction_date', [$start, $end]);
+            })
+            ->when($request->filled('month'), function ($q) use ($request) {
+                $q->whereMonth('sales.transaction_date', $request->month);
+            })
+            ->when($request->filled('year'), function ($q) use ($request) {
+                $q->whereYear('sales.transaction_date', $request->year);
+            })
+            ->selectRaw('SUM(products.cost_price * sale_details.quantity) as modal')
+            ->value('modal');
+
+        // ==============================
+        // Hitung Laba (Omzet - Modal)
+        // ==============================
+        $totalLaba = $totalPenjualan - $totalModal;
+
+        // ==============================
+        // Hitung Utang & Piutang
+        // ==============================
+        $totalUtang = Payable::when($request->filled('year'), fn($q) => $q->whereYear('created_at', $request->year))
+            ->when($request->filled('month'), fn($q) => $q->whereMonth('created_at', $request->month))
+            ->sum('total_amount');
+
+        $totalPiutang = Receivable::when($request->filled('year'), fn($q) => $q->whereYear('created_at', $request->year))
+            ->when($request->filled('month'), fn($q) => $q->whereMonth('created_at', $request->month))
+            ->sum('total_amount');
+
+        // ==============================
+        // Ambil data penjualan per bulan
+        // ==============================
+        $salesChart = (clone $query)
+            ->selectRaw('YEAR(transaction_date) as tahun, MONTH(transaction_date) as bulan, SUM(total_price) as total')
+            ->groupBy('tahun', 'bulan')
+            ->orderBy('tahun')
+            ->orderBy('bulan')
+            ->get();
+
+        // Normalisasi data: semua bulan ada
+        $year = $request->year ?? now()->year;
+        $labels = [];
+        $values = [];
+
+        for ($m = 1; $m <= 12; $m++) {
+            $labels[] = Carbon::create()->month($m)->format('F'); // Nama bulan full
+            $row = $salesChart->firstWhere('bulan', $m);
+            $values[] = $row ? $row->total : 0;
+        }
+
+        return view('report.business-overview.print', [
+            'totalPenjualan' => $totalPenjualan,
+            'totalModal'     => $totalModal,
+            'totalLaba'      => $totalLaba,
+            'totalUtang'     => $totalUtang,
+            'totalPiutang'   => $totalPiutang,
+            'labels'         => $labels,
+            'values'         => $values,
+            'request'        => $request
+        ]);
 
         // Pilihan 2: jika ingin langsung PDF
         /*

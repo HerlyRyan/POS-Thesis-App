@@ -7,7 +7,7 @@
         <!-- Desktop View -->
         <div class="hidden md:block">
             <x-filter-report-table :action="route('admin.report_orders.index')" :printRoute="route('admin.report_orders.print')" searchPlaceholder="Cari invoice atau status..."
-                selectName="status" :selectOptions="['persiapan' => 'Persiapan', 'pengiriman' => 'Pengiriman', 'selesai' => 'Selesai']" selectLabel="Semua Status" date='true' />
+                selectName="status" :selectOptions="['persiapan' => 'Persiapan', 'pengiriman' => 'Pengiriman', 'selesai' => 'Selesai']" selectLabel="Semua Status" date='true' year='true' />
 
             <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -109,7 +109,7 @@
         <!-- Mobile View -->
         <div class="block md:hidden space-y-4">
             <x-filter-report-table :action="route('admin.report_orders.index')" :printRoute="route('admin.report_orders.print')" searchPlaceholder="Cari invoice atau status..."
-                selectName="status" :selectOptions="['persiapan' => 'Persiapan', 'pengiriman' => 'Pengiriman', 'selesai' => 'Selesai']" selectLabel="Semua Status" date='true' />
+                selectName="status" :selectOptions="['persiapan' => 'Persiapan', 'pengiriman' => 'Pengiriman', 'selesai' => 'Selesai']" selectLabel="Semua Status" date='true' year='true' />
 
             @forelse($orders as $order)
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">

@@ -6,7 +6,7 @@
         <!-- Desktop View -->
         <div class="hidden md:block">
             <x-filter-report-table :action="route('admin.report_best_sellers.index')" :printRoute="route('admin.report_best_sellers.print')" searchPlaceholder="Cari produk terlaris..."
-                date='true' />
+                date='true' year='true' />
 
             <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

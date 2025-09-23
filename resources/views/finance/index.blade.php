@@ -15,23 +15,28 @@
             <div>
                 <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Ringkasan Saldo</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Saldo Cash</h4>
-                        <p class="text-2xl font-bold text-green-500 dark:text-green-400">Rp {{ number_format($cashBalance, 0, ',', '.') }}</p>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Saldo Cash</h4>
+                        <p class="text-2xl font-bold text-green-500">Rp {{ number_format($cashBalance, 0, ',', '.') }}
+                        </p>
                         <div class="mt-2">
-                            <a href="{{ route('admin.finance.show', 'cash') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Lihat Detail</a>
+                            <a href="{{ route('admin.finance.show', 'cash') }}"
+                                class="text-sm text-indigo-600 hover:underline">Lihat Detail</a>
                         </div>
                     </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Saldo Bank</h4>
-                        <p class="text-2xl font-bold text-blue-500 dark:text-blue-400">Rp {{ number_format($bankBalance, 0, ',', '.') }}</p>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Saldo Bank</h4>
+                        <p class="text-2xl font-bold text-blue-500">Rp {{ number_format($bankBalance, 0, ',', '.') }}
+                        </p>
                         <div class="mt-2">
-                            <a href="{{ route('admin.finance.show', 'bank') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Lihat Detail</a>
+                            <a href="{{ route('admin.finance.show', 'bank') }}"
+                                class="text-sm text-indigo-600 hover:underline">Lihat Detail</a>
                         </div>
                     </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Total Saldo</h4>
-                        <p class="text-2xl font-bold text-indigo-500 dark:text-indigo-400">Rp {{ number_format($filteredTotal, 0, ',', '.') }}</p>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Total Saldo</h4>
+                        <p class="text-2xl font-bold text-indigo-500">Rp
+                            {{ number_format($filteredTotal, 0, ',', '.') }}</p>
                     </div>
                 </div>
             </div>
@@ -40,18 +45,21 @@
             <div>
                 <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Ringkasan Piutang (Aset)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Piutang Terbayar</h4>
-                        <p class="text-2xl font-bold text-teal-500 dark:text-teal-400">Rp {{ number_format($paid_receivables, 0, ',', '.') }}</p>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Piutang Terbayar</h4>
+                        <p class="text-2xl font-bold text-teal-500">Rp
+                            {{ number_format($paid_receivables, 0, ',', '.') }}</p>
                     </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Piutang Tersisa</h4>
-                        <p class="text-2xl font-bold text-teal-500 dark:text-teal-400">Rp {{ number_format($remaining_receivables, 0, ',', '.') }}</p>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Piutang Tersisa</h4>
+                        <p class="text-2xl font-bold text-teal-500">Rp
+                            {{ number_format($remaining_receivables, 0, ',', '.') }}</p>
                     </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Total Piutang</h4>
-                        <p class="text-2xl font-bold text-teal-600 dark:text-teal-300">Rp {{ number_format($total_receivables, 0, ',', '.') }}</p>
-                        {{-- <div class="mt-2"><a href="#" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Lihat Detail</a></div> --}}
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Total Piutang</h4>
+                        <p class="text-2xl font-bold text-teal-600">Rp
+                            {{ number_format($total_receivables, 0, ',', '.') }}</p>
+                        {{-- <div class="mt-2"><a href="#" class="text-sm text-indigo-600 hover:underline">Lihat Detail</a></div> --}}
                     </div>
                 </div>
             </div>
@@ -60,18 +68,21 @@
             <div>
                 <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Ringkasan Utang (Liabilitas)</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Utang Terbayar</h4>
-                        <p class="text-2xl font-bold text-orange-500 dark:text-orange-400">Rp {{ number_format($paid_payables, 0, ',', '.') }}</p>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Utang Terbayar</h4>
+                        <p class="text-2xl font-bold text-orange-500">Rp
+                            {{ number_format($paid_payables, 0, ',', '.') }}</p>
                     </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Utang Tersisa</h4>
-                        <p class="text-2xl font-bold text-orange-500 dark:text-orange-400">Rp {{ number_format($remaining_payables, 0, ',', '.') }}</p>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Utang Tersisa</h4>
+                        <p class="text-2xl font-bold text-orange-500">Rp
+                            {{ number_format($remaining_payables, 0, ',', '.') }}</p>
                     </div>
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg shadow">
-                        <h4 class="font-semibold text-gray-600 dark:text-gray-300">Total Utang</h4>
-                        <p class="text-2xl font-bold text-orange-600 dark:text-orange-300">Rp {{ number_format($total_payables, 0, ',', '.') }}</p>
-                        {{-- <div class="mt-2"><a href="#" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Lihat Detail</a></div> --}}
+                    <div class="p-4 bg-gray-50 rounded-lg shadow">
+                        <h4 class="font-semibold text-gray-600">Total Utang</h4>
+                        <p class="text-2xl font-bold text-orange-600">Rp
+                            {{ number_format($total_payables, 0, ',', '.') }}</p>
+                        {{-- <div class="mt-2"><a href="#" class="text-sm text-indigo-600 hover:underline">Lihat Detail</a></div> --}}
                     </div>
                 </div>
             </div>

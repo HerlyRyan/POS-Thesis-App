@@ -1,11 +1,12 @@
 @props([
     'action', // URL tujuan form filter
     'printRoute' => null, // Route tombol cetak
-    'searchPlaceholder' => 'Search...',
+    'searchPlaceholder' => null,
     'selectName' => null,
     'selectOptions' => [],
     'selectLabel' => 'All Options',
     'date' => false,
+    'year' => false,
 ])
 
 <div class="mb-4">
@@ -14,12 +15,14 @@
         <div class="bg-white p-4 rounded-lg shadow-md mb-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 items-end">
                 <!-- Search -->
-                <div>
-                    <label for="searchInput" class="block text-sm font-medium text-gray-700">Cari Data</label>
-                    <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
-                        placeholder="{{ $searchPlaceholder }}"
-                        class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                </div>
+                @if ($searchPlaceholder)
+                    <div>
+                        <label for="searchInput" class="block text-sm font-medium text-gray-700">Cari Data</label>
+                        <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
+                            placeholder="{{ $searchPlaceholder }}"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                @endif
 
                 <!-- Select Filter -->
                 @if ($selectName && count($selectOptions))
@@ -67,7 +70,8 @@
                             @endfor
                         </select>
                     </div>
-
+                @endif
+                @if ($year)
                     <!-- Year -->
                     <div>
                         <label for="year" class="block text-sm font-medium text-gray-700">Tahun</label>
@@ -87,12 +91,10 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-wrap items-center gap-2">
-            @if ($date)
-                <button type="submit"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Filter
-                </button>
-            @endif
+            <button type="submit"
+                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Filter
+            </button>
 
             <button type="button" id="resetButton"
                 class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-800 text-sm font-semibold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">

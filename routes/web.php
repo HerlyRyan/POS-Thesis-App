@@ -102,8 +102,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
             Route::get('/sales', [Report::class, 'indexSales'])->name('report_sales.index');
             Route::get('/sales/print', [Report::class, 'printSales'])->name('report_sales.print');
 
-            Route::get('/sales_growth', [Report::class, 'indexSalesGrowth'])->name('report_sales_growth.index');
-            Route::get('/sales_growth/print', [Report::class, 'printSalesGrowth'])->name('report_sales_growth.print');
+            Route::get('/business_growth', [Report::class, 'indexBusinessGrowth'])->name('report_business_growth.index');
+            Route::get('/business_growth/print', [Report::class, 'printBusinessGrowth'])->name('report_business_growth.print');
 
             Route::get('/best_sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers.index');
             Route::get('/best_sellers/print', [Report::class, 'printBestSellingProducts'])->name('report_best_sellers.print');

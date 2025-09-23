@@ -12,7 +12,7 @@
         <!-- Desktop View -->
         <div class="hidden md:block">
             <x-filter-report-table :action="url()->current()" :printRoute="url()->current() . '/print'" searchPlaceholder="Cari record..."
-                selectName="type" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Tipe" date='true' />
+                selectName="type" :selectOptions="['income' => 'Income', 'expense' => 'Expense']" selectLabel="Semua Tipe" date='true' year='true' />
             <!-- Wrapper untuk menghindari overflow -->
             <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -29,7 +29,7 @@
                                 Tipe</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Dampak</th>
+                                Akun</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Kategori</th>
@@ -131,7 +131,7 @@
                         </div>
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Dampak: {{ $record->source }}
+                        Akun: {{ $record->source }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
                         Category: {{ $record->category }}

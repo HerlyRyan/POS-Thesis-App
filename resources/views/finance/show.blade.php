@@ -24,7 +24,7 @@
                                 Tipe</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                Dampak</th>
+                                Akun</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Kategori</th>
@@ -137,7 +137,7 @@
                         </div>
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Dampak: {{ $record->source }}
+                        Akun: {{ $record->source }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
                         Category: {{ $record->category }}

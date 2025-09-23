@@ -34,11 +34,11 @@
 
             {{-- Sumber Dana --}}
             <div class="mb-4">
-                <label for="source" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Sumber/Dampak</label>
+                <label for="source" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Akun</label>
                 <select name="source" id="source"
                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                     required>
-                    <option value="">-- Pilih Sumber/Dampak --</option>
+                    <option value="">-- Pilih Akun --</option>
                     <option value="cash" {{ old('source') == 'cash' ? 'selected' : '' }}>Cash</option>
                     <option value="bank" {{ old('source') == 'bank' ? 'selected' : '' }}>Bank</option>
                 </select>

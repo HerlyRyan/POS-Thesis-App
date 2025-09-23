@@ -47,4 +47,9 @@ class Order extends Model
     {
         return $this->hasMany(OrderPayments::class);
     }
+
+    public function receivable()
+    {
+        return $this->hasOne(Receivable::class);
+    }
 }

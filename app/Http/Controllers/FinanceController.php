@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\FinanceReports;
+use App\Models\Payable;
+use App\Models\Receivable;
 use Illuminate\Support\Facades\Schema;
 
 use Illuminate\Http\Request;
@@ -27,13 +29,29 @@ class FinanceController extends Controller
         $bankExpense = FinanceReports::where('source', 'bank')->where('type', 'expense')->sum('amount');
         $bankBalance = $bankIncome - $bankExpense;
 
+        // Receivable
+        $paid_receivables = Receivable::sum('paid_amount');
+        $remaining_receivables = Receivable::sum('remaining_amount');
+        $total_receivables = Receivable::sum('total_amount');
+
+        // Payable
+        $paid_payables = Payable::sum('installment_amount');
+        $remaining_payables = Payable::sum('remaining_amount');
+        $total_payables = Payable::sum('total_amount');
+
         // Total berdasarkan filter (semua jenis source & type)
         $filteredTotal = $cashBalance + $bankBalance;
 
         return view('finance.index', compact(
             'filteredTotal',
             'cashBalance',
-            'bankBalance'
+            'bankBalance',
+            'paid_receivables',
+            'remaining_receivables',
+            'total_receivables',
+            'paid_payables',
+            'remaining_payables',
+            'total_payables',
         ));
     }
 

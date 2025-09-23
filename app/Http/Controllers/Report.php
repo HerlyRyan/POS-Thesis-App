@@ -212,6 +212,101 @@ class Report extends Controller
     */
     }
 
+    // Sales Growth
+    public function indexSalesGrowth(Request $request)
+    {
+        $query = Sales::with(['customer.user', 'user']);
+
+        // Filter pencarian umum
+        if ($request->has('search') && $request->search != '') {
+            $query->where(function ($q) use ($request) {
+                $q->where('invoice_number', 'like', "%{$request->search}%")
+                    ->orWhereHas('customer', function ($q) use ($request) {
+                        $q->whereHas('user', function ($q2) use ($request) {
+                            $q2->where('name', 'like', "%{$request->search}%");
+                        });
+                    });
+            });
+        }
+
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where('payment_status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('transaction_date', [$start, $end]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('transaction_date', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('transaction_date', $request->year);
+        }
+
+        $sales = $query->orderBy('transaction_date', 'asc')->paginate(10);
+        // dd($request->all(), $query->toSql());
+
+        return view('report.sales-growth.index', compact('sales', 'request'));
+    }
+
+    public function printSalesGrowth(Request $request)
+    {
+        $query = Sales::with(['customer.user', 'user']);
+
+        // Filter umum
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('invoice_number', 'like', "%{$request->search}%")
+                    ->orWhereHas('customer.user', function ($q2) use ($request) {
+                        $q2->where('name', 'like', "%{$request->search}%");
+                    });
+            });
+        }
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where('payment_status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('transaction_date', [$start, $end]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('transaction_date', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('transaction_date', $request->year);
+        }
+
+        $sales = $query->orderBy('transaction_date', 'asc')->get();
+
+        // Pilihan 1: tampilkan view print biasa (HTML print view)
+        return view('report.sales-growth.print', compact('sales'));
+
+        // Pilihan 2: jika ingin langsung PDF
+        /*
+    $pdf = PDF::loadView('report.sales.print_pdf', compact('sales'));
+    return $pdf->download('laporan-penjualan.pdf');
+    */
+    }
+
+    // Best Selling Product
     public function indexBestSellingProducts(Request $request)
     {
         $query = Product::withSum(['saleDetails as total_sold' => function ($q) use ($request) {

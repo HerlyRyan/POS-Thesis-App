@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\FinanceReports;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Receivable;
 use App\Models\SaleDetail;
 use App\Models\Sales;
 use App\Services\MidtransService;
@@ -20,7 +21,6 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Response;
-
 class SalesController extends Controller
 {
     protected $fonnte;
@@ -215,10 +215,11 @@ class SalesController extends Controller
                 // Kurangi stok untuk setiap produk
                 foreach ($saleDetails as $detail) {
                     $product = Product::find($detail->product_id);
-                    if ($product) {
+                    if ($product && $product->stock >= 10) {
                         $product->decrement('stock', $detail->quantity);
                     }
-                    if ($product->stock <= 10) {
+                    
+                    if ($product && $product->stock <= 10) {
                         $message = "⚠️ *Stok Menipis*\nProduk: {$product->name}\nStok saat ini: {$product->stock}\nMinimum: {$product->minimum_stock}\nSegera lakukan pemesanan ulang!";
                         $this->fonnte->sendMessage('085821331091', $message);
                     }
@@ -243,6 +244,14 @@ class SalesController extends Controller
                 'total' => $total
             ]);
 
+            // Update status Receivable (Piutang)
+            $receivable = Receivable::where('sale_id', $sale->id);
+            $remaining = $sale->total_price - $sale->total_price;
+            $receivable->update([
+                'status' => 'paid',
+                'paid_amount' => $sale->total_price,
+                'remaining_amount' => $remaining,
+            ]);
 
             // Return redirect response
             return redirect()->route('admin.sales.index')
@@ -267,7 +276,7 @@ class SalesController extends Controller
             // Kurangi stok untuk setiap produk
             foreach ($saleDetails as $detail) {
                 $product = Product::find($detail->product_id);
-                if ($product) {
+                if ($product && $product->stock >= 10) {
                     $product->decrement('stock', $detail->quantity);
                 }
                 if ($product->stock <= 10) {
@@ -276,8 +285,19 @@ class SalesController extends Controller
                 }
             }
 
+            // Create Order
             Order::create([
                 'sale_id' => $sale->id,
+            ]);
+
+            // Create Receivable (Piutang)
+            Receivable::create([
+                'sale_id' => $sale->id,
+                'customer_id' => $sale->customer_id,
+                'total_amount' => $sale->total_price,
+                'remaining_amount' => $sale->total_price,
+                'status' => 'unpaid',
+                'due_date' => now()->addDays(7), // contoh jatuh tempo 7 hari
             ]);
 
             // Return redirect response

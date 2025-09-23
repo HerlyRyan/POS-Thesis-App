@@ -43,7 +43,7 @@ class MidtransWebhookController extends Controller
             // Kurangi stok untuk setiap produk
             foreach ($saleDetails as $detail) {
                 $product = Product::find($detail->product_id);
-                if ($product) {
+                if ($product && $product->stock >= 10) {
                     $product->decrement('stock', $detail->quantity);
                 }
                 if ($product->stock <= 10) {

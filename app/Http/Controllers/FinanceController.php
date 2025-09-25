@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\FinanceReports;
 use App\Models\Payable;
 use App\Models\Receivable;
-use Illuminate\Support\Facades\Schema;
 
 use Illuminate\Http\Request;
-
-use function PHPSTORM_META\type;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class FinanceController extends Controller
 {
@@ -61,7 +60,16 @@ class FinanceController extends Controller
      */
     public function create()
     {
-        return view('finance.create');
+        $payables = Payable::whereIn('status', ['unpaid', 'partial'])->get();
+        $cashIncome = FinanceReports::where('source', 'cash')->where('type', 'income')->sum('amount');
+        $cashExpense = FinanceReports::where('source', 'cash')->where('type', 'expense')->sum('amount');
+        $cashBalance = $cashIncome - $cashExpense;
+
+        $bankIncome = FinanceReports::where('source', 'bank')->where('type', 'income')->sum('amount');
+        $bankExpense = FinanceReports::where('source', 'bank')->where('type', 'expense')->sum('amount');
+        $bankBalance = $bankIncome - $bankExpense;
+
+        return view('finance.create', compact('payables', 'cashBalance', 'bankBalance'));
     }
 
     /**
@@ -72,38 +80,50 @@ class FinanceController extends Controller
         $request->validate([
             'type' => 'required|in:income,expense',
             'category' => 'required|string',
-            'description' => 'required|string',
-            'amount' => 'required|numeric',
+            'description' => 'nullable|string',
+            'amount' => 'required|numeric|min:1',
             'source' => 'required|in:cash,bank',
-            'transaction_date' => 'required|date'
+            'transaction_date' => 'required|date',
+            'payable_id' => 'nullable|exists:payables,id'
         ]);
 
-        // Ambil total terakhir, default ke 0 jika belum ada transaksi
-        $lastCashTotal = FinanceReports::where('source', 'cash')->latest()->value('total') ?? 0;
-        $lastBankTotal = FinanceReports::where('source', 'bank')->latest()->value('total') ?? 0;
+        DB::transaction(function () use ($request) {
+            // Hitung total sebelumnya
+            $lastTotal = FinanceReports::where('source', $request->source)->latest()->value('total') ?? 0;
+            $total = $request->type === 'income'
+                ? $lastTotal + $request->amount
+                : $lastTotal - $request->amount;
 
-        // Hitung total berdasarkan jenis transaksi dan sumber
-        $total = 0;
-        if ($request->type == "income") {
-            $total = $request->source === "cash"
-                ? $lastCashTotal + $request->amount
-                : $lastBankTotal + $request->amount;
-        } else {
-            $total = $request->source === "cash"
-                ? $lastCashTotal - $request->amount
-                : $lastBankTotal - $request->amount;
-        }
+            // Simpan transaksi keuangan
+            FinanceReports::create([
+                'type' => $request->type,
+                'category' => $request->category,
+                'description' => $request->description ?? ($request->category === 'payable_payment' ? 'Pembayaran Hutang' : 'Transaksi'),
+                'amount' => $request->amount,
+                'source' => $request->source,
+                'total' => $total,
+                'transaction_date' => $request->transaction_date,
+            ]);
 
-        // Simpan transaksi
-        FinanceReports::create([
-            'type' => $request->type,
-            'category' => $request->category,
-            'description' => $request->description,
-            'amount' => $request->amount,
-            'source' => $request->source,
-            'total' => $total,
-            'transaction_date' => $request->transaction_date,
-        ]);
+            // Jika kategori pembayaran hutang
+            if ($request->category === 'payable_payment' && $request->payable_id) {
+                $payable = Payable::findOrFail($request->payable_id);
+
+                // Pastikan tidak lebih besar dari sisa
+                if ($request->amount > $payable->remaining_amount) {
+                    // This will trigger a rollback and redirect back with the error.
+                    throw ValidationException::withMessages([
+                        'amount' => 'Jumlah bayar melebihi sisa hutang.',
+                    ]);
+                }
+
+                // Update payable
+                $payable->remaining_amount -= $request->amount;
+                $payable->installment_amount += $request->amount;
+                $payable->status = $payable->remaining_amount <= 0 ? 'paid' : 'partial';
+                $payable->save();
+            }
+        });
 
         return redirect()->route('admin.finance.index')->with('success', 'Transaction created successfully.');
     }

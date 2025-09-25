@@ -43,7 +43,19 @@
 
             <!-- Piutang Section -->
             <div>
-                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Ringkasan Piutang (Aset)</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Ringkasan Piutang (Aset)</h3>
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('admin.receivable.index') }}"
+                            class="inline-flex items-center px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-gray-700 dark:text-gray-200 text-xs uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Lihat Detail
+                        </a>
+                        {{-- <a href="{{ route('admin.payable.create') }}"
+                            class="inline-flex items-center px-3 py-1 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Tambah Utang
+                        </a> --}}
+                    </div>
+                </div> 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-4 bg-gray-50 rounded-lg shadow">
                         <h4 class="font-semibold text-gray-600">Piutang Terbayar</h4>
@@ -66,7 +78,19 @@
 
             <!-- Utang Section -->
             <div>
-                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Ringkasan Utang (Liabilitas)</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Ringkasan Utang (Liabilitas)</h3>
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('admin.payable.index') }}"
+                            class="inline-flex items-center px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-gray-700 dark:text-gray-200 text-xs uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Lihat Detail
+                        </a>
+                        <a href="{{ route('admin.payable.create') }}"
+                            class="inline-flex items-center px-3 py-1 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Tambah Utang
+                        </a>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-4 bg-gray-50 rounded-lg shadow">
                         <h4 class="font-semibold text-gray-600">Utang Terbayar</h4>

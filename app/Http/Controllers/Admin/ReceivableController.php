@@ -17,10 +17,10 @@ class ReceivableController extends Controller
     {
         $query = Receivable::with(['sale', 'customer']);
         if ($request->has('search') && $request->search != '') {
-            $query->where(function ($q) use ($request) {
-                $q->where('customer.user', function ($query) use ($request) {
-                        $query->where('name', 'like', "%{$request->search}%");
-                    });
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->whereHas('user', function ($q2) use ($request) {
+                    $q2->where('name', 'like', "%{$request->search}%");
+                });
             });
         }
 

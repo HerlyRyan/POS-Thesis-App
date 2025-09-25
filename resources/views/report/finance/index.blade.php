@@ -1,6 +1,9 @@
 <x-admin-layout>
-    <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Laporan Keuangan</h2>
+        </div>
+
         <!-- Summary Cards -->
         <div class="space-y-8">
             <!-- Saldo Section -->
@@ -12,7 +15,7 @@
                         <p class="text-2xl font-bold text-green-500">Rp {{ number_format($cashBalance, 0, ',', '.') }}
                         </p>
                         <div class="mt-2">
-                            <a href="{{ route('admin.finance.show', 'cash') }}"
+                            <a href="{{ route('admin.report_finance.show', 'cash') }}"
                                 class="text-sm text-indigo-600 hover:underline">Lihat Detail</a>
                         </div>
                     </div>
@@ -21,7 +24,7 @@
                         <p class="text-2xl font-bold text-blue-500">Rp {{ number_format($bankBalance, 0, ',', '.') }}
                         </p>
                         <div class="mt-2">
-                            <a href="{{ route('admin.finance.show', 'bank') }}"
+                            <a href="{{ route('admin.report_finance.show', 'bank') }}"
                                 class="text-sm text-indigo-600 hover:underline">Lihat Detail</a>
                         </div>
                     </div>
@@ -35,7 +38,15 @@
 
             <!-- Piutang Section -->
             <div>
-                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Ringkasan Piutang (Aset)</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Ringkasan Piutang (Aset)</h3>
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('admin.report_receivable.show') }}"
+                            class="inline-flex items-center px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-gray-700 dark:text-gray-200 text-xs uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Lihat Detail
+                        </a>
+                    </div>
+                </div> 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-4 bg-gray-50 rounded-lg shadow">
                         <h4 class="font-semibold text-gray-600">Piutang Terbayar</h4>
@@ -51,14 +62,21 @@
                         <h4 class="font-semibold text-gray-600">Total Piutang</h4>
                         <p class="text-2xl font-bold text-teal-600">Rp
                             {{ number_format($total_receivables, 0, ',', '.') }}</p>
-                        {{-- <div class="mt-2"><a href="#" class="text-sm text-indigo-600 hover:underline">Lihat Detail</a></div> --}}
                     </div>
                 </div>
             </div>
 
             <!-- Utang Section -->
             <div>
-                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Ringkasan Utang (Liabilitas)</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200">Ringkasan Utang (Liabilitas)</h3>
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('admin.report_payable.show') }}"
+                            class="inline-flex items-center px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-gray-700 dark:text-gray-200 text-xs uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Lihat Detail
+                        </a>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-4 bg-gray-50 rounded-lg shadow">
                         <h4 class="font-semibold text-gray-600">Utang Terbayar</h4>
@@ -74,7 +92,6 @@
                         <h4 class="font-semibold text-gray-600">Total Utang</h4>
                         <p class="text-2xl font-bold text-orange-600">Rp
                             {{ number_format($total_payables, 0, ',', '.') }}</p>
-                        {{-- <div class="mt-2"><a href="#" class="text-sm text-indigo-600 hover:underline">Lihat Detail</a></div> --}}
                     </div>
                 </div>
             </div>

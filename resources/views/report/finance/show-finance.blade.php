@@ -1,5 +1,4 @@
 <x-admin-layout>
-    <x-flash-modal />
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <div class="flex justify-between">
             <h2 class="text-white text-xl">Transaksi {{ $records->first()->source ?? 'Tidak ada' }}</h2>

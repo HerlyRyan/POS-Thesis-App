@@ -103,6 +103,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
             Route::get('/finance/{source}', [Report::class, 'showFinance'])->name('report_finance.show');
             Route::get('/finance/{source}/print', [Report::class, 'printFinance'])->name('report_finance.print');
 
+            Route::get('/finance/receivable/show', [Report::class, 'showReceivable'])->name('report_receivable.show');
+            Route::get('/finance/receivable/printReceivable', [Report::class, 'printReceivable'])->name('report_receivable.print');
+
+            Route::get('/finance/payable/show', [Report::class, 'showPayable'])->name('report_payable.show');
+            Route::get('/finance/payable/printpayable', [Report::class, 'printPayable'])->name('report_payable.print');
+
             Route::get('/sales', [Report::class, 'indexSales'])->name('report_sales.index');
             Route::get('/sales/print', [Report::class, 'printSales'])->name('report_sales.print');
 

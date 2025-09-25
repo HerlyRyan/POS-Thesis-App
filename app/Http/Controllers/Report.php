@@ -89,9 +89,79 @@ class Report extends Controller
         }
 
         $records = $query->where('source', $source)->orderBy('transaction_date', 'asc')->paginate(31);
-        return view('report.finance.show', compact(
+        return view('report.finance.show-finance', compact(
             'records',
         ));
+    }
+
+    public function showReceivable(Request $request)
+    {
+        $query = Receivable::with(['sale', 'customer']);
+        if ($request->has('search') && $request->search != '') {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->whereHas('user', function ($q2) use ($request) {
+                    $q2->where('name', 'like', "%{$request->search}%");
+                });
+            });
+        }
+
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
+        $receivables = $query->paginate(10);
+        return view('report.finance.show-receivable', compact('receivables'));
+    }
+
+    public function showPayable(Request $request)
+    {
+        $query = Payable::latest();
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('lender_name', 'LIKE', "%{$search}%");
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
+        $payables = $query->paginate(10);
+        return view('report.finance.show-payable', compact('payables'));
     }
 
     public function printFinance(string $source, Request $request)
@@ -126,8 +196,96 @@ class Report extends Controller
         }
 
         $records = $query->where('source', $source)->orderBy('transaction_date', 'asc')->get();
-        return view('report.finance.print', compact(
+        return view('report.finance.print-finance', compact(
             'records',
+        ));
+
+        // Pilihan 2: jika ingin langsung PDF
+        /*
+    $pdf = PDF::loadView('report.sales.print_pdf', compact('sales'));
+    return $pdf->download('laporan-penjualan.pdf');
+    */
+    }
+
+    public function printReceivable(Request $request)
+    {
+        $query = Receivable::with(['sale', 'customer']);
+        if ($request->has('search') && $request->search != '') {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->whereHas('user', function ($q2) use ($request) {
+                    $q2->where('name', 'like', "%{$request->search}%");
+                });
+            });
+        }
+
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
+        $receivables = $query->get();
+
+        return view('report.finance.print-receivable', compact(
+            'receivables',
+        ));
+
+        // Pilihan 2: jika ingin langsung PDF
+        /*
+    $pdf = PDF::loadView('report.sales.print_pdf', compact('sales'));
+    return $pdf->download('laporan-penjualan.pdf');
+    */
+    }
+
+    public function printPayable(Request $request)
+    {
+        $query = Payable::latest();
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('lender_name', 'LIKE', "%{$search}%");
+        }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter rentang tanggal
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end = Carbon::parse($request->end_date)->endOfDay();
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        // Filter per bulan
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+
+        // Filter per tahun
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
+        $payables = $query->get();
+
+        return view('report.finance.print-payable', compact(
+            'payables',
         ));
 
         // Pilihan 2: jika ingin langsung PDF

@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Receivable;
 use App\Models\SaleDetail;
 use App\Models\Sales;
+use App\Models\SalesTarget;
 use App\Models\Truck;
 use Carbon\Carbon;
 
@@ -575,6 +576,76 @@ class Report extends Controller
             'labels'         => $labels,
             'values'         => $values,
             'request'        => $request
+        ]);
+
+        // Pilihan 2: jika ingin langsung PDF
+        /*
+    $pdf = PDF::loadView('report.sales.print_pdf', compact('sales'));
+    return $pdf->download('laporan-penjualan.pdf');
+    */
+    }
+
+    // Sales Plan
+    public function indexSalesPlan(Request $request)
+    {
+        $year = $request->input('year', now()->year);
+
+        // Ambil total penjualan per bulan untuk tahun tertentu
+        $salesPerMonth = Sales::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as bulan, SUM(total_price) as total')
+            ->whereYear('created_at', $year)
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->pluck('total', 'bulan');
+
+        // Ambil target per bulan, samakan format jadi YYYY-MM
+        $targets = SalesTarget::where('month', 'like', $year . '%')
+            ->pluck('target_amount', 'month');
+
+
+        // Hitung prediksi sederhana (rata-rata 3 bulan terakhir + 5%)
+        $avgSales = Sales::selectRaw('AVG(total_price) as avg_sales')
+            ->whereYear('created_at', $year)
+            ->whereBetween('created_at', [now()->subMonths(3), now()])
+            ->value('avg_sales');
+
+        $prediction = round($avgSales * 1.05, 0);
+
+        return view('report.sales-plan.index', [
+            'salesPerMonth' => $salesPerMonth,
+            'targets'       => $targets,
+            'prediction'    => $prediction,
+            'selectedYear'  => $year,
+        ]);
+    }
+
+    public function printSalesPlan(Request $request)
+    {
+        $year = $request->input('year', now()->year);
+
+        // Ambil total penjualan per bulan untuk tahun tertentu
+        $salesPerMonth = Sales::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as bulan, SUM(total_price) as total')
+            ->whereYear('created_at', $year)
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->pluck('total', 'bulan');
+
+        // Ambil target per bulan, samakan format jadi YYYY-MM
+        $targets = SalesTarget::where('month', 'like', $year . '%')
+            ->pluck('target_amount', 'month');
+
+        // Hitung prediksi sederhana (rata-rata 3 bulan terakhir + 5%)
+        $avgSales = Sales::selectRaw('AVG(total_price) as avg_sales')
+            ->whereYear('created_at', $year)
+            ->whereBetween('created_at', [now()->subMonths(3), now()])
+            ->value('avg_sales');
+
+        $prediction = round($avgSales * 1.05, 0);
+
+        return view('report.sales-plan.print', [
+            'salesPerMonth' => $salesPerMonth,
+            'targets'       => $targets,
+            'prediction'    => $prediction,
+            'selectedYear'  => $year,
         ]);
 
         // Pilihan 2: jika ingin langsung PDF

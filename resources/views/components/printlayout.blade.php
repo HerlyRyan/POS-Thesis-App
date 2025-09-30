@@ -134,6 +134,14 @@
             page-break-before: avoid;
         }
 
+        .text-red {
+            color: red
+        }
+
+        .text-green {
+            color: green
+        }
+
         /* Print-specific styles */
         @media print {
             body {

@@ -16,6 +16,7 @@ use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Admin\PayableController;
 use App\Http\Controllers\Admin\ReceivableController;
+use App\Http\Controllers\Admin\SalesTargetController;
 use App\Http\Controllers\Report;
 use App\Http\Controllers\TrucksController;
 
@@ -81,6 +82,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::resource('orders', OrderController::class);
         Route::resource('payable', PayableController::class);
         Route::resource('receivable', ReceivableController::class);
+        Route::resource('sales-targets', SalesTargetController::class);
 
         // Orders
         Route::get('orders/assign/worker/{order}', [OrderController::class, 'assignWorkerView'])->name('orders.assignWorkerView');
@@ -112,14 +114,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
             Route::get('/sales', [Report::class, 'indexSales'])->name('report_sales.index');
             Route::get('/sales/print', [Report::class, 'printSales'])->name('report_sales.print');
 
-            Route::get('/business_growth', [Report::class, 'indexBusinessGrowth'])->name('report_business_growth.index');
-            Route::get('/business_growth/print', [Report::class, 'printBusinessGrowth'])->name('report_business_growth.print');
+            Route::get('/business-growth', [Report::class, 'indexBusinessGrowth'])->name('report_business_growth.index');
+            Route::get('/business-growth/print', [Report::class, 'printBusinessGrowth'])->name('report_business_growth.print');
 
-            Route::get('/best_sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers.index');
-            Route::get('/best_sellers/print', [Report::class, 'printBestSellingProducts'])->name('report_best_sellers.print');
+            Route::get('/best-sellers', [Report::class, 'indexBestSellingProducts'])->name('report_best_sellers.index');
+            Route::get('/best-sellers/print', [Report::class, 'printBestSellingProducts'])->name('report_best_sellers.print');
 
-            Route::get('/low_stock', [Report::class, 'indexLowStock'])->name('report_low_stock.index');
-            Route::get('/low_stock/print', [Report::class, 'printLowStock'])->name('report_low_stock.print');
+            Route::get('/low-stock', [Report::class, 'indexLowStock'])->name('report_low_stock.index');
+            Route::get('/low-stock/print', [Report::class, 'printLowStock'])->name('report_low_stock.print');
 
             Route::get('/orders', [Report::class, 'indexOrders'])->name('report_orders.index');
             Route::get('/orders/print', [Report::class, 'printOrders'])->name('report_orders.print');

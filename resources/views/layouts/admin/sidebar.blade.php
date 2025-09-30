@@ -88,6 +88,16 @@
 
                         <span class="mx-3">Truk</span>
                     </a>
+                    <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.sales-targets.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                        href="{{ route('admin.sales-targets.index') }}">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7h12a2 2 0 012 2v7a2 2 0 01-2 2H8m0-11v11a2 2 0 01-2 2H4a2 2 0 01-2-2v-5m0 0l3-6a2 2 0 012-2h2m-1 14a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z" />
+                        </svg>
+
+                        <span class="mx-3">Target Penjualan</span>
+                    </a>
                 </div>
             </div>
             <a class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.sales.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"

@@ -7,41 +7,78 @@
     'selectLabel' => 'All Options',
     'textAdd' => null,
     'routeProduct' => null,
+    'year' => false,
+    'search' => 1,
 ])
+
+@php
+    // Base classes for form inputs for consistency
+    $inputClasses =
+        'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm';
+
+    // Base classes for buttons for consistency
+    $buttonBaseClasses =
+        'inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2';
+@endphp
 
 <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <!-- Filter Form -->
-    <form method="GET" action="{{ $action }}" class="flex flex-wrap md:flex-row md:items-center items-center gap-3"
+    <form method="GET" action="{{ $action }}" class="flex flex-wrap md:flex-nowrap items-center gap-3"
         id="searchForm">
-        <!-- Input Search -->
-        <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
-            placeholder="{{ $searchPlaceholder }}"
-            class="flex-1 w-full md:basis-1/3 max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        @if ($search == 1)
+            <!-- Input Search -->
+            <div class="flex-grow w-full md:w-auto">
+                <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
+                    placeholder="{{ $searchPlaceholder }}" class="{{ $inputClasses }}">
+            </div>
+        @endif
 
         <!-- Select Filter -->
         @if ($selectName && count($selectOptions))
-            <select name="{{ $selectName }}" id="filter"
-                class="w-full md:w-48 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <option value="">{{ $selectLabel }}</option>
-                @foreach ($selectOptions as $value => $label)
-                    <option value="{{ $value }}" {{ request($selectName) == $value ? 'selected' : '' }}>
-                        {{ $label }}
-                    </option>
-                @endforeach
-            </select>
+            <div class="w-full md:w-48">
+                <select name="{{ $selectName }}" id="filter" class="{{ $inputClasses }}">
+                    <option value="">{{ $selectLabel }}</option>
+                    @foreach ($selectOptions as $value => $label)
+                        <option value="{{ $value }}" {{ request($selectName) == $value ? 'selected' : '' }}>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        @endif
+
+        @if ($year)
+            <!-- Year -->
+            <div class="w-full md:w-36">
+                <select name="year" id="year" class="{{ $inputClasses }}">
+                    <option value="">Pilih Tahun</option>
+                    @for ($y = date('Y'); $y >= date('Y') - 10; $y--)
+                        <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>
+                            {{ $y }}
+                        </option>
+                    @endfor
+                </select>
+            </div>
         @endif
 
         <!-- Reset Button -->
-        <button type="button" onclick="window.location.href='{{ $action }}'" id="resetButton"
-            class="inline-flex items-center px-3 py-2 bg-gray-300 border border-transparent rounded-md text-xs font-semibold text-gray-800 uppercase tracking-widest hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-            Reset
-        </button>
+        <div class="flex flex-wrap items-center gap-2">
+            <button type="submit"
+                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Filter
+            </button>
+
+            <button type="button" onclick="window.location.href='{{ $action }}'" id="resetButton"
+                class="{{ $buttonBaseClasses }} bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500">
+                Reset
+            </button>
+        </div>
     </form>
 
-    <div class="flex flex-wrap md:flex-row md:items-center items-center gap-3">
+    <div class="flex flex-shrink-0 items-center gap-3">
         @if ($routeProduct)
             <a href="{{ $routeProduct }}"
-                class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                class="{{ $buttonBaseClasses }} bg-green-600 hover:bg-green-700 focus:ring-green-500">
                 Tambah Stok
             </a>
         @endif
@@ -49,9 +86,9 @@
         <!-- Tombol Tambah -->
         @if ($route)
             <a href="{{ $route }}"
-                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                class="{{ $buttonBaseClasses }} bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500">
                 @if ($textAdd)
-                    Tambahkan Data {{ $textAdd }}
+                    Tambahkan {{ $textAdd }}
                 @else
                     Kembali
                 @endif
@@ -61,32 +98,28 @@
 
     <script>
         let debounceTimer;
-        const searchInput = document.getElementById('searchInput');
         const searchForm = document.getElementById('searchForm');
-        const filter = document.getElementById('filter');
+        const searchInput = document.getElementById('searchInput');
+        const filterSelect = document.getElementById('filter');
+        const yearSelect = document.getElementById('year');
         const resetButton = document.getElementById('resetButton');
 
-        if (filter) {
-            filter.addEventListener('change', function() {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => {
-                    searchForm.submit();
-                }, 500);
-            });
-        }
-
-        searchInput.addEventListener('input', function() {
+        const submitForm = () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 searchForm.submit();
-            }, 500); // delay 500ms after the user stops typing
-        });
+            }, 500); // delay 500ms
+        };
+
+        searchInput.addEventListener('input', submitForm);
+        if (filterSelect) {
+            filterSelect.addEventListener('change', () => searchForm.submit());
+        }
+        if (yearSelect) {
+            yearSelect.addEventListener('change', () => searchForm.submit());
+        }
 
         resetButton.addEventListener('click', function() {
-            searchInput.value = '';
-            if (filter) {
-                filter.value = '';
-            }
             // Redirect to the base URL without query parameters
             window.location.href = window.location.pathname;
         });

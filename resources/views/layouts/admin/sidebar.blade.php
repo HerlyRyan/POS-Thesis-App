@@ -100,6 +100,16 @@
 
                         <span class="mx-3">Target Penjualan</span>
                     </a>
+                    <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.promotions.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                        href="{{ route('admin.promotions.index') }}">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+                            <path d="m10 16l4-4-4-4" />
+                        </svg>
+
+                        <span class="mx-3">Promosi</span>
+                    </a>
                 </div>
             </div>
             <a class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.sales.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"

@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\Receivable;
 use App\Models\SaleDetail;
 use App\Models\Sales;
+use App\Models\SalesPromotion;
 use App\Models\SalesTarget;
 use App\Models\Truck;
 use Carbon\Carbon;
@@ -610,11 +611,16 @@ class Report extends Controller
 
         $prediction = round($avgSales * 1.05, 0);
 
+        $promotions = SalesPromotion::whereYear('start_date', $year)
+            ->orWhereYear('end_date', $year)
+            ->get();
+
         return view('report.sales-plan.index', [
             'salesPerMonth' => $salesPerMonth,
             'targets'       => $targets,
             'prediction'    => $prediction,
             'selectedYear'  => $year,
+            'promotions'    => $promotions,
         ]);
     }
 
@@ -641,11 +647,16 @@ class Report extends Controller
 
         $prediction = round($avgSales * 1.05, 0);
 
+        $promotions = SalesPromotion::whereYear('start_date', $year)
+            ->orWhereYear('end_date', $year)
+            ->get();
+
         return view('report.sales-plan.print', [
             'salesPerMonth' => $salesPerMonth,
             'targets'       => $targets,
             'prediction'    => $prediction,
             'selectedYear'  => $year,
+            'promotions'    => $promotions,
         ]);
 
         // Pilihan 2: jika ingin langsung PDF

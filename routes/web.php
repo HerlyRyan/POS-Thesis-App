@@ -16,6 +16,7 @@ use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\Admin\OrderPaymentController;
 use App\Http\Controllers\Admin\PayableController;
 use App\Http\Controllers\Admin\ReceivableController;
+use App\Http\Controllers\Admin\SalesPromotionController;
 use App\Http\Controllers\Admin\SalesTargetController;
 use App\Http\Controllers\Report;
 use App\Http\Controllers\TrucksController;
@@ -83,6 +84,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
         Route::resource('payable', PayableController::class);
         Route::resource('receivable', ReceivableController::class);
         Route::resource('sales-targets', SalesTargetController::class);
+        Route::resource('promotions', SalesPromotionController::class);
 
         // Orders
         Route::get('orders/assign/worker/{order}', [OrderController::class, 'assignWorkerView'])->name('orders.assignWorkerView');

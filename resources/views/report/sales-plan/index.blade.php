@@ -18,6 +18,39 @@
                 <div class="relative h-96">
                     <canvas id="salesChart"></canvas>
                 </div>
+                <div class="mt-6">
+                    <h2 class="text-lg font-semibold">Perencanaan Peningkatan Penjualan</h2>
+                    <ul class="list-disc ml-5 mt-2">
+                        @forelse($promotions as $promo)
+                            <li class="py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                                    <div>
+                                        <p class="font-semibold text-gray-800">{{ $promo->title }}</p>
+                                        <p class="text-sm text-gray-500 flex items-center mt-1">
+                                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                            {{ \Carbon\Carbon::parse($promo->start_date)->isoFormat('D MMM') }} -
+                                            {{ \Carbon\Carbon::parse($promo->end_date)->isoFormat('D MMM YYYY') }}
+                                        </p>
+                                    </div>
+                                    <div class="mt-2 sm:mt-0">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                            Target: {{ $promo->expected_increase ?? 'N/A' }}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        @empty
+                            <li>Belum ada rencana promo</li>
+                        @endforelse
+                    </ul>
+                </div>
+
             </div>
 
             {{-- Stats and Insights Grid --}}

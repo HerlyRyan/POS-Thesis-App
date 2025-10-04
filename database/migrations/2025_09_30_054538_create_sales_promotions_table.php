@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title'); // nama promo
             $table->text('description')->nullable(); // detail promo
+            $table->decimal('discount_percentage', 5, 2)->nullable(); // diskon %
+            $table->enum('payment_method', ['cash', 'transfer', 'cod'])->default('cash');
             $table->date('start_date');
             $table->date('end_date');
             $table->decimal('expected_increase', 12, 2)->nullable(); // target kenaikan (misalnya persen atau nominal)

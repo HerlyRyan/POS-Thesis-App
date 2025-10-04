@@ -24,6 +24,27 @@
                 @enderror
             </div>
 
+            <div class="mb-4">
+                <label for="discount_percentage" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Persentase Diskon (%)</label>
+                <input id="discount_percentage" name="discount_percentage" type="number" step="0.01"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50">{{ old('discount_percentage') }}</input>
+                @error('discount_percentage')
+                    <span class="text-red-600 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="mt-6">
+                <label for="payment_method" class="block font-medium text-gray-700 dark:text-gray-200">Metode
+                    Pembayaran</label>
+                <select name="payment_method" id="payment_method" x-model="payment_method"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="">-- Pilih Metode Pembayaran --</option>
+                    <option value="cash">Cash</option>
+                    <option value="transfer">Transfer</option>
+                    <option value="cod">COD</option>
+                </select>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Tanggal Mulai</label>

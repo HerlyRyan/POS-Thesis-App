@@ -21,6 +21,12 @@
                                 Judul</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Diskon</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                Metode Pembayaran</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 Tanggal Mulai</th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -44,6 +50,14 @@
                                     class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {{ Str::title($promotion->title) }}
                                 </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    {{ $promotion->discount_percentage }}%
+                                </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    {{ $promotion->payment_method }}
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     {{ \Carbon\Carbon::parse($promotion->start_date)->format('d M Y') }}
                                 </td>
@@ -64,7 +78,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                     Tidak ada data promosi.
                                 </td>
                             </tr>
@@ -88,7 +102,8 @@
                         {{ $promotion->title }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Periode: {{ \Carbon\Carbon::parse($promotion->start_date)->format('d M Y') }} - {{ \Carbon\Carbon::parse($promotion->end_date)->format('d M Y') }}
+                        Periode: {{ \Carbon\Carbon::parse($promotion->start_date)->format('d M Y') }} -
+                        {{ \Carbon\Carbon::parse($promotion->end_date)->format('d M Y') }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
                         Deskripsi: {{ Str::limit($promotion->description, 100) }}
@@ -112,23 +127,4 @@
         </div>
     </div>
 
-    <script>
-        let debounceTimer;
-        const searchInput = document.getElementById('searchInput');
-        const searchForm = document.getElementById('searchForm');
-        const resetButton = document.getElementById('resetButton');
-
-        searchInput.addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                searchForm.submit();
-            }, 500); // delay 500ms after the user stops typing
-        });
-
-        resetButton.addEventListener('click', function() {
-            searchInput.value = '';
-            // Redirect to the base URL without query parameters
-            window.location.href = window.location.pathname;
-        });
-    </script>
 </x-admin-layout>

@@ -12,6 +12,8 @@ class SalesPromotion extends Model
     protected $fillable = [
         'title',
         'description',
+        'discount_percentage',
+        'payment_method',
         'start_date',
         'end_date',
         'expected_increase'

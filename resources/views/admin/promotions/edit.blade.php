@@ -25,6 +25,29 @@
                 @enderror
             </div>
 
+            <div class="mb-4">
+                <label for="discount_percentage" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Persentase Diskon (%)</label>
+                <input type="number" step="0.01" id="discount_percentage" name="discount_percentage" value="{{ old('discount_percentage', $promotion->discount_percentage) }}"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50">
+                @error('discount_percentage')
+                    <span class="text-red-600 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="payment_method" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Metode Pembayaran</label>
+                <select name="payment_method" id="payment_method"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50">
+                    <option value="">-- Pilih Metode Pembayaran --</option>
+                    <option value="cash" {{ old('payment_method', $promotion->payment_method) == 'cash' ? 'selected' : '' }}>Cash</option>
+                    <option value="transfer" {{ old('payment_method', $promotion->payment_method) == 'transfer' ? 'selected' : '' }}>Transfer</option>
+                    <option value="cod" {{ old('payment_method', $promotion->payment_method) == 'cod' ? 'selected' : '' }}>COD</option>
+                </select>
+                @error('payment_method')
+                    <span class="text-red-600 text-sm">{{ $message }}</span>
+                @enderror
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Tanggal Mulai</label>

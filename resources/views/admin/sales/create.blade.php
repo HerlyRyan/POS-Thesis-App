@@ -21,16 +21,41 @@
                 </div>
 
                 <!-- Customer -->
-                <div class="mb-4">
-                    <label for="customer_id"
+                <div x-data="customerSearch({{ Js::from($customers->map(function ($customer) {return ['id' => $customer->id, 'name' => $customer->user->name, 'phone' => $customer->phone];})) }})" class="relative mb-4">
+                    <label for="customer_search"
                         class="block font-medium text-sm text-gray-700 dark:text-gray-200">Pelanggan</label>
-                    <select name="customer_id"
-                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                        <option value="">-- Pilih Pelanggan --</option>
-                        @foreach ($customers as $customer)
-                            <option value="{{ $customer->id }}">{{ $customer->user->name }}</option>
-                        @endforeach
+
+                    <!-- Hidden select for form submission -->
+                    <select name="customer_id" x-model="selectedCustomerId" class="hidden">
+                        <option value=""></option>
+                        <template x-for="customer in customers" :key="customer.id">
+                            <option :value="customer.id" x-text="customer.name"></option>
+                        </template>
                     </select>
+
+                    <!-- Searchable input -->
+                    <div class="relative" @click.away="open = false">
+                        <input type="text" id="customer_search" x-model="search" @focus="open = true"
+                            @input="open = true" placeholder="Cari nama atau nomor telepon..."
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+
+                        <!-- Dropdown -->
+                        <div x-show="open" x-transition
+                            class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                            <ul>
+                                <template x-for="customer in filteredCustomers" :key="customer.id">
+                                    <li @click="selectCustomer(customer)"
+                                        class="px-4 py-2 cursor-pointer hover:bg-gray-100">
+                                        <span x-text="customer.name"></span>
+                                        <span class="text-sm text-gray-500" x-text="`(${customer.phone})`"></span>
+                                    </li>
+                                </template>
+                                <template x-if="filteredCustomers.length === 0 && search.length > 0">
+                                    <li class="px-4 py-2 text-gray-500">Pelanggan tidak ditemukan.</li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -129,19 +154,15 @@
                 <div class="mt-6 bg-gray-50 p-4 rounded-lg space-y-2">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600">Subtotal:</span>
-                        <span x-text="formatRupiah(subtotal)"
-                            class="font-medium text-gray-900"></span>
+                        <span x-text="formatRupiah(subtotal)" class="font-medium text-gray-900"></span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600">Diskon:</span>
-                        <span x-text="`- ${formatRupiah(discountAmount)}`"
-                            class="font-medium text-red-600"></span>
+                        <span x-text="`- ${formatRupiah(discountAmount)}`" class="font-medium text-red-600"></span>
                     </div>
-                    <div
-                        class="flex justify-between items-center border-t border-gray-200 pt-2 mt-2">
+                    <div class="flex justify-between items-center border-t border-gray-200 pt-2 mt-2">
                         <span class="text-base font-bold text-gray-900">Total Bayar:</span>
-                        <span x-text="formatRupiah(totalPrice)"
-                            class="text-xl font-bold text-green-600"></span>
+                        <span x-text="formatRupiah(totalPrice)" class="text-xl font-bold text-green-600"></span>
                     </div>
                 </div>
             </div>
@@ -166,6 +187,29 @@
 
     <!-- Alpine.js Script -->
     <script>
+        function customerSearch(customers) {
+            return {
+                open: false,
+                search: '',
+                selectedCustomerId: '',
+                customers: customers,
+                get filteredCustomers() {
+                    if (this.search === '') {
+                        return this.customers;
+                    }
+                    return this.customers.filter(customer =>
+                        customer.name.toLowerCase().includes(this.search.toLowerCase()) ||
+                        customer.phone.toLowerCase().includes(this.search.toLowerCase())
+                    );
+                },
+                selectCustomer(customer) {
+                    this.selectedCustomerId = customer.id;
+                    this.search = customer.id ? `${customer.name} (${customer.phone})` : '';
+                    this.open = false;
+                }
+            }
+        }
+
         function saleForm(allProducts, allPromotions) {
             return {
                 allProducts: allProducts,

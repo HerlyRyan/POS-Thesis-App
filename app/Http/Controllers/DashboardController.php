@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $totalSales = Sales::where('payment_status', 'dibayar')->whereYear('created_at', $selectedYear)->count();
         $totalProducts = Product::where('stock', '>', 0)->count();
 
-        $monthlySalesRaw = Sales::selectRaw('MONTH(created_at) as month_number, MIN(MONTHNAME(created_at)) as month, SUM(total_price) as total')
+        $monthlySalesRaw = Sales::selectRaw('MONTH(created_at) as month_number, MIN(MONTHNAME(created_at)) as month, SUM(grand_price) as total')
             ->whereYear('created_at', $selectedYear)
             ->where('payment_status', 'dibayar')
             ->groupByRaw('MONTH(created_at)')

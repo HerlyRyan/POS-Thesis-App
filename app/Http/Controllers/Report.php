@@ -416,7 +416,7 @@ class Report extends Controller
         // ==============================
         // Hitung Total Penjualan (Omzet)
         // ==============================
-        $totalPenjualan = (clone $query)->sum('total_price');
+        $totalPenjualan = (clone $query)->sum('grand_price');
 
         // ==============================
         // Hitung Total Modal
@@ -457,7 +457,7 @@ class Report extends Controller
         // Ambil data penjualan per bulan
         // ==============================
         $salesChart = (clone $query)
-            ->selectRaw('YEAR(transaction_date) as tahun, MONTH(transaction_date) as bulan, SUM(total_price) as total')
+            ->selectRaw('YEAR(transaction_date) as tahun, MONTH(transaction_date) as bulan, SUM(grand_price) as total')
             ->groupBy('tahun', 'bulan')
             ->orderBy('tahun')
             ->orderBy('bulan')
@@ -510,7 +510,7 @@ class Report extends Controller
         // ==============================
         // Hitung Total Penjualan (Omzet)
         // ==============================
-        $totalPenjualan = (clone $query)->sum('total_price');
+        $totalPenjualan = (clone $query)->sum('grand_price');
 
         // ==============================
         // Hitung Total Modal
@@ -551,7 +551,7 @@ class Report extends Controller
         // Ambil data penjualan per bulan
         // ==============================
         $salesChart = (clone $query)
-            ->selectRaw('YEAR(transaction_date) as tahun, MONTH(transaction_date) as bulan, SUM(total_price) as total')
+            ->selectRaw('YEAR(transaction_date) as tahun, MONTH(transaction_date) as bulan, SUM(grand_price) as total')
             ->groupBy('tahun', 'bulan')
             ->orderBy('tahun')
             ->orderBy('bulan')
@@ -592,7 +592,7 @@ class Report extends Controller
         $year = $request->input('year', now()->year);
 
         // Ambil total penjualan per bulan untuk tahun tertentu
-        $salesPerMonth = Sales::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as bulan, SUM(total_price) as total')
+        $salesPerMonth = Sales::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as bulan, SUM(grand_price) as total')
             ->whereYear('created_at', $year)
             ->groupBy('bulan')
             ->orderBy('bulan')
@@ -604,7 +604,7 @@ class Report extends Controller
 
 
         // Hitung prediksi sederhana (rata-rata 3 bulan terakhir + 5%)
-        $avgSales = Sales::selectRaw('AVG(total_price) as avg_sales')
+        $avgSales = Sales::selectRaw('AVG(grand_price) as avg_sales')
             ->whereYear('created_at', $year)
             ->whereBetween('created_at', [now()->subMonths(3), now()])
             ->value('avg_sales');
@@ -629,7 +629,7 @@ class Report extends Controller
         $year = $request->input('year', now()->year);
 
         // Ambil total penjualan per bulan untuk tahun tertentu
-        $salesPerMonth = Sales::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as bulan, SUM(total_price) as total')
+        $salesPerMonth = Sales::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as bulan, SUM(grand_price) as total')
             ->whereYear('created_at', $year)
             ->groupBy('bulan')
             ->orderBy('bulan')
@@ -640,7 +640,7 @@ class Report extends Controller
             ->pluck('target_amount', 'month');
 
         // Hitung prediksi sederhana (rata-rata 3 bulan terakhir + 5%)
-        $avgSales = Sales::selectRaw('AVG(total_price) as avg_sales')
+        $avgSales = Sales::selectRaw('AVG(grand_price) as avg_sales')
             ->whereYear('created_at', $year)
             ->whereBetween('created_at', [now()->subMonths(3), now()])
             ->value('avg_sales');

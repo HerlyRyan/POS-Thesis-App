@@ -58,7 +58,7 @@
                                     {{ $sale->user->name ?? 'Website' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    Rp {{ number_format($sale->total_price, 0, ',', '.') }}
+                                    Rp {{ number_format($sale->grand_price, 0, ',', '.') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     {{ $sale->payment_method }}

@@ -31,7 +31,7 @@
                     <td>{{ $sale->user->name ?? 'Website' }}</td>
                     <td>{{ ucfirst($sale->payment_method) }}</td>
                     <td>{{ ucfirst($sale->payment_status) }}</td>
-                    <td class="right">Rp {{ number_format($sale->total_price, 0, ',', '.') }}</td>
+                    <td class="right">Rp {{ number_format($sale->grand_price, 0, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>

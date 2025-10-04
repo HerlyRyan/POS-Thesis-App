@@ -22,7 +22,7 @@ class PayableController extends Controller
         if ($request->has('status') && $request->status != '') {
             $query->where('status', $request->status);
         }
-        $payables = $query->paginate(5);
+        $payables = $query->paginate(10);
         return view('admin.payable.index', compact('payables'));
     }
 

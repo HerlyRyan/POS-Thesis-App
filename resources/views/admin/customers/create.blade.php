@@ -84,66 +84,6 @@
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        function dismissLocationError() {
-            const notification = document.getElementById('location-error-notification');
-            if (notification) {
-                notification.style.transition = 'opacity 0.5s';
-                notification.style.opacity = '0';
-                setTimeout(function() {
-                    notification.style.display = 'none';
-                }, 500);
-            }
-        }
-
-        // Ambil lokasi dari browser
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-
-                // Set input
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
-
-                // Update peta
-                map.setView([lat, lng], 15);
-                marker = L.marker([lat, lng]).addTo(map).bindPopup("Lokasi Anda").openPopup();
-            }, function(error) {
-                // Create error notification modal
-                const notificationDiv = document.createElement('div');
-                notificationDiv.id = 'location-error-notification';
-                notificationDiv.className = 'py-4 mb-4 fixed top-16 right-0 z-50 w-auto max-w-[calc(100%-2rem)]';
-
-                notificationDiv.innerHTML = `
-                    <div class="mr-4">
-                        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg border-l-4 border-red-500">
-                            <div class="p-6 text-gray-900 dark:text-gray-100 flex justify-between items-center">
-                                <div>
-                                    Gagal mendapatkan lokasi. Silakan izinkan akses lokasi atau pilih manual di peta.
-                                </div>
-                                <button onclick="dismissLocationError()" class="text-gray-500 hover:text-gray-700">
-                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                document.body.appendChild(notificationDiv);
-
-                // Auto dismiss after 5 seconds
-                setTimeout(() => {
-                    dismissLocationError();
-                }, 5000);
-            });
-        } else {
-            alert("Browser tidak mendukung geolocation.");
-        }
-
         // Update lokasi saat peta diklik
         map.on('click', function(e) {
             const {

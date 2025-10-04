@@ -62,7 +62,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                    Rp {{ number_format($order->sale->total_price, 0, ',', '.') }}</td>
+                                    Rp {{ number_format($order->sale->grand_price, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 

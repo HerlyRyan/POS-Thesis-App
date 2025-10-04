@@ -25,7 +25,7 @@ class CustomerController extends Controller
             });
         }
 
-        $customers = $query->paginate(5);
+        $customers = $query->paginate(10);
 
         return view('admin.customers.index', compact('customers', 'columns'));
     }

@@ -48,7 +48,7 @@
                                 </td>
                                 <td
                                     class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                    {{ Str::title($payable->lender_name) }}
+                                    {{ $payable->lender_name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     Rp {{ number_format($payable->total_amount, 0, ',', '.') }}
@@ -65,7 +65,7 @@
                             {{ $payable->status == 'paid'
                                 ? 'bg-green-100 text-green-800'
                                 : ($payable->status == 'partial'
-                                    ? 'bg-yellow-500 text-white'
+                                    ? 'bg-yellow-500 text-yellow-800'
                                     : 'bg-red-100 text-red-800') }}">
                                         @if ($payable->status == 'unpaid')
                                             Belum dibayar
@@ -114,18 +114,29 @@
                 <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                     <div class="flex justify-between items-start">
                         <div class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                            {{ Str::title($payable->lender_name) }}
+                            {{ $payable->lender_name }}
                         </div>
                         <span
-                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $payable->status == 'Lunas' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            {{ $payable->status }}
+                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            {{ $payable->status == 'paid'
+                                ? 'bg-green-100 text-green-800'
+                                : ($payable->status == 'partial'
+                                    ? 'bg-yellow-500 text-yellow-800'
+                                    : 'bg-red-100 text-red-800') }}">
+                            @if ($payable->status == 'unpaid')
+                                Belum dibayar
+                            @elseif ($payable->status == 'paid')
+                                Lunas
+                            @else
+                                Dibayar sebagian
+                            @endif
                         </span>
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Total: @rupiah($payable->total_amount)
+                        Total: Rp {{ number_format($payable->total_amount, 0, ',', '.') }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Sisa: <span class="font-bold">@rupiah($payable->remaining_amount)</span>
+                        Sisa: <span class="font-bold">Rp {{ number_format($payable->remaining_amount, 0, ',', '.') }}</span>
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
                         Jatuh Tempo: {{ \Carbon\Carbon::parse($payable->due_date)->format('d M Y') }}

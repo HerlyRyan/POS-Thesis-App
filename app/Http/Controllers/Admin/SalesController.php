@@ -49,7 +49,7 @@ class SalesController extends Controller
             $query->where('payment_status', $request->status);
         }
 
-        $sales = $query->orderBy('transaction_date', 'desc')->paginate(5);
+        $sales = $query->orderBy('transaction_date', 'desc')->paginate(10);
 
         return view('admin.sales.index', compact('sales', 'columns'));
     }
@@ -269,7 +269,7 @@ class SalesController extends Controller
 
             // Tambahkan ke laporan keuangan
             $lastFinance = FinanceReports::where('source', 'cash')->latest()->value('total') ?? 0;
-            $total = $sale->total_price + $lastFinance;
+            $total = $sale->grand_price + $lastFinance;
 
             FinanceReports::create([
                 'type' => 'income',
@@ -331,8 +331,8 @@ class SalesController extends Controller
             Receivable::create([
                 'sale_id' => $sale->id,
                 'customer_id' => $sale->customer_id,
-                'total_amount' => $sale->total_price,
-                'remaining_amount' => $sale->total_price,
+                'total_amount' => $sale->grand_price,
+                'remaining_amount' => $sale->grand_price,
                 'status' => 'unpaid',
                 'due_date' => now()->addDays(7), // contoh jatuh tempo 7 hari
             ]);

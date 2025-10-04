@@ -28,7 +28,7 @@ class EmployeeController extends Controller
             $query->where('position', $request->position);
         }
 
-        $employees = $query->paginate(5);
+        $employees = $query->paginate(10);
 
         return view('admin.employees.index', compact('employees', 'columns'));
     }

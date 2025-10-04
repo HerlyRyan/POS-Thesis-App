@@ -611,8 +611,8 @@ class Report extends Controller
 
         $prediction = round($avgSales * 1.05, 0);
 
-        $promotions = SalesPromotion::whereYear('start_date', $year)
-            ->orWhereYear('end_date', $year)
+        $promotions = SalesPromotion::where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
             ->get();
 
         return view('report.sales-plan.index', [
@@ -647,8 +647,8 @@ class Report extends Controller
 
         $prediction = round($avgSales * 1.05, 0);
 
-        $promotions = SalesPromotion::whereYear('start_date', $year)
-            ->orWhereYear('end_date', $year)
+        $promotions = SalesPromotion::where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
             ->get();
 
         return view('report.sales-plan.print', [

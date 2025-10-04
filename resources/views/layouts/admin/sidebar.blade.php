@@ -31,7 +31,7 @@
         @if ($role === 'admin')
             <div class="relative group">
                 <button id="dropdown-button-master"
-                    class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.product.*') || Route::currentRouteNamed('admin.customers.*') || Route::currentRouteNamed('admin.employees.*') || Route::currentRouteNamed('admin.trucks.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
+                    class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.product.*') || Route::currentRouteNamed('admin.customers.*') || Route::currentRouteNamed('admin.employees.*') || Route::currentRouteNamed('admin.trucks.*') || Route::currentRouteNamed('admin.sales-targets.*') || Route::currentRouteNamed('admin.promotions.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -170,7 +170,7 @@
         @if ($role === 'admin' || $role === 'owner')
             <div class="relative group">
                 <button id="dropdown-button-report"
-                    class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.report_finance.*') || Route::currentRouteNamed('admin.report_sales.*') || Route::currentRouteNamed('admin.report_best_sellers.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
+                    class="flex items-center px-6 py-2 mt-4 {{ Route::currentRouteNamed('admin.report_finance.*') || Route::currentRouteNamed('admin.report_sales.*') || Route::currentRouteNamed('admin.report_best_sellers.*') || Route::currentRouteNamed('admin.report_receivable.*') || Route::currentRouteNamed('admin.report_payable.*') || Route::currentRouteNamed('admin.report_business_growth.*') || Route::currentRouteNamed('admin.report_sales_plan.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100">
                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -185,7 +185,7 @@
                     </svg>
                 </button>
                 <div id="dropdown-menu-report" class="dropdown_branding w-full">
-                    <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.report_finance.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                    <a class="flex items-center px-6 py-2 mt-4 ml-5 {{ Route::currentRouteNamed('admin.report_finance.*') || Route::currentRouteNamed('admin.report_receivable.*') || Route::currentRouteNamed('admin.report_payable.*') ? 'text-gray-100' : 'text-gray-500' }} hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
                         href="{{ route('admin.report_finance.index') }}">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -373,19 +373,25 @@
             {{ Route::currentRouteNamed('admin.product.*') ||
             Route::currentRouteNamed('admin.customers.*') ||
             Route::currentRouteNamed('admin.employees.*') ||
-            Route::currentRouteNamed('admin.trucks.*')
+            Route::currentRouteNamed('admin.trucks.*') ||
+            Route::currentRouteNamed('admin.sales-targets.*') ||
+            Route::currentRouteNamed('admin.promotions.*')
                 ? 'true'
                 : 'false' }};
 
         const isReportActive =
             {{ Route::currentRouteNamed('admin.report_finance.*') ||
+            Route::currentRouteNamed('admin.report_receivable.*') ||
+            Route::currentRouteNamed('admin.report_payable.*') ||
             Route::currentRouteNamed('admin.report_sales.*') ||
             Route::currentRouteNamed('admin.report_best_sellers.*') ||
             Route::currentRouteNamed('admin.report_low_stock.*') ||
             Route::currentRouteNamed('admin.report_orders.*') ||
             Route::currentRouteNamed('admin.report_employees.*') ||
             Route::currentRouteNamed('admin.report_customers.*') ||
-            Route::currentRouteNamed('admin.report_trucks.*')
+            Route::currentRouteNamed('admin.report_trucks.*') ||
+            Route::currentRouteNamed('admin.report_business_growth.*') ||
+            Route::currentRouteNamed('admin.report_sales_plan.*')
                 ? 'true'
                 : 'false' }};
 

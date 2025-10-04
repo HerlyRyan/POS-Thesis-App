@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('invoice_number')->unique();
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete(); // kasir
+            $table->foreignId('promotion_id')->nullable()->constrained('sales_promotions')->nullOnDelete(); // kasir
             $table->decimal('total_price', 12, 2);         
+            $table->decimal('discount', 12, 2);         
+            $table->decimal('grand_price', 12, 2);         
             $table->enum('payment_method', ['cash', 'transfer', 'cod'])->default('cash');
             $table->string('snap_url')->nullable();
             $table->enum('payment_status', ['dibayar', 'belum dibayar', 'cicil', 'cancelled'])->default('belum dibayar');

@@ -3,110 +3,158 @@
         <h1 class="text-2xl font-bold">Tambah Data Penjualan</h1>
     </x-slot>
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded shadow-md">
-        <h1 class="text-2xl text-white font-bold">Tambah Data Penjualan</h1>
+    <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl text-gray-900 dark:text-gray-100 font-bold">Tambah Data Penjualan</h1>
         <br>
 
-        <form action="{{ route('admin.sales.store') }}" method="POST" id="sale-form" x-data="saleForm({{ Js::from($products) }})">
+        <form action="{{ route('admin.sales.store') }}" method="POST" id="sale-form" x-data="saleForm({{ Js::from($products) }}, {{ Js::from($promotions) }})">
             @csrf
 
-            <!-- Invoice -->
-            <div class="mb-4">
-                <label for="invoice" class="block font-medium text-gray-700 dark:text-gray-200">Nomor Invoice</label>
-                <input type="text" id="invoice" name="invoice" value="{{ $invoiceNumber }}"
-                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" readonly>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Invoice -->
+                <div class="mb-4">
+                    <label for="invoice" class="block font-medium text-sm text-gray-700 dark:text-gray-200">Nomor
+                        Invoice</label>
+                    <input type="text" id="invoice" name="invoice" value="{{ $invoiceNumber }}"
+                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        readonly>
+                </div>
 
-            <!-- Customer -->
-            <div class="flex flex-col gap-1 mb-4">
-                <label for="customer_id" class="block font-medium text-gray-700 dark:text-gray-200">Pelanggan</label>
-                <select name="customer_id" class="product-select w-full rounded border-gray-300">
-                    <option value="">-- Pilih Pelanggan --</option>
-                    @foreach ($customers as $customer)
-                        <option value="{{ $customer->id }}">{{ $customer->user->name }}</option>
-                    @endforeach
-                </select>
+                <!-- Customer -->
+                <div class="mb-4">
+                    <label for="customer_id"
+                        class="block font-medium text-sm text-gray-700 dark:text-gray-200">Pelanggan</label>
+                    <select name="customer_id"
+                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                        <option value="">-- Pilih Pelanggan --</option>
+                        @foreach ($customers as $customer)
+                            <option value="{{ $customer->id }}">{{ $customer->user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             <!-- Produk -->
-            <div class="flex flex-col gap-1 mb-4">
-                <label for="products" class="block font-medium text-gray-700 dark:text-gray-200">Produk</label>
-                <template x-for="(item, index) in products" :key="index">
-                    <div class="flex flex-col gap-2">
-                        <div class="flex gap-4 items-start">
-                            <!-- Dropdown Produk -->
-                            <select :name="`products[${index}][product_id]`" x-model="item.product_id"
-                                @change="validateQuantity(index)" class="w-full rounded border-gray-300">
-                                <option value="">-- Pilih Produk --</option>
-                                <template x-for="product in allProducts" :key="product.id">
-                                    <option :value="product.id"
-                                        x-text="`${product.name} - Rp ${formatRupiah(product.price)} (Stok: ${product.stock})`">
-                                    </option>
-                                </template>
-                            </select>
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-2">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Detail Produk</h3>
+                <div class="space-y-4">
+                    <template x-for="(item, index) in products" :key="index">
+                        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-4 items-start">
+                                <!-- Dropdown Produk -->
+                                <div class="w-full">
+                                    <select :name="`products[${index}][product_id]`" x-model="item.product_id"
+                                        @change="validateQuantity(index)"
+                                        class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                        <option value="">-- Pilih Produk --</option>
+                                        <template x-for="product in allProducts" :key="product.id">
+                                            <option :value="product.id"
+                                                x-text="`${product.name} - Rp ${formatRupiah(product.price)} (Stok: ${product.stock})`">
+                                            </option>
+                                        </template>
+                                    </select>
+                                </div>
 
-                            <!-- Input Quantity -->
-                            <input type="number" min="1" :max="getMaxStock(item.product_id)"
-                                :name="`products[${index}][quantity]`" x-model.number="item.quantity"
-                                @input="validateQuantity(index)" class="w-24 rounded border-gray-300">
+                                <!-- Input Quantity -->
+                                <input type="number" min="1" :max="getMaxStock(item.product_id)"
+                                    :name="`products[${index}][quantity]`" x-model.number="item.quantity"
+                                    @input="validateQuantity(index)" placeholder="Qty"
+                                    class="w-full sm:w-24 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
 
-                            <!-- Tombol Hapus -->
-                            <button type="button" @click="removeProduct(index)"
-                                class="flex items-center justify-center w-8 h-8 rounded-full text-red-500 hover:bg-red-100 transition">
-                                <!-- Ikon Trash -->
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
+                                <!-- Tombol Hapus -->
+                                <button type="button" @click="removeProduct(index)"
+                                    class="p-2 text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded-full transition-colors justify-self-end sm:justify-self-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                        fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Pesan Error -->
+                            <template x-if="item.error">
+                                <p class="text-sm text-red-600 dark:text-red-400 mt-2" x-text="item.error"></p>
+                            </template>
                         </div>
-
-                        <!-- Pesan Error -->
-                        <template x-if="item.error">
-                            <p class="text-sm text-red-600" x-text="item.error"></p>
-                        </template>
-                    </div>
-                </template>
+                    </template>
+                </div>
             </div>
 
             <!-- Tambah Produk -->
             <button type="button" @click="addProduct()"
-                class="flex items-center gap-1 mt-4 text-sm text-indigo-600 hover:underline">
-                <!-- Ikon Plus -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                class="inline-flex items-center gap-2 mt-4 px-3 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-100 rounded-md hover:bg-indigo-200 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
                 Tambah Produk
             </button>
 
-            <!-- Metode Pembayaran -->
-            <div class="mt-6">
-                <label for="payment_method" class="block font-medium text-gray-700 dark:text-gray-200">Metode
-                    Pembayaran</label>
-                <select name="payment_method" id="payment_method" x-model="payment_method"
-                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                    <option value="">-- Pilih Metode Pembayaran --</option>
-                    <option value="cash">Cash</option>
-                    <option value="transfer">Transfer</option>
-                </select>
+            <!-- Rincian Pembayaran -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Rincian Pembayaran</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Metode Pembayaran -->
+                    <div>
+                        <label for="payment_method" class="block font-medium text-sm text-gray-700 dark:text-gray-200">
+                            Metode Pembayaran
+                        </label>
+                        <select name="payment_method" id="payment_method" x-model="payment_method"
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                            <option value="">-- Pilih Metode Pembayaran --</option>
+                            <option value="cash">Cash</option>
+                            <option value="transfer">Transfer</option>
+                        </select>
+                    </div>
+
+                    <!-- Diskon -->
+                    <div>
+                        <label for="promotion_id"
+                            class="block font-medium text-sm text-gray-700 dark:text-gray-200">Diskon</label>
+                        <select name="promotion_id" x-model="promotion_id"
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                            <option value="">-- Pilih Diskon --</option>
+                            <template x-for="promo in filteredPromotions" :key="promo.id">
+                                <option :value="promo.id"
+                                    x-text="`${promo.title} (${promo.discount_percentage}%)`">
+                                </option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Total Harga -->
+                <div class="mt-6 bg-gray-50 p-4 rounded-lg space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Subtotal:</span>
+                        <span x-text="formatRupiah(subtotal)"
+                            class="font-medium text-gray-900"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">Diskon:</span>
+                        <span x-text="`- ${formatRupiah(discountAmount)}`"
+                            class="font-medium text-red-600"></span>
+                    </div>
+                    <div
+                        class="flex justify-between items-center border-t border-gray-200 pt-2 mt-2">
+                        <span class="text-base font-bold text-gray-900">Total Bayar:</span>
+                        <span x-text="formatRupiah(totalPrice)"
+                            class="text-xl font-bold text-green-600"></span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Total Harga -->
-            <div class="mt-6">
-                <label class="block font-medium text-gray-700 dark:text-gray-200">Total Harga</label>
-                <p class="mt-1 text-lg font-bold text-green-600 dark:text-green-400" x-text="formatRupiah(totalPrice)">
-                </p>
-            </div>
-
-            <!-- Submit -->
-            <div class="flex items-center justify-between">
+            <!-- Tombol Aksi -->
+            <div
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4 mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
                 <a href="{{ route('admin.sales.index') }}"
-                    class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                    Kembali ke Daftar Penjualan
+                    class="w-full sm:w-auto inline-flex justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
+                    Batal
                 </a>
                 <button type="button" x-data @click="$dispatch('open-modal', 'confirm-create')"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    class="w-full sm:w-auto inline-flex justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Buat Penjualan
                 </button>
             </div>
@@ -118,14 +166,26 @@
 
     <!-- Alpine.js Script -->
     <script>
-        function saleForm(allProducts) {
+        function saleForm(allProducts, allPromotions) {
             return {
                 allProducts: allProducts,
+                allPromotions: allPromotions,
+                payment_method: '',
+                promotion_id: '',
                 products: [{
                     product_id: '',
                     quantity: 1,
                     error: ''
                 }],
+
+                get filteredPromotions() {
+                    if (!this.payment_method) {
+                        return this.allPromotions;
+                    }
+                    return this.allPromotions.filter(promo =>
+                        promo.payment_method === 'all' || promo.payment_method === this.payment_method
+                    );
+                },
 
                 addProduct() {
                     this.products.push({
@@ -152,6 +212,9 @@
                         if (item.quantity > max) {
                             item.error = `Stok maksimum hanya ${max}`;
                             item.quantity = max;
+                        } else if (item.quantity < 1) {
+                            item.error = `Kuantitas minimum adalah 1`;
+                            item.quantity = 1;
                         } else {
                             item.error = '';
                         }
@@ -160,13 +223,30 @@
                     }
                 },
 
-                get totalPrice() {
+                // Hitung subtotal
+                get subtotal() {
                     return this.products.reduce((total, item) => {
                         const product = this.allProducts.find(p => p.id == item.product_id);
                         const price = product ? product.price : 0;
                         const qty = item.quantity || 0;
                         return total + price * qty;
                     }, 0);
+                },
+
+                // Hitung diskon
+                get discountAmount() {
+                    if (this.promotion_id) {
+                        const promo = this.allPromotions.find(p => p.id == this.promotion_id);
+                        if (promo) {
+                            return (promo.discount_percentage / 100) * this.subtotal;
+                        }
+                    }
+                    return 0;
+                },
+
+                // Total akhir setelah diskon
+                get totalPrice() {
+                    return this.subtotal - this.discountAmount;
                 },
 
                 formatRupiah(number) {

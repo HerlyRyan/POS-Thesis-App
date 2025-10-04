@@ -61,7 +61,7 @@
                                     {{ $sale->user->name ?? 'Website' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    Rp {{ number_format($sale->total_price, 0, ',', '.') }}
+                                    Rp {{ number_format($sale->grand_price, 0, ',', '.') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                     {{ $sale->payment_method }}
@@ -154,7 +154,7 @@
                         Customer: {{ $sale->customer->user->name ?? 'N/A' }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                        Total: Rp {{ number_format($sale->total_price, 0, ',', '.') }}
+                        Total: Rp {{ number_format($sale->grand_price, 0, ',', '.') }}
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400 mb-3">
                         Date: {{ $sale->transaction_date->format('d M Y') }}

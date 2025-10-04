@@ -200,12 +200,27 @@
         <section class="invoice-summary">
             <table>
                 <tr>
+                    <td class="text-right">Subtotal</td>
+                    <td class="text-right">Rp {{ number_format($sale->total_price, 0, ',', '.') }}</td>
+                </tr>
+                @if($sale->discount > 0)
+                <tr>
+                    <td class="text-right">
+                        Diskon
+                        @if($sale->promotion)
+                            <br><small>({{ $sale->promotion->title }})</small>
+                        @endif
+                    </td>
+                    <td class="text-right">- Rp {{ number_format($sale->discount, 0, ',', '.') }}</td>
+                </tr>
+                @endif
+                <tr>
                     <td class="text-right">Metode Pembayaran:</td>
                     <td class="text-right" style="font-weight: bold;">{{ ucfirst($sale->payment_method) }}</td>
                 </tr>
                 <tr>
-                    <td class="text-right total">Total</td>
-                    <td class="text-right total">Rp {{ number_format($sale->total_price, 0, ',', '.') }}</td>
+                    <td class="text-right total">Grand Total</td>
+                    <td class="text-right total">Rp {{ number_format($sale->grand_price, 0, ',', '.') }}</td>
                 </tr>
             </table>
         </section>

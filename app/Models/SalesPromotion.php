@@ -18,4 +18,9 @@ class SalesPromotion extends Model
         'end_date',
         'expected_increase'
     ];
+
+    public function sales()
+    {
+        return $this->hasMany(Sales::class, 'promotion_id');
+    }
 }

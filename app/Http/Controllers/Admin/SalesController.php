@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Receivable;
 use App\Models\SaleDetail;
 use App\Models\Sales;
+use App\Models\SalesPromotion;
 use App\Services\MidtransService;
 use App\Services\FonnteService;
 use Illuminate\Http\RedirectResponse;
@@ -68,7 +69,13 @@ class SalesController extends Controller
 
         $products = Product::all();
         $customers = Customer::all();
-        return view('admin.sales.create', compact('products', 'customers', 'invoiceNumber'));
+        
+        // Get active promotions
+        $promotions = SalesPromotion::where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->get();
+            
+        return view('admin.sales.create', compact('products', 'customers', 'invoiceNumber', 'promotions'));
     }
 
     public function store(Request $request)
@@ -79,91 +86,121 @@ class SalesController extends Controller
             'products.*.quantity' => 'required|integer|min:1',
             'payment_method' => 'required|in:cash,transfer,ewallet',
             'customer_id' => 'nullable|exists:customers,id',
+            'promotion_id' => 'nullable|exists:sales_promotions,id',
         ]);
 
-        // Hitung total dan siapkan detail penjualan
-        $totalPrice = 0;
-        $details = [];
-
-        foreach ($request->products as $item) {
-            $product = Product::findOrFail($item['product_id']);
-            $quantity = $item['quantity'];
-            $subtotal = $product->price * $quantity;
-
-            if ($product->stock < $quantity) {
-                return redirect()->back()->withErrors(['stock' => "Stok untuk {$product->name} tidak mencukupi."]);
+        return DB::transaction(function () use ($request) {
+            $user = $request->user();
+            
+            // Get product IDs for bulk query
+            $productIds = array_column($request->products, 'product_id');
+            $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+            
+            // Validate customer
+            if ($user->hasRole('customer')) {
+                $customer = $user->customer;
+            } else {
+                $customer = $request->customer_id ? Customer::find($request->customer_id) : null;
             }
 
-            $details[] = [
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'price' => $product->price,
-                'quantity' => $quantity,
-                'subtotal' => $subtotal,
-            ];
+            if ($request->customer_id && !$customer) {
+                throw new \Exception('Pelanggan tidak ditemukan.');
+            }
 
-            $totalPrice += $subtotal;
-        }
+            // Validate promotion once
+            $promotion = null;
+            $discountPercentage = 0;
+            
+            if ($request->promotion_id) {
+                $promotion = SalesPromotion::find($request->promotion_id);
+                if (!$promotion) {
+                    throw new \Exception('Promo tidak ditemukan.');
+                }
+                $discountPercentage = $promotion->discount_percentage;
+            }
 
-        // Ambil customer_id dari user login (jika role customer) atau dari input admin
-        $user = $request->user();
-        if ($user->hasRole('customer')) {
-            $customer_id = $user->customer->id ?? null;
-        } else {
-            $customer_id = $request->customer_id;
-        }
+            // Calculate totals and prepare details in single loop
+            $totalPrice = 0;
+            $details = [];
 
-        // Simpan penjualan
-        if ($request->payment_method == 'cash') {
-            $sale = Sales::create([
+            foreach ($request->products as $item) {
+                $product = $products->get($item['product_id']);
+                
+                if (!$product) {
+                    throw new \Exception('Produk tidak ditemukan.');
+                }
+
+                $quantity = $item['quantity'];
+                
+                if ($product->stock < $quantity) {
+                    throw new \Exception("Stok untuk {$product->name} tidak mencukupi.");
+                }
+
+                $subtotal = $product->price * $quantity;
+                $totalPrice += $subtotal;
+
+                $details[] = [
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'price' => $product->price,
+                    'quantity' => $quantity,
+                    'subtotal' => $subtotal,
+                ];
+            }
+
+            // Apply discount to total
+            $discountAmount = $promotion ? ($discountPercentage / 100) * $totalPrice : 0;
+            $grandTotal = max(0, $totalPrice - $discountAmount);
+
+            // Prepare sale data
+            $saleData = [
                 'invoice_number' => $request->invoice,
-                'customer_id' => $customer_id,
+                'customer_id' => $customer->id,
                 'user_id' => $user->id,
+                'promotion_id' => $promotion?->id,
                 'total_price' => $totalPrice,
+                'discount' => $discountAmount,
+                'grand_price' => $grandTotal,
                 'payment_method' => $request->payment_method,
                 'payment_status' => 'menunggu pembayaran',
                 'transaction_date' => now(),
-            ]);
-
-            // Simpan detail penjualan
-            foreach ($details as $detail) {
-                $sale->details()->create($detail);
-            }
-        }
-
-        if ($request->payment_method == 'transfer') {
-            $midtrans = new MidtransService();
-
-            $params = [
-                'transaction_details' => [
-                    'order_id' => $request->invoice,
-                    'gross_amount' => $totalPrice,
-                ],
-                'customer_details' => [
-                    'first_name' => optional($request->user())->name ?? 'Pelanggan',
-                    'email' => $request->user()->email ?? 'email@example.com',
-                ],
             ];
 
-            $snap = $midtrans->createTransaction($params);
+            // Handle payment method specific logic
+            if ($request->payment_method === 'transfer') {
+                $midtrans = new MidtransService();
+                
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $request->invoice,
+                        'gross_amount' => $grandTotal,
+                    ],
+                    'customer_details' => [
+                        'first_name' => $user->name ?? 'Pelanggan',
+                        'email' => $user->email ?? 'email@example.com',
+                    ],
+                ];
 
-            $sale = Sales::create([
-                'invoice_number' => $request->invoice,
-                'customer_id' => $customer_id,
-                'user_id' => $request->user()->id,
-                'total_price' => $totalPrice,
-                'payment_method' => 'transfer',
-                'payment_status' => 'menunggu pembayaran',
-                'snap_url' => $snap->redirect_url,
-                'transaction_date' => now(),
-            ]);
-
-            foreach ($details as $detail) {
-                $sale->details()->create($detail);
+                $snap = $midtrans->createTransaction($params);
+                $saleData['snap_url'] = $snap->redirect_url;
             }
-        }
 
-        return redirect()->route('admin.sales.index')->with('success', 'Penjualan berhasil disimpan.');
+            // Create sale
+            $sale = Sales::create($saleData);
+
+            // Bulk insert sale details
+            $detailsWithSaleId = array_map(function ($detail) use ($sale) {
+                $detail['sale_id'] = $sale->id;
+                $detail['created_at'] = now();
+                $detail['updated_at'] = now();
+                return $detail;
+            }, $details);
+
+            SaleDetail::insert($detailsWithSaleId);
+
+            return redirect()->route('admin.sales.index')
+                ->with('success', 'Penjualan berhasil disimpan.');
+        });
     }
 
     public function show(Sales $sale)
@@ -308,7 +345,7 @@ class SalesController extends Controller
 
     public function printInvoice($saleId)
     {
-        $sale = Sales::with(['details', 'customer', 'user'])->findOrFail($saleId);
+        $sale = Sales::with(['details', 'customer', 'user', 'promotion'])->findOrFail($saleId);
         return view('admin.sales.print-invoice', compact('sale'));
         // Or to stream directly to browser:
         // return $pdf->stream('invoice-' . $sale->invoice_number . '.pdf');

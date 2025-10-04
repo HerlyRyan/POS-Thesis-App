@@ -17,7 +17,10 @@ class Sales extends Model
         'invoice_number',
         'customer_id',
         'user_id',
+        'promotion_id',
         'total_price',
+        'discount',
+        'grand_price',
         'payment_method',
         'payment_status',
         'transaction_date',
@@ -43,5 +46,10 @@ class Sales extends Model
     public function orders()
     {
         return $this->hasOne(Order::class, 'sale_id');
+    }
+
+    public function promotion()
+    {
+        return $this->belongsTo(SalesPromotion::class); 
     }
 }

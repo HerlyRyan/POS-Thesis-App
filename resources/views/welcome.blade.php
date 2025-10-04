@@ -82,10 +82,10 @@
             <h2 class="text-3xl sm:text-4xl font-extrabold text-center mb-8 sm:mb-12 text-gray-900">Produk Unggulan
             </h2>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+            <div class="flex flex-wrap justify-center gap-6 sm:gap-8">
                 @forelse ($topProducts as $product)
                     <div
-                        class="product-card bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition duration-300 border border-gray-200 flex flex-col">
+                        class="product-card bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition duration-300 border border-gray-200 flex flex-col w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.34rem)] xl:w-[calc(25%-1.5rem)]">
                         <a href="{{ route('products.show', $product->id) }}" class="block">
                             <div class="relative">
                                 <img src="{{ asset('/storage/products/' . $product->image) ?? 'https://images.unsplash.com/photo-1605457867610-e990b096bf76?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80' }}"

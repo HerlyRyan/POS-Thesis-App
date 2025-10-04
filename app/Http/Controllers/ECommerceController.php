@@ -332,7 +332,9 @@ class ECommerceController extends Controller
         $query->withCount(['saleDetails as sold_count' => function ($query) {
             $query->select(DB::raw("SUM(quantity)"));
         }]);
-        $products = $query->paginate(6);
+
+        $perPage = $request->input('per_page', 6);
+        $products = $query->paginate($perPage);
 
         return view('customer.product', compact('products'));
     }

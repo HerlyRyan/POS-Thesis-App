@@ -62,7 +62,7 @@
                         <div class="relative">
                             <img src="{{ asset('/storage/products/' . $product->image) ?? 'https://images.unsplash.com/photo-1605457867610-e990b096bf76?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80' }}"
                                 class="w-full h-56 object-cover" alt="{{ $product->name }}">
-                            @if ($product->stock <= 5 && $product->stock > 0)
+                            @if ($product->stock <= 10 && $product->stock > 0)
                                 <span
                                     class="absolute top-3 right-3 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full">Stok
                                     Terbatas!</span>
@@ -173,5 +173,28 @@
     </div>
 
     <x-add-to-cart-modal />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let columns = 1; // default mobile
+            if (window.innerWidth >= 1280) {
+                columns = 4; // xl
+            } else if (window.innerWidth >= 1024) {
+                columns = 3; // lg
+            } else if (window.innerWidth >= 640) {
+                columns = 2; // sm
+            }
+
+            // Misal tampilkan 2 row per halaman
+            let perPage = columns * 2;
+
+            const url = new URL(window.location.href);
+            if (!url.searchParams.has('per_page')) {
+                url.searchParams.set('per_page', perPage);
+                window.location.href = url.toString();
+            }
+        });
+    </script>
+
 
 </x-customer-layout>

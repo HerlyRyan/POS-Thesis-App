@@ -102,11 +102,15 @@
                     class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                     Kembali
                 </a>
-                <button type="submit"
+                <button type="button" x-data @click="$dispatch('open-modal', 'confirm-create')"
                     class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-white text-xs uppercase tracking-widest shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Tambah Hutang
                 </button>
             </div>
         </form>
+
+        <x-confirm-create-update-button :name="'confirm-create'" modalForm="payable-form"
+            confirmMessage="Konfirmasi Pembuatan Data Hutang"
+            question="Apakah kamu yakin ingin menambah data hutang ini?" buttonText="Ya, Buat" />
     </div>
 </x-admin-layout>

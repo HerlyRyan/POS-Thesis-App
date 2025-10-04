@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductReview;
 use App\Models\Sales;
+use App\Models\SalesPromotion;
 use App\Models\TruckTracking;
 use App\Services\FonnteService;
 use App\Services\MidtransService;
@@ -63,7 +64,12 @@ class ECommerceController extends Controller
             return $cart->cartItems;
         });
 
-        return view('customer.cart', compact('cartItems'));
+        // Get active promotions
+        $promotions = SalesPromotion::whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->get();
+
+        return view('customer.cart', compact('cartItems', 'promotions'));
     }
 
 
@@ -148,6 +154,22 @@ class ECommerceController extends Controller
         DB::transaction(function () use ($user, $selectedItems, $request) {
             $total = $selectedItems->sum('subtotal');
 
+            // Validate promotion once
+            $promotion = null;
+            $discountPercentage = 0;
+
+            if ($request->promotion_id) {
+                $promotion = SalesPromotion::find($request->promotion_id);
+                if (!$promotion) {
+                    throw new \Exception('Promo tidak ditemukan.');
+                }
+                $discountPercentage = $promotion->discount_percentage;
+            }
+
+            // Apply discount to total
+            $discountAmount = $promotion ? ($discountPercentage / 100) * $total : 0;
+            $grandTotal = max(0, $total - $discountAmount);
+
             $invoiceNumber = 'INVGS-' . now()->format('mdy') . '-' . strtoupper(Str::random(4));
 
             if ($request->payment_method == 'cod') {
@@ -155,7 +177,10 @@ class ECommerceController extends Controller
                     'invoice_number' => $invoiceNumber,
                     'customer_id' => $user->customer->id,
                     'user_id' => null,
+                    'promotion_id' => $promotion?->id,
                     'total_price' => $total,
+                    'discount' => $discountAmount,
+                    'grand_price' => $grandTotal,
                     'payment_method' => 'cod',
                     'payment_status' => 'belum dibayar',
                     'transaction_date' => now(),
@@ -195,7 +220,10 @@ class ECommerceController extends Controller
                     'invoice_number' => $invoiceNumber,
                     'customer_id' => $user->customer->id,
                     'user_id' => $request->user()->id,
+                    'promotion_id' => $promotion?->id,
                     'total_price' => $total,
+                    'discount' => $discountAmount,
+                    'grand_price' => $grandTotal,
                     'payment_method' => 'transfer',
                     'payment_status' => 'menunggu pembayaran',
                     'snap_url' => $snap->redirect_url,
